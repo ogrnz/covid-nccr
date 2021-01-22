@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BEARER_TOKEN = os.getenv('BEARER_TOKEN')
+DEBUG = False
 
 #API
 def create_url(id):
@@ -66,8 +67,9 @@ def main(df, delay=1):
                 pass
             except KeyboardInterrupt:
                 return df, errorsLst 
-        # if index==3:
-        #     break
+
+        if DEBUG==True and index==3:
+            break
 
     shape2 = df.shape
     if shape1 != shape2:
@@ -84,31 +86,35 @@ if __name__ == "__main__":
     #eu.to_pickle(r'data/EU.pkl')
     #un = pd.read_excel(r'data/UN.xlsx')
     #un.to_pickle(r'data/UN.pkl')
-    #eu = pd.read_pickle(r'data/EU.pkl')
+    eu = pd.read_pickle(r'data/EU.pkl')
     un = pd.read_pickle(r'data/UN.pkl')
 
-    # eu = eu.set_index('ID')
+    eu = eu.set_index('ID')
     un = un.set_index('ID')
 
-    #EU now good
-    dfs = [un]
+    dfs = [eu, un]
     for i, df in enumerate(dfs):
+        df['OldText'] = df['Text'] 
         name = 'EU' if df.shape[0] == 7595 else 'UN'
+
+        #insert OldText before Text
+        cols = df.columns.tolist()
+        cols.insert(6, cols[-1])
+        cols.pop()
+        df = df[cols]
+
         print("Starting...")
 
         try:
             edited, errorsLst = main(df)
             print('Writing to xlsx.')   
-            df.to_excel('data/' + name + '_total.xlsx')
+            edited.to_excel('data/' + name + '_total.xlsx')
             if len(errorsLst) > 0:
                 with open(f'logs/{name}_errors.json', 'w') as outfile:
                     json.dump(errorsLst, outfile)
             print('Done.')
         except Exception as e:
             print('Exception', e)
-        
-
-        
         
 # rate limit 900/15min -> 1 tweet/s (v1.1) 
 #If there is an error, the text is not remplaced

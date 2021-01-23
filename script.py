@@ -49,7 +49,7 @@ def main(df, delay=1):
     t1 = time.time()
     count = 0
 
-    for index, row in df.iterrows():
+    for index, row in df.loc[1100:1500,:].iterrows():
         counterUpdater(index, total)
 
         if row['Text'][-1] == '…':
@@ -86,13 +86,13 @@ if __name__ == "__main__":
     #eu.to_pickle(r'data/EU.pkl')
     #un = pd.read_excel(r'data/UN.xlsx')
     #un.to_pickle(r'data/UN.pkl')
-    eu = pd.read_pickle(r'data/EU.pkl')
+    #eu = pd.read_pickle(r'data/EU.pkl')
     un = pd.read_pickle(r'data/UN.pkl')
 
-    eu = eu.set_index('ID')
+    #eu = eu.set_index('ID')
     un = un.set_index('ID')
 
-    dfs = [eu, un]
+    dfs = [un]
     for i, df in enumerate(dfs):
         df['OldText'] = df['Text'] 
         name = 'EU' if df.shape[0] == 7595 else 'UN'
@@ -117,5 +117,3 @@ if __name__ == "__main__":
             print('Exception', e)
         
 # rate limit 900/15min -> 1 tweet/s (v1.1) 
-#If there is an error, the text is not remplaced
-#and the error is logged

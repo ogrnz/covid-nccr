@@ -1,0 +1,6 @@
+venv
+
+complete-tweets/data
+complete-tweets/logs
+complete-tweets/.env
+

@@ -49,7 +49,7 @@ def main(df, delay=1):
     t1 = time.time()
     count = 0
 
-    for index, row in df.loc[1100:1500,:].iterrows():
+    for index, row in df.iterrows():
         counterUpdater(index, total)
 
         if row['Text'][-1] == '…':

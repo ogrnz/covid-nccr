@@ -4,3 +4,4 @@ complete-tweets/data
 complete-tweets/logs
 complete-tweets/.env
 
+get-last-tweets/.env

@@ -5,3 +5,6 @@ complete-tweets/logs
 complete-tweets/.env
 
 get-last-tweets/.env
+get-last-tweets/__pycache__
+get-last-tweets/json_parser.py
+get-last-tweets/tweets.json

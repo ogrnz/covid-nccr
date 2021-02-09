@@ -64,7 +64,6 @@ def main(df, delay=1):
                 #might be better to log directly
                 errorsLst[index] = str(e)
                 print(index, e)
-                pass
             except KeyboardInterrupt:
                 return df, errorsLst 
 

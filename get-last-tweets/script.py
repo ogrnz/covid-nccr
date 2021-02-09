@@ -21,7 +21,7 @@ consumer_key = os.getenv('KEY')
 consumer_secret = os.getenv('KEY_SECRET') 
 access_key = os.getenv('TOKEN')
 access_secret = os.getenv('TOKEN_SECRET')
-DEBUG = False
+DEBUG = True
 
 # Sqlite
 def connect_sqlite(db):
@@ -99,7 +99,11 @@ def get_all_tweets(screen_name, last_id, api):
     '''
 
     alltweets = []
-    new_tweets = api.user_timeline(screen_name=screen_name, count=200)
+    new_tweets = api.user_timeline(
+        screen_name=screen_name, count=200, 
+        tweet_mode="extended"
+    )
+    
     alltweets.extend(new_tweets)
 
     oldest = alltweets[-1].id - 1
@@ -114,7 +118,10 @@ def get_all_tweets(screen_name, last_id, api):
         print(f"Getting tweets before {oldest}")
 
         new_tweets = api.user_timeline(
-            screen_name=screen_name, count=200, max_id=oldest)
+            screen_name=screen_name, 
+            count=200, max_id=oldest,
+            tweet_mode="extended"
+        )
 
         alltweets.extend(new_tweets)
         oldest = alltweets[-1].id - 1
@@ -133,13 +140,25 @@ def get_all_tweets(screen_name, last_id, api):
             continue  
         
         # Get type
-        tweet_type = None
-        if tweet.in_reply_to_status_id is not None:
-            tweet_type = 'Reply'
-        elif tweet.text[:2] == 'RT':
+        # tweet_type = None
+        # if tweet.in_reply_to_status_id is not None:
+        #     tweet_type = 'Reply'
+        # elif tweet.text[:2] == 'RT':
+        #     tweet_type = 'Retweet'
+        # else:
+        #     tweet_type = 'New'
+        # print(tweet._json)
+
+        old_text = None
+        if hasattr(tweet, 'retweeted_status'):
+            old_text = tweet.full_text
             tweet_type = 'Retweet'
-        else:
+            full_text = tweet.retweeted_status.full_text
+        else:  # Not a Retweet
+            full_text = tweet.full_text
             tweet_type = 'New'
+            if tweet.in_reply_to_status_id is not None:
+                tweet_type = 'Reply'
 
         # Make final dict
         outtweets[index] = {
@@ -149,13 +168,16 @@ def get_all_tweets(screen_name, last_id, api):
             'created_at': tweet.created_at.strftime('%d/%m/%Y %H:%M:%S'), 
             'handle': f"@{tweet.user.screen_name}",
             'name': tweet.user.name,
-            'oldtext': tweet.text,
-            'text': None,
+            'oldText': old_text,
+            'text': full_text,
             'URL': f'https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}',
             'retweets': tweet.retweet_count,
             'favorites': tweet.favorite_count
         }
 
+    #print(outtweets[0]) #RT
+    #print(outtweets[1]) #Reply
+    #print(outtweets[4]) #New
     return outtweets
 
 if __name__ == "__main__":

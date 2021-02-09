@@ -32,15 +32,16 @@ def connect_sqlite(db):
         print(e)
 
     return conn
-def create_table(conn, create_table_sql):
+def create_table(conn, table_sql):
     try:
         c = conn.cursor()
-        c.execute(create_table_sql)
+        c.execute(table_sql)
     except Error as e:
         print(e)
 def insert_tweet(conn, tweet):
     sql = ''' INSERT OR IGNORE INTO tweets(
                     tweet_id,
+                    covid_theme,
                     type, 
                     created_at, 
                     handle, 
@@ -50,12 +51,26 @@ def insert_tweet(conn, tweet):
                     url,
                     retweets,
                     favorites)
-              VALUES(?,?,?,?,?,?,?,?,?,?) '''
+              VALUES(?,?,?,?,?,?,?,?,?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, tweet)
     conn.commit()
 
     return cur.lastrowid
+def get_last_id(conn, screen_name):
+    screen_name = f'@{screen_name}'
+
+    cur = conn.cursor()
+    cur.execute('''
+        SELECT tweet_id 
+        FROM tweets 
+        WHERE handle=?
+        ORDER BY tweet_id DESC''', 
+        (screen_name,)
+    )
+
+    # Return last inserted tweet_id by handle
+    return cur.fetchone()
 
 # Helpers
 def get_actors_urls(filename):
@@ -77,7 +92,7 @@ def setup_API(consumer_key, consumer_secret, access_key, access_secret):
     except Exception as e:
         return e
 
-def get_all_tweets(screen_name, api):
+def get_all_tweets(screen_name, last_id, api):
     '''
     Script from @yanofsky as baseline
     https://gist.github.com/yanofsky/5436496
@@ -89,9 +104,11 @@ def get_all_tweets(screen_name, api):
 
     oldest = alltweets[-1].id - 1
 
+
     while len(new_tweets) > 0:
-        # If tweet older than that ID (== 31/12/2019), stop execution 
-        if oldest < 1211913001147740161:
+        # If tweet older than that ID (== 31/12/2019)
+        # or older than last ID in db for that actor, go to next actor
+        if oldest < 1211913001147740161 or oldest < last_id:
             break
 
         print(f"Getting tweets before {oldest}")
@@ -103,6 +120,7 @@ def get_all_tweets(screen_name, api):
         oldest = alltweets[-1].id - 1
         
         print(f"...{len(alltweets)} tweets downloaded")
+
         if DEBUG:
             break
     
@@ -125,13 +143,14 @@ def get_all_tweets(screen_name, api):
 
         # Make final dict
         outtweets[index] = {
-            'tweet_id': tweet.id, 
+            'tweet_id': tweet.id,
+            'covid_theme': None, 
             'type': tweet_type,
             'created_at': tweet.created_at.strftime('%d/%m/%Y %H:%M:%S'), 
             'handle': f"@{tweet.user.screen_name}",
             'name': tweet.user.name,
             'oldtext': tweet.text,
-            'text': '',
+            'text': None,
             'URL': f'https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}',
             'retweets': tweet.retweet_count,
             'favorites': tweet.favorite_count
@@ -143,9 +162,21 @@ if __name__ == "__main__":
     today = date.today()
     date_name = today.strftime('%Y-%m-%d')
 
+    conn = connect_sqlite('tweets.db')
+
     # Get actors urls
     urls = get_actors_urls('actors_url.txt')
     screen_names = [url[19:len(url)] for url in urls]
+
+    # Get actors last scraped tweet_id
+    last_ids = {}
+    with conn:
+        for name in screen_names:
+            try:
+                last_ids[name] = int(get_last_id(conn, name)[0])    
+            except TypeError as e:
+                last_ids[name] = 0
+                print('TypeError', name, e)
 
     # Connect to Twitter API
     api = setup_API(consumer_key, consumer_secret, access_key, access_secret) 
@@ -159,10 +190,11 @@ if __name__ == "__main__":
     for i, actor in enumerate(screen_names, start=1):
         print(i, '/', total)
         print('Starting to retrieve tweets for ', actor)
-
+        
+        last_tweet_id = last_ids[actor]
         try:
             # Get last ~3200 tweets from someone
-            tweets = get_all_tweets(actor, api)
+            tweets = get_all_tweets(actor, last_tweet_id, api)
             # Add to total dict
             total_tweets[actor] = tweets
         except Exception as e:
@@ -180,18 +212,22 @@ if __name__ == "__main__":
     # Insert tweets into DB
     t1 = time.time()
     db_errors = {}
-    conn = connect_sqlite('tweets.db')
+    
     with conn:
         for actor in total_tweets:
             print('Inserting tweets from', actor)
             for i, tweet in enumerate(total_tweets[actor], start=1):
                 counterUpdater(i, len(total_tweets[actor]))
 
-                #Check if is about covid
-
                 tweet_entry = ()
                 for key, val in total_tweets[actor][tweet].items():
                     tweet_entry += (val,)
+
+                tmp_tweet = list(tweet_entry)
+                # Work with entries
+                #Check if is about covid
+                tmp_tweet[1] = 0
+                tweet_entry = tuple(tmp_tweet)
 
                 try:
                     insert_tweet(conn, tweet_entry)   
@@ -203,3 +239,6 @@ if __name__ == "__main__":
     print(f'Done in {round(elapsed / 60, 2)} min')
     if len(db_errors) > 0:
         print('With some errors:', json.dumps(db_errors, indent=4))
+
+# TODO
+# Retrieve full text with extended mode

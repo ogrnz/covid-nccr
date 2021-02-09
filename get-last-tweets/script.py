@@ -203,5 +203,3 @@ if __name__ == "__main__":
     print(f'Done in {round(elapsed / 60, 2)} min')
     if len(db_errors) > 0:
         print('With some errors:', json.dumps(db_errors, indent=4))
-# TODO
-# - include 2 last actors

@@ -7,6 +7,7 @@ import os
 import sqlite3
 from sqlite3 import Error
 import requests
+import time
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -15,7 +16,7 @@ consumer_key = os.getenv('KEY')
 consumer_secret = os.getenv('KEY_SECRET') 
 access_key = os.getenv('TOKEN')
 access_secret = os.getenv('TOKEN_SECRET')
-DEBUG = True
+DEBUG = False
 
 #API
 def create_url(id):
@@ -76,18 +77,23 @@ def main():
     headers = create_headers(bearer_token)
 
     errorsLst = {}
-    for index, rt in enumerate(rts[4:10], start=1):
-        print(rt[0])
+    for index, rt in enumerate(rts, start=1):
         counterUpdater(index, tot)
         url = create_url(rt[0])
 
         try:
             full_text = get_full_tweet(url, headers)
+            time.sleep(1)
             with conn:
                 update_tweet(conn, rt[0], full_text)
         except Exception as e:
             errorsLst[index] = str(e)
-            print(index, e)
+            print(index, rt[0], e)
 
 if __name__ == "__main__":
+    t1 = time.time()
+
     main()
+
+    elapsed = time.time() - t1
+    print(f'Done in {round(elapsed / 60, 2)} min')

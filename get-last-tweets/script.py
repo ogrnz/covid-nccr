@@ -21,7 +21,7 @@ consumer_key = os.getenv('KEY')
 consumer_secret = os.getenv('KEY_SECRET') 
 access_key = os.getenv('TOKEN')
 access_secret = os.getenv('TOKEN_SECRET')
-DEBUG = True
+DEBUG = False
 
 # Sqlite
 def connect_sqlite(db):
@@ -235,9 +235,11 @@ if __name__ == "__main__":
     t1 = time.time()
     db_errors = {}
     
-    with conn:
-        for actor in total_tweets:
-            print('Inserting tweets from', actor)
+    for actor in total_tweets:
+        print('Inserting tweets from', actor)
+
+        # Open and close conn for each actor, so changes are not lost if issue  
+        with conn:
             for i, tweet in enumerate(total_tweets[actor], start=1):
                 counterUpdater(i, len(total_tweets[actor]))
 

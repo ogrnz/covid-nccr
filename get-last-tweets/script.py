@@ -108,7 +108,6 @@ def get_all_tweets(screen_name, last_id, api):
 
     oldest = alltweets[-1].id - 1
 
-
     while len(new_tweets) > 0:
         # If tweet older than that ID (== 31/12/2019)
         # or older than last ID in db for that actor, go to next actor
@@ -263,6 +262,3 @@ if __name__ == "__main__":
     print(f'Done in {round(elapsed / 60, 2)} min')
     if len(db_errors) > 0:
         print('With some errors:', json.dumps(db_errors, indent=4))
-
-# TODO
-# Retrieve full text with extended mode

@@ -137,16 +137,6 @@ def get_all_tweets(screen_name, last_id, api):
         as_of = dt.strptime("2019/12/31", "%Y/%m/%d")
         if tweet.created_at < as_of:
             continue  
-        
-        # Get type
-        # tweet_type = None
-        # if tweet.in_reply_to_status_id is not None:
-        #     tweet_type = 'Reply'
-        # elif tweet.text[:2] == 'RT':
-        #     tweet_type = 'Retweet'
-        # else:
-        #     tweet_type = 'New'
-        # print(tweet._json)
 
         old_text = None
         if hasattr(tweet, 'retweeted_status'):

@@ -1,13 +1,8 @@
 .vscode
 venv
+.env
+logs
 
-complete-tweets/data
-complete-tweets/logs
-complete-tweets/.env
+src/get-last-tweets/__pycache__
 
-get-last-tweets/.env
-get-last-tweets/__pycache__
-get-last-tweets/json_parser.py
-get-last-tweets/tweets.json
-
-sqlite/db/*.db
+database/*.db

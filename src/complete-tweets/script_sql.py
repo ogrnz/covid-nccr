@@ -1,5 +1,4 @@
 '''
-09/02/2021
 Get tweets from database
 Complete the tweet if it is truncated
 '''

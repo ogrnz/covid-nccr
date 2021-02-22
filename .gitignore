@@ -3,6 +3,11 @@ venv
 .env
 logs
 
+src/__pycache__
+src/api/__pycache__
+src/common/__pycache__
+src/db/__pycache__
+
 src/get-last-tweets/__pycache__
 
 database/*.db

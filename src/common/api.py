@@ -1,44 +1,53 @@
-from datetime import date
+"""
+API module
+"""
+
 from datetime import datetime as dt
 
 import tweepy
 
-from  src.common.helpers import Helpers
 
-class Api:  
+class Api:
     """
     Handles communication with the Twitter API through
     tweepy
     """
 
-    def __init__(self):
-        pass
+    api = None
+    connected = False
 
-    def connect_api(self, cons_key, cons_scrt, 
-            acc_key, acc_scrt):
+    def __init__(self, CONSUMER_KEY, CONSUMER_SECRET, ACCESS_KEY, ACCESS_SECRET):
+        self.connect_api(CONSUMER_KEY, CONSUMER_SECRET,
+                         ACCESS_KEY, ACCESS_SECRET)
+
+    def connect_api(self, cons_key, cons_scrt,
+                    acc_key, acc_scrt):
+        """
+        Connect to twitter API through tweepy
+        """
+
         try:
             auth = tweepy.OAuthHandler(cons_key, cons_scrt)
             auth.set_access_token(acc_key, acc_scrt)
             self.api = tweepy.API(auth)
+            self.connected = True
+        except Exception as error:
+            print('Error connecting to Twitter API ', error)
 
-            return self.api
-        except Exception as e:
-            return e
-
-    def get_tweets(self, screen_name, last_id):
+    def get_tweets(self, screen_name, last_id=0):
         """
-        Retrieve tweets from a user 
+        Retrieve tweets from a user
         Script from @yanofsky as baseline
         https://gist.github.com/yanofsky/5436496
         """
 
-        alltweets = []
+        all_tweets = []
         new_tweets = self.api.user_timeline(
-            screen_name=screen_name, count=200, 
+            screen_name=screen_name, count=200,
             tweet_mode="extended"
         )
-        alltweets.extend(new_tweets)
-        oldest = alltweets[-1].id - 1
+        all_tweets.extend(new_tweets)
+        oldest = all_tweets[-1].id - 1
 
         while len(new_tweets) > 0:
             # If tweet older than that ID (== 31/12/2019)
@@ -46,27 +55,27 @@ class Api:
             if oldest < 1211913001147740161 or oldest < last_id:
                 break
 
-            print(f"Getting tweets before {oldest}")
+            print(f"Getting tweets before {oldest} ({screen_name})")
 
             new_tweets = self.api.user_timeline(
-                screen_name=screen_name, 
+                screen_name=screen_name,
                 count=200, max_id=oldest,
                 tweet_mode="extended"
             )
-            alltweets.extend(new_tweets)
-            oldest = alltweets[-1].id - 1
-            
-            Helpers.dynamic_text(f"...{len(alltweets)} tweets downloaded")
+            all_tweets.extend(new_tweets)
+            oldest = all_tweets[-1].id - 1
+
+            print(f"...{len(all_tweets)} tweets downloaded")
 
         outtweets = {}
-        for index, tweet in enumerate(alltweets):
+        for index, tweet in enumerate(all_tweets):
             # Ignore tweets older than 2019/12/31
             as_of = dt.strptime("2019/12/31", "%Y/%m/%d")
             if tweet.created_at < as_of:
-                continue  
+                continue
 
             old_text = None
-            if hasattr(tweet, 'retweeted_status'): #Is RT
+            if hasattr(tweet, 'retweeted_status'):  # Is RT
                 old_text = tweet.full_text
                 tweet_type = 'Retweet'
                 full_text = tweet.retweeted_status.full_text
@@ -79,9 +88,9 @@ class Api:
             # Make final dict
             outtweets[index] = {
                 'tweet_id': tweet.id,
-                'covid_theme': None, 
+                'covid_theme': None,
                 'type': tweet_type,
-                'created_at': tweet.created_at.strftime('%d/%m/%Y %H:%M:%S'), 
+                'created_at': tweet.created_at.strftime('%d/%m/%Y %H:%M:%S'),
                 'handle': f"@{tweet.user.screen_name}",
                 'name': tweet.user.name,
                 'oldText': old_text,
@@ -91,11 +100,14 @@ class Api:
                 'favorites': tweet.favorite_count
             }
 
-            return outtweets
+        return outtweets
+
 
 if __name__ == "__main__":
-    from src.common.app import App
-    
+    from app import App
+
     app = App(debug=True)
-    api = Api.connect_api(App.BEARER_TOKEN, App.CONSUMER_KEY,
-        App.CONSUMER_SECRET, App.ACCESS_KEY, App.ACCESS_SECRET)
+    api = Api(app.CONSUMER_KEY, app.CONSUMER_SECRET,
+              app.ACCESS_KEY, app.ACCESS_SECRET)
+
+    tweets = api.get_tweets('elonmusk')

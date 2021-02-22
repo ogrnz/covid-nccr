@@ -1,3 +1,7 @@
+"""
+Helpers module
+"""
+
 class Helpers:
     """
     Class that contains helper functions
@@ -12,8 +16,8 @@ class Helpers:
         Retrieve all accounts URLs located in file
         """
 
-        with open('../resources/actors_url.txt', 'r') as f:
-            urls = f.readlines()
+        with open(f'src/resources/{filename}', 'r') as file:
+            urls = file.readlines()
             urls = [url.strip('\n') for url in urls]
         return urls
 
@@ -24,3 +28,12 @@ class Helpers:
         """
 
         print(text, end="\r")
+
+    @staticmethod
+    def get_screen_names(urls: list) -> list:
+        """
+        Returns screen_names list stripped from urls
+        """
+
+        return [url[19:len(url)] for url in urls]
+        

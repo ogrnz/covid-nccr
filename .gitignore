@@ -8,6 +8,6 @@ src/api/__pycache__
 src/common/__pycache__
 src/db/__pycache__
 
-src/get-last-tweets/__pycache__
+src/get-last-tweets
 
 database/*.db

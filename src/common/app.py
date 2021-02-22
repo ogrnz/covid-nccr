@@ -1,3 +1,7 @@
+"""
+App module
+"""
+
 import os
 
 from dotenv import load_dotenv
@@ -16,7 +20,7 @@ class App:
     DEBUG = False
 
     def __init__(self, debug: bool):
-        load_dotenv(dotenv_path='../../.env')
+        load_dotenv(dotenv_path='.env')
 
         self.BEARER_TOKEN = os.getenv('BEARER_TOKEN')
         self.CONSUMER_KEY = os.getenv('KEY')

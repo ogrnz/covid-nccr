@@ -77,7 +77,7 @@ def get_actors_urls(filename):
     with open(filename, 'r') as f:
         urls = f.readlines()
     urls = [url.strip('\n') for url in urls]
-    return urls
+    return urls  
 def counterUpdater(count, total):
     print(f"{count} / {total}", end="\r") 
 

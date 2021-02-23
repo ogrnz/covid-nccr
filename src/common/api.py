@@ -17,11 +17,9 @@ class Api:
     connected = False
 
     def __init__(self, CONSUMER_KEY, CONSUMER_SECRET, ACCESS_KEY, ACCESS_SECRET):
-        self.connect_api(CONSUMER_KEY, CONSUMER_SECRET,
-                         ACCESS_KEY, ACCESS_SECRET)
+        self.connect_api(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_KEY, ACCESS_SECRET)
 
-    def connect_api(self, cons_key, cons_scrt,
-                    acc_key, acc_scrt):
+    def connect_api(self, cons_key, cons_scrt, acc_key, acc_scrt):
         """
         Connect to twitter API through tweepy
         """
@@ -32,7 +30,7 @@ class Api:
             self.api = tweepy.API(auth)
             self.connected = True
         except Exception as error:
-            print('Error connecting to Twitter API ', error)
+            print("Error connecting to Twitter API ", error)
 
     def get_tweets(self, screen_name, last_id=0):
         """
@@ -43,8 +41,7 @@ class Api:
 
         all_tweets = []
         new_tweets = self.api.user_timeline(
-            screen_name=screen_name, count=200,
-            tweet_mode="extended"
+            screen_name=screen_name, count=200, tweet_mode="extended"
         )
         all_tweets.extend(new_tweets)
         oldest = all_tweets[-1].id - 1
@@ -58,9 +55,7 @@ class Api:
             print(f"Getting tweets before {oldest} ({screen_name})")
 
             new_tweets = self.api.user_timeline(
-                screen_name=screen_name,
-                count=200, max_id=oldest,
-                tweet_mode="extended"
+                screen_name=screen_name, count=200, max_id=oldest, tweet_mode="extended"
             )
             all_tweets.extend(new_tweets)
             oldest = all_tweets[-1].id - 1
@@ -75,29 +70,29 @@ class Api:
                 continue
 
             old_text = None
-            if hasattr(tweet, 'retweeted_status'):  # Is RT
+            if hasattr(tweet, "retweeted_status"):  # Is RT
                 old_text = tweet.full_text
-                tweet_type = 'Retweet'
+                tweet_type = "Retweet"
                 full_text = tweet.retweeted_status.full_text
             else:  # Not a Retweet
                 full_text = tweet.full_text
-                tweet_type = 'New'
+                tweet_type = "New"
                 if tweet.in_reply_to_status_id is not None:
-                    tweet_type = 'Reply'
+                    tweet_type = "Reply"
 
             # Make final dict
             outtweets[index] = {
-                'tweet_id': tweet.id,
-                'covid_theme': None,
-                'type': tweet_type,
-                'created_at': tweet.created_at.strftime('%d/%m/%Y %H:%M:%S'),
-                'handle': f"@{tweet.user.screen_name}",
-                'name': tweet.user.name,
-                'oldText': old_text,
-                'text': full_text,
-                'URL': f'https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}',
-                'retweets': tweet.retweet_count,
-                'favorites': tweet.favorite_count
+                "tweet_id": tweet.id,
+                "covid_theme": None,
+                "type": tweet_type,
+                "created_at": tweet.created_at.strftime("%d/%m/%Y %H:%M:%S"),
+                "handle": f"@{tweet.user.screen_name}",
+                "name": tweet.user.name,
+                "oldText": old_text,
+                "text": full_text,
+                "URL": f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}",
+                "retweets": tweet.retweet_count,
+                "favorites": tweet.favorite_count,
             }
 
         return outtweets
@@ -107,7 +102,6 @@ if __name__ == "__main__":
     from app import App
 
     app = App(debug=True)
-    api = Api(app.CONSUMER_KEY, app.CONSUMER_SECRET,
-              app.ACCESS_KEY, app.ACCESS_SECRET)
+    api = Api(app.CONSUMER_KEY, app.CONSUMER_SECRET, app.ACCESS_KEY, app.ACCESS_SECRET)
 
-    tweets = api.get_tweets('elonmusk')
+    tweets = api.get_tweets("elonmusk")

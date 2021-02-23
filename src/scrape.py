@@ -18,7 +18,7 @@ from common.api import Api
 today = date.today()
 
 app = App(debug=False)
-db = Database("tweets_tests.db")
+db = Database("tweets.db")
 
 # Retrieve urls and screen_names
 urls = Helpers.get_actors_url("actors_url.txt")
@@ -35,7 +35,7 @@ with db:
             print("TypeError", name, error)
 
 # Connect to the API
-api = Api(app.CONSUMER_KEY, app.CONSUMER_SECRET, app.ACCESS_KEY, app.ACCESS_SECRET)
+api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)
 
 t1 = time.time()
 total = len(screen_names)
@@ -56,7 +56,7 @@ for i, actor in enumerate(screen_names, start=1):
         scrape_errors[actor] = str(error)
         print("ERROR", actor, error)
 
-    if app.DEBUG:
+    if app.debug:
         break
 
 elapsed = time.time() - t1

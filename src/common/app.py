@@ -12,20 +12,20 @@ class App:
     Main App class
     """
 
-    BEARER_TOKEN = None
-    CONSUMER_KEY = None
-    CONSUMER_SECRET = None
-    ACCESS_KEY = None
-    ACCESS_SECRET = None
+    bearer_token = None
+    consumer_key = None
+    consumer_secret = None
+    access_key = None
+    access_secret = None
 
-    DEBUG = False
+    debug = False
 
     def __init__(self, debug: bool):
         load_dotenv(dotenv_path=".env")
 
-        self.BEARER_TOKEN = os.getenv("BEARER_TOKEN")
-        self.CONSUMER_KEY = os.getenv("KEY")
-        self.CONSUMER_SECRET = os.getenv("KEY_SECRET")
-        self.ACCESS_KEY = os.getenv("TOKEN")
-        self.ACCESS_SECRET = os.getenv("TOKEN_SECRET")
-        self.DEBUG = debug
+        self.bearer_token = os.getenv("BEARER_TOKEN")
+        self.consumer_key = os.getenv("KEY")
+        self.consumer_secret = os.getenv("KEY_SECRET")
+        self.access_key = os.getenv("TOKEN")
+        self.access_secret = os.getenv("TOKEN_SECRET")
+        self.debug = debug

@@ -83,7 +83,7 @@ for actor in total_tweets:
             tmp_tweet = list(tweet_entry)
             # Work with entries
             # Check if is about covid
-            tmp_tweet[1] = 0
+            tmp_tweet[1] = 1
             tweet_entry = tuple(tmp_tweet)
 
             try:

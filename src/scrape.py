@@ -6,6 +6,9 @@ the database with latest tweets
 from datetime import date
 import time
 import json
+import sqlite3
+
+import tweepy
 
 from common.database import Database
 from common.app import App
@@ -49,7 +52,7 @@ for i, actor in enumerate(screen_names, start=1):
     try:
         tweets = api.get_tweets(actor, last_tweet_id)
         total_tweets[actor] = tweets
-    except Exception as error:
+    except tweepy.TweepError as error:
         scrape_errors[actor] = str(error)
         print("ERROR", actor, error)
 
@@ -85,7 +88,7 @@ for actor in total_tweets:
 
             try:
                 db.insert_tweet(tweet_entry)
-            except Exception as error:
+            except sqlite3.Error as error:
                 db_errors[actor][tweet] = str(error)
                 print("ERROR", actor, error)
 

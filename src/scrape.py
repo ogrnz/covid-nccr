@@ -17,9 +17,9 @@ from common.classify import Classifier
 
 today = date.today()
 
-# Instanciate needed class
-app = App(debug=True)
-db = Database("tweets_tests02.db")
+# Instanciate needed classes
+app = App(debug=False)
+db = Database("tweets.db")
 classifier = Classifier()
 
 # Retrieve urls and screen_names
@@ -39,13 +39,12 @@ with db:
 # Connect to the API
 api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)
 
+# Retrieve all new tweets per actor
 t1 = time.time()
 total = len(screen_names)
 
 total_tweets = {}
 scrape_errors = {}
-
-# Retrieve all new tweets per actor
 for i, actor in enumerate(screen_names, start=1):
     print(f"{i}/{total}")
     print(f"Starting to retrieve tweets for {actor}")
@@ -66,9 +65,8 @@ Helpers.print_timer(elapsed)
 if len(scrape_errors) > 0:
     print("With some errors:", json.dumps(scrape_errors, indent=4))
 
-t1 = time.time()
-
 # Classify tweets (about covid or not)
+t1 = time.time()
 tweet_entries = []
 for actor in total_tweets:
     print("Classifiying tweets from", actor)
@@ -100,7 +98,7 @@ Helpers.print_timer(elapsed)
 
 # Insert tweets into DB
 t1 = time.time()
-
+print("Inserting new tweets")
 with db:
     inserted = db.insert_many(tweet_entries)
 print(f"{inserted} tweets inserted")

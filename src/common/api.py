@@ -102,6 +102,6 @@ if __name__ == "__main__":
     from app import App
 
     app = App(debug=True)
-    api = Api(app.CONSUMER_KEY, app.CONSUMER_SECRET, app.ACCESS_KEY, app.ACCESS_SECRET)
+    api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)
 
     tweets = api.get_tweets("elonmusk")

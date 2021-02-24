@@ -13,6 +13,8 @@ class Database:
     def __init__(self, db_name: str):
         self.db_name = db_name
         self.conn = None
+        self.sql_schema = self.retrieve_schema()
+        self.create_table()
 
     def __enter__(self):
         self.connect()
@@ -31,15 +33,28 @@ class Database:
         except sqlite3.Error as error:
             print(f"Error establishing connection to database {self.db_name}\n", error)
 
-    def create_table(self, table_sql):
+    def retrieve_schema(self):
+        """
+        Get sql tweets table schema
+        """
+
+        with open("database/schema.sql", "r") as sql:
+            sql_lines = sql.readlines()
+        return "".join(sql_lines)
+
+    def create_table(self):
         """
         Create an SQL table
         """
         try:
+            self.connect()
             cur = self.conn.cursor()
-            cur.execute(table_sql)
+            cur.execute(self.sql_schema)
         except sqlite3.Error as error:
             print("Error creating table", error)
+        finally:
+            if self.conn:
+                self.conn.close()
 
     def get_by_type(self, tweet_type: str):
         """
@@ -138,17 +153,6 @@ class Database:
 
 if __name__ == "__main__":
 
-    db = Database("tweets_tests.db")
+    db = Database("tweets_01.db")
 
-    # print(len(db.get_by_type('Reply')))
-
-    # db.update_tweet_by_id(1341331429100294144, 'text', None)
-    # #id doesn't exist, why no error raised?
-
-    # tweet = (123, 0, 'New', '19/02/2021 17:00:01', '@Fake', 'Fake', \
-    #          None, 'tweet', 'google.com', 0, 100)
-    # db.insert_tweet(tweet)
-
-    # print(db.get_last_id_by_handle('EU_Commission'))
-
-    # del db
+    print(db.sql_schema)

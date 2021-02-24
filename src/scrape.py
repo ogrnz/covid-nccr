@@ -17,8 +17,8 @@ from common.api import Api
 
 today = date.today()
 
-app = App(debug=False)
-db = Database("tweets.db")
+app = App(debug=True)
+db = Database("tweets_tests01.db")
 
 # Retrieve urls and screen_names
 urls = Helpers.get_actors_url("actors_url.txt")
@@ -81,14 +81,19 @@ for actor in total_tweets:
                 tweet_entry += (val,)
 
             tmp_tweet = list(tweet_entry)
-            # Work with entries
+
             # Check if is about covid
-            tmp_tweet[1] = 1
+            if Helpers.classify(tmp_tweet[7]):
+                tmp_tweet[1] = 1  # About covid
+            else:
+                tmp_tweet[1] = 0  # Not about covid
+
             tweet_entry = tuple(tmp_tweet)
 
             try:
                 db.insert_tweet(tweet_entry)
             except sqlite3.Error as error:
+                # Capturing the error again to log the actor
                 db_errors[actor][tweet] = str(error)
                 print("ERROR", actor, error)
 

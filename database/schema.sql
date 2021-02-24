@@ -1,4 +1,4 @@
-CREATE TABLE "tweets" (
+CREATE TABLE IF NOT EXISTS "tweets" (
 	"tweet_id"	integer NOT NULL UNIQUE,
 	"covid_theme"	INTEGER,
 	"created_at"	TEXT NOT NULL,

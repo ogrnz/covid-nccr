@@ -128,7 +128,6 @@ class Database:
     def update_theme_many(self, params):
         """
         Update tweets in bulk
-
         """
 
         sql = """UPDATE tweets SET covid_theme = ? WHERE tweet_id = ?"""
@@ -173,6 +172,24 @@ class Database:
             return cur.lastrowid
         except sqlite3.Error as error:
             print(f"Error inserting new tweet \n {tweet} \n {error}")
+        finally:
+            cur.close()
+
+    def insert_many(self, tweets):
+        """
+        Insert new tweet into database
+        """
+        sql = """ INSERT OR IGNORE INTO tweets
+                  VALUES(?,?,?,?,?,?,?,?,?,?,?) """
+        cur = self.conn.cursor()
+
+        try:
+            cur.executemany(sql, tweets)
+            self.conn.commit()
+
+            return cur.rowcount
+        except sqlite3.Error as error:
+            print(f"Error inserting new tweets \n {error}")
         finally:
             cur.close()
 

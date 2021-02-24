@@ -6,7 +6,6 @@ the database with latest tweets
 from datetime import date
 import time
 import json
-import sqlite3
 
 import tweepy
 
@@ -20,7 +19,7 @@ today = date.today()
 
 # Instanciate needed class
 app = App(debug=True)
-db = Database("tweets_tests01.db")
+db = Database("tweets_tests02.db")
 classifier = Classifier()
 
 # Retrieve urls and screen_names
@@ -63,48 +62,48 @@ for i, actor in enumerate(screen_names, start=1):
         break
 
 elapsed = time.time() - t1
-print(f"Done in {round(elapsed / 60, 2)} min")
+Helpers.print_timer(elapsed)
 if len(scrape_errors) > 0:
     print("With some errors:", json.dumps(scrape_errors, indent=4))
 
-# Insert tweets into DB
 t1 = time.time()
-db_errors = {}
 
+# Classify tweets (about covid or not)
+tweet_entries = []
 for actor in total_tweets:
-    print("Inserting tweets from", actor)
+    print("Classifiying tweets from", actor)
     tot_tweets_actor = len(total_tweets[actor])
 
-    with db:
-        for i, tweet in enumerate(total_tweets[actor], start=1):
-            Helpers.dynamic_text(f"{i}/{tot_tweets_actor}")
+    for i, tweet in enumerate(total_tweets[actor], start=1):
+        Helpers.dynamic_text(f"{i}/{tot_tweets_actor}")
 
-            tweet_entry = ()
-            for key, val in total_tweets[actor][tweet].items():
-                tweet_entry += (val,)
+        tweet_entry = ()
+        for key, val in total_tweets[actor][tweet].items():
+            tweet_entry += (val,)
 
-            tmp_tweet = list(tweet_entry)
+        tmp_tweet = list(tweet_entry)
 
-            # Check if is about covid
-            if classifier.classify(tmp_tweet[7]):
-                tmp_tweet[1] = 1  # About covid
-            else:
-                tmp_tweet[1] = 0  # Not about covid
+        # Check if is about covid
+        if classifier.classify(tmp_tweet[7]):
+            tmp_tweet[1] = 1  # About covid
+        else:
+            tmp_tweet[1] = 0  # Not about covid
 
-            tweet_entry = tuple(tmp_tweet)
-            print(tweet_entry)
+        tweet_entry = tuple(tmp_tweet)
+        tweet_entries.append(tweet_entry)
 
-            try:
-                db.insert_tweet(tweet_entry)
-            except sqlite3.Error as error:
-                # Capturing the error again to log the actor
-                db_errors[actor][tweet] = str(error)
-                print("ERROR", actor, error)
-
-            if app.debug:
-                break
+    if app.debug:
+        break
 
 elapsed = time.time() - t1
-print(f"Done in {round(elapsed / 60, 2)} min")
-if len(db_errors) > 0:
-    print("With some errors:", json.dumps(db_errors, indent=4))
+Helpers.print_timer(elapsed)
+
+# Insert tweets into DB
+t1 = time.time()
+
+with db:
+    inserted = db.insert_many(tweet_entries)
+print(f"{inserted} tweets inserted")
+
+elapsed = time.time() - t1
+Helpers.print_timer(elapsed)

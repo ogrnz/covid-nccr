@@ -38,6 +38,13 @@ class Helpers:
 
         return [url[19 : len(url)] for url in urls]
 
+    @staticmethod
+    def print_timer(elapsed):
+        """
+        Print elapsed time in terminal
+        """
+        print(f"Done in {round(elapsed / 60, 2)} min")
+
 
 if __name__ == "__main__":
     pass

@@ -13,7 +13,7 @@ class Database:
     def __init__(self, db_name: str):
         self.db_name = db_name
         self.conn = None
-        self.sql_schema = self.retrieve_schema()
+        self.sql_schema = self.__retrieve_schema()
         self.create_table()
 
     def __enter__(self):
@@ -33,7 +33,7 @@ class Database:
         except sqlite3.Error as error:
             print(f"Error establishing connection to database {self.db_name}\n", error)
 
-    def retrieve_schema(self):
+    def __retrieve_schema(self):
         """
         Get sql tweets table schema
         """
@@ -55,6 +55,37 @@ class Database:
         finally:
             if self.conn:
                 self.conn.close()
+
+    def get_all_tweets(self):
+        """
+        Retrieve all tweets
+        """
+
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM tweets")
+
+            return cur.fetchall()
+        except sqlite3.Error as error:
+            print("Error", error)
+        finally:
+            cur.close()
+
+    def get_fields(self, fields: list):
+        """
+        Retrieve desired fields from all tweets
+        """
+
+        fields = ",".join(fields)
+        try:
+            cur = self.conn.cursor()
+            cur.execute(f"SELECT {fields} FROM tweets")
+
+            return cur.fetchall()
+        except sqlite3.Error as error:
+            print("Error", error)
+        finally:
+            cur.close()
 
     def get_by_type(self, tweet_type: str):
         """
@@ -91,6 +122,28 @@ class Database:
             self.conn.commit()
         except sqlite3.Error as error:
             print(f"Error updating tweet {tweet_id} ", error)
+        finally:
+            cur.close()
+
+    def update_theme_many(self, params):
+        """
+        Update tweets in bulk
+
+        """
+
+        sql = """UPDATE tweets SET covid_theme = ? WHERE tweet_id = ?"""
+        cur = self.conn.cursor()
+
+        try:
+            cur.executemany(
+                sql,
+                params,
+            )
+            self.conn.commit()
+
+            return cur.rowcount
+        except sqlite3.Error as error:
+            print("Error updating tweets", error)
         finally:
             cur.close()
 

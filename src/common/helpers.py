@@ -38,25 +38,6 @@ class Helpers:
 
         return [url[19 : len(url)] for url in urls]
 
-    @staticmethod
-    def classify(text) -> bool:
-        """
-        Classify a string as being about covid or not
-        """
-        with open("src/resources/covid_keywords.txt", "r", encoding="utf-8") as file:
-            words = [line.strip("\n") for line in file.readlines()]
-
-        text_split = text.split()
-
-        for txt_ele in text_split:
-            return bool(txt_ele in words)
-
 
 if __name__ == "__main__":
-    text1 = "Hello is this tweet about covid?"
-    text2 = "je ne pense pas que ce tweet concerne ce que je pense"
-    text3 = "covid"
-
-    print(Helpers.classify(text1))
-    print(Helpers.classify(text2))
-    print(Helpers.classify(text3))
+    pass

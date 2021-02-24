@@ -14,11 +14,14 @@ from common.database import Database
 from common.app import App
 from common.helpers import Helpers
 from common.api import Api
+from common.classify import Classifier
 
 today = date.today()
 
+# Instanciate needed class
 app = App(debug=True)
 db = Database("tweets_tests01.db")
+classifier = Classifier()
 
 # Retrieve urls and screen_names
 urls = Helpers.get_actors_url("actors_url.txt")
@@ -83,12 +86,13 @@ for actor in total_tweets:
             tmp_tweet = list(tweet_entry)
 
             # Check if is about covid
-            if Helpers.classify(tmp_tweet[7]):
+            if classifier.classify(tmp_tweet[7]):
                 tmp_tweet[1] = 1  # About covid
             else:
                 tmp_tweet[1] = 0  # Not about covid
 
             tweet_entry = tuple(tmp_tweet)
+            print(tweet_entry)
 
             try:
                 db.insert_tweet(tweet_entry)
@@ -96,6 +100,9 @@ for actor in total_tweets:
                 # Capturing the error again to log the actor
                 db_errors[actor][tweet] = str(error)
                 print("ERROR", actor, error)
+
+            if app.debug:
+                break
 
 elapsed = time.time() - t1
 print(f"Done in {round(elapsed / 60, 2)} min")

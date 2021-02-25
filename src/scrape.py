@@ -3,7 +3,6 @@ Main scraping script, run this file to complete
 the database with latest tweets
 """
 
-from datetime import date
 import time
 import json
 
@@ -15,12 +14,9 @@ from common.helpers import Helpers
 from common.api import Api
 from common.classify import Classifier
 
-if __name__ == "__main__":
-    today = date.today()
 
-    # Instanciate needed classes
-    app = App(debug=False)
-    db = Database("tweets_tests.db")
+def main(app: App, db: Database):
+    # Instanciate needed class
     classifier = Classifier()
 
     # Retrieve urls and screen_names
@@ -35,7 +31,6 @@ if __name__ == "__main__":
                 last_ids[name] = int(db.get_last_id_by_handle(name)[0])
             except TypeError as error:
                 last_ids[name] = 0
-                # print("TypeError", name, error)
 
     # Connect to the API
     api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)
@@ -116,3 +111,10 @@ if __name__ == "__main__":
 
     elapsed = time.time() - t1
     Helpers.print_timer(elapsed)
+
+
+if __name__ == "__main__":
+    app_run = App(debug=False)
+    database = Database("tweets.db")
+
+    main(app_run, database)

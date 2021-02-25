@@ -13,4 +13,4 @@ src/get-last-tweets
 database/*.db
 database/*.db-journal
 database/csv/*
-database/xls/*
+database/xlsx/*

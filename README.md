@@ -11,10 +11,7 @@ Tweets are classified as being about covid or not with a very basic keyword matc
 The process' pipeline is the following:
 
 1. Scrape, classify and upload new tweets
-2. Export the updated database to the `database/csv` folder
-3. Convert the `.csv` file to `.xlsx` with the handy `convert-csv-to.xlsx` utils.
-
--   `convert-csv-to-xlsx databse/csv/tweets_all.csv databse/xlsx/tweets_all.xlsx -d "," -e "utf-8"`
+2. Export the updated database to the `database/csv` folder and convert them to xslx with `convert_csv.py`.
 
 TODO:
 

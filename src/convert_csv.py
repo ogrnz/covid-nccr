@@ -1,48 +1,24 @@
 """
-Converts sqlite to csv
+Converts sqlite to csv and exports it to xslx
 """
 
-import csv
-from datetime import date
-
+from common.app import App
 from common.database import Database
+from common.convert import Converter
 
 
-def convert_by_columns(
-    db_name: str = "tweets_tests.db",
-    cols: tuple = (
-        "tweet_id",
-        "covid_theme",
-        "created_at",
-        "handle",
-        "name",
-        "oldtext",
-        "text",
-        "url",
-        "type",
-        "retweets",
-        "favorites",
-    ),
-):
-    """
-    Convert tweets table to csv by columns
-    """
+def main(app: App, database: Database):
+    converter = Converter(database, "convert")
 
-    today = str(date.today())
-    db = Database(db_name)
+    print("Converting table to csv...")
+    csv_file = converter.convert_by_columns()
 
-    outfile = db_name.strip(".db")
-    with db, open(
-        f"database/csv/{outfile}-{today}.csv", "w+", encoding="utf-8", newline=""
-    ) as out:
-        try:
-            writer = csv.writer(out, delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
-            writer.writerow(cols)
-            tweets = db.get_fields(list(cols), limit=100)
-            writer.writerows(tweets)
-        except Exception as error:
-            print("Error", error)
+    print("Converting csv to xlsx...")
+    converter.csv_to_xlsx(csv_file)
 
 
-# Newline problem
-convert_by_columns()
+if __name__ == "__main__":
+    app_run = App(debug=False)
+    database = Database("tweets.db")
+
+    main(app_run, database)

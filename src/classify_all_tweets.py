@@ -36,6 +36,6 @@ if __name__ == "__main__":
     print(f"Updating {COUNT} classified tweets...")
 
     with db:
-        modified = db.update_theme_many(classified_tweets)
+        db.update_theme_many(classified_tweets)
 
-    print(f"{modified} tweets updated.")
+    print("Tweets updated.")

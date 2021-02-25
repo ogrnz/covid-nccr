@@ -15,6 +15,7 @@ class Database:
         self.conn = None
         self.sql_schema = self.__retrieve_schema()
         self.create_table()
+        self.db_name = db_name
 
     def __enter__(self):
         self.connect()
@@ -46,6 +47,7 @@ class Database:
         """
         Create an SQL table
         """
+
         try:
             self.connect()
             cur = self.conn.cursor()
@@ -80,9 +82,11 @@ class Database:
         try:
             cur = self.conn.cursor()
             if limit is not None:
-                cur.execute(f"SELECT {fields} FROM tweets LIMIT {limit}")
+                cur.execute(
+                    f"SELECT {fields} FROM tweets WHERE covid_theme=1 LIMIT {limit}"
+                )
             else:
-                cur.execute(f"SELECT {fields} FROM tweets")
+                cur.execute(f"SELECT {fields} FROM tweets WHERE covid_theme=1 ")
 
             return cur.fetchall()
         except sqlite3.Error as error:

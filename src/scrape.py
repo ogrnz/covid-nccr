@@ -19,7 +19,7 @@ if __name__ == "__main__":
     today = date.today()
 
     # Instanciate needed classes
-    app = App(debug=False)
+    app = App(debug=True)
     db = Database("tweets.db")
     classifier = Classifier()
 
@@ -75,11 +75,14 @@ if __name__ == "__main__":
     t1 = time.time()
     tweet_entries = []
     for actor in total_tweets:
-        print("Classifiying tweets from", actor)
+        # print("Classifiying tweets from", actor)
         tot_tweets_actor = len(total_tweets[actor])
 
         for i, tweet in enumerate(total_tweets[actor], start=1):
-            Helpers.dynamic_text(f"{i}/{tot_tweets_actor}")
+            Helpers.dynamic_text(
+                f"Classifiying tweets from {actor}: \
+                {i}/{tot_tweets_actor} \r"
+            )
 
             tweet_entry = ()
             for key, val in total_tweets[actor][tweet].items():

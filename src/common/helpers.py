@@ -43,7 +43,7 @@ class Helpers:
         """
         Print elapsed time in terminal
         """
-        print(f"Done in {round(elapsed, 1)} s")
+        print(f"\nDone in {round(elapsed, 1)} s")
 
 
 if __name__ == "__main__":

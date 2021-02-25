@@ -71,7 +71,7 @@ class Database:
         finally:
             cur.close()
 
-    def get_fields(self, fields: list):
+    def get_fields(self, fields: list, limit=None):
         """
         Retrieve desired fields from all tweets
         """
@@ -79,7 +79,10 @@ class Database:
         fields = ",".join(fields)
         try:
             cur = self.conn.cursor()
-            cur.execute(f"SELECT {fields} FROM tweets")
+            if limit is not None:
+                cur.execute(f"SELECT {fields} FROM tweets LIMIT {limit}")
+            else:
+                cur.execute(f"SELECT {fields} FROM tweets")
 
             return cur.fetchall()
         except sqlite3.Error as error:

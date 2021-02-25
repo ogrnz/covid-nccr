@@ -19,8 +19,8 @@ if __name__ == "__main__":
     today = date.today()
 
     # Instanciate needed classes
-    app = App(debug=True)
-    db = Database("tweets.db")
+    app = App(debug=False)
+    db = Database("tweets_tests.db")
     classifier = Classifier()
 
     # Retrieve urls and screen_names
@@ -63,6 +63,9 @@ if __name__ == "__main__":
             print("KeyError when retrieving tweets from", actor, error)
             continue
 
+        except KeyboardInterrupt as error:
+            pass
+
         if app.debug:
             break
 
@@ -75,7 +78,6 @@ if __name__ == "__main__":
     t1 = time.time()
     tweet_entries = []
     for actor in total_tweets:
-        # print("Classifiying tweets from", actor)
         tot_tweets_actor = len(total_tweets[actor])
 
         for i, tweet in enumerate(total_tweets[actor], start=1):

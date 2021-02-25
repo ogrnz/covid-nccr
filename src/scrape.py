@@ -34,7 +34,7 @@ with db:
             last_ids[name] = int(db.get_last_id_by_handle(name)[0])
         except TypeError as error:
             last_ids[name] = 0
-            print("TypeError", name, error)
+            # print("TypeError", name, error)
 
 # Connect to the API
 api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)
@@ -49,13 +49,18 @@ for i, actor in enumerate(screen_names, start=1):
     print(f"{i}/{total}")
     print(f"Starting to retrieve tweets for {actor}")
 
-    last_tweet_id = last_ids[actor]
     try:
+        last_tweet_id = last_ids[actor]
         tweets = api.get_tweets(actor, last_tweet_id)
         total_tweets[actor] = tweets
+
     except tweepy.TweepError as error:
         scrape_errors[actor] = str(error)
         print("ERROR", actor, error)
+
+    except KeyError as error:
+        print("KeyError when retrieving tweets from", actor, error)
+        continue
 
     if app.debug:
         break

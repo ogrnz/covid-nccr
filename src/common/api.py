@@ -16,8 +16,8 @@ class Api:
     api = None
     connected = False
 
-    def __init__(self, CONSUMER_KEY, CONSUMER_SECRET, ACCESS_KEY, ACCESS_SECRET):
-        self.connect_api(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_KEY, ACCESS_SECRET)
+    def __init__(self, cons_key, cons_scrt, acc_key, acc_scrt):
+        self.connect_api(cons_key, cons_scrt, acc_key, acc_scrt)
 
     def connect_api(self, cons_key, cons_scrt, acc_key, acc_scrt):
         """
@@ -81,16 +81,17 @@ class Api:
                     tweet_type = "Reply"
 
             # Make final dict
+            # Warning: structure should match database's schema!
             outtweets[index] = {
                 "tweet_id": tweet.id,
                 "covid_theme": None,
-                "type": tweet_type,
                 "created_at": tweet.created_at.strftime("%d/%m/%Y %H:%M:%S"),
                 "handle": f"@{tweet.user.screen_name}",
                 "name": tweet.user.name,
                 "oldText": old_text,
                 "text": full_text,
                 "URL": f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}",
+                "type": tweet_type,
                 "retweets": tweet.retweet_count,
                 "favorites": tweet.favorite_count,
             }
@@ -99,7 +100,7 @@ class Api:
 
 
 if __name__ == "__main__":
-    from app import App
+    from common.app import App
 
     app = App(debug=True)
     api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)

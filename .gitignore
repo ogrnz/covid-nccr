@@ -11,3 +11,4 @@ src/db/__pycache__
 src/get-last-tweets
 
 database/*.db
+database/*.db-journal

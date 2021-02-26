@@ -62,8 +62,8 @@ def main(app: App, db: Database):
             print("KeyError when retrieving tweets from", actor, error)
             continue
 
-        except KeyboardInterrupt as error:
-            pass
+        # except KeyboardInterrupt as error:
+        #     pass
 
         if app.debug:
             break

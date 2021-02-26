@@ -2,6 +2,10 @@
 Helpers module
 """
 
+import re
+
+import pandas as pd
+
 
 class Helpers:
     """
@@ -45,6 +49,59 @@ class Helpers:
         """
         print(f"\nDone in {round(elapsed, 1)} s")
 
+    @staticmethod
+    def extract_ids_file(file_path, col="URL") -> list:
+        """
+        Extract tweeter statuses ids from
+        a column of a xlsx (or pkl) file
+        """
+
+        if file_path[-1] == "l":
+            df = pd.read_pickle(file_path)
+        else:
+            df = pd.read_excel(file_path)
+
+        df[col].fillna(0, inplace=True)
+        urls = df[col].values.tolist()
+
+        # ids = []
+        # for url in urls:
+        #     tweet_id = Helpers.extract_id(str(url))
+        #     ids.append(tweet_id)
+        ids = [Helpers.extract_id(str(url)) for url in urls]
+
+        return ids
+
+    @staticmethod
+    def extract_id(url: str):
+        """
+        Extract the status id from a twitter url
+        """
+
+        try:
+            tweet_id = re.search(r"/status/(\d+)", url).group(1)
+        except AttributeError:
+            tweet_id = 0
+
+        return tweet_id
+
+    @staticmethod
+    def count_null_id(lst: list, start=0, finish=None):
+        """
+        Count the None elems in a list
+        Here a null_id == 0
+        """
+
+        return sum(elem == 0 for elem in lst[start:finish])
+
+    @staticmethod
+    def count_nans(lst: list, start=0, finish=None):
+        """
+        Count the None elems in a list
+        """
+
+        return sum(elem is None for elem in lst[start:finish])
+
 
 if __name__ == "__main__":
-    pass
+    Helpers.extract_ids_file("src/resources/data/fr.pkl")

@@ -20,7 +20,7 @@ class App:
 
     debug = False
 
-    def __init__(self, debug: bool):
+    def __init__(self, debug: bool = False):
         load_dotenv(dotenv_path=".env")
 
         self.bearer_token = os.getenv("BEARER_TOKEN")

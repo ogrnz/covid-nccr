@@ -73,20 +73,22 @@ class Database:
         finally:
             cur.close()
 
-    def get_fields(self, fields: list, limit=None):
+    def get_fields(self, fields: list, only_covid: bool, limit=None):
         """
         Retrieve desired fields from all tweets
         """
+
+        where_cond = "WHERE covid_theme=1"
+        if not only_covid:
+            where_cond = None
 
         fields = ",".join(fields)
         try:
             cur = self.conn.cursor()
             if limit is not None:
-                cur.execute(
-                    f"SELECT {fields} FROM tweets WHERE covid_theme=1 LIMIT {limit}"
-                )
+                cur.execute(f"SELECT {fields} FROM tweets {where_cond} LIMIT {limit}")
             else:
-                cur.execute(f"SELECT {fields} FROM tweets WHERE covid_theme=1 ")
+                cur.execute(f"SELECT {fields} FROM tweets {where_cond}")
 
             return cur.fetchall()
         except sqlite3.Error as error:

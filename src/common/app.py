@@ -27,5 +27,10 @@ class App:
         self.consumer_key = os.getenv("KEY")
         self.consumer_secret = os.getenv("KEY_SECRET")
         self.access_key = os.getenv("TOKEN")
+
         self.access_secret = os.getenv("TOKEN_SECRET")
+        self.webdav_server = os.getenv("WEBDAV_SERVER")
+        self.webdav_login = os.getenv("WEBDAV_LOGIN")
+        self.webdav_pwd = os.getenv("WEBDAV_PWD")
+
         self.debug = debug

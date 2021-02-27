@@ -3,6 +3,8 @@ Converter module
 """
 
 import csv
+import uuid
+import os.path
 from datetime import date
 
 import openpyxl
@@ -15,9 +17,9 @@ class Converter:
     Convert database table to csv
     """
 
-    def __init__(self, database: Database, mode: str):
+    def __init__(self, database: Database, only_covid: bool):
         self.database = database
-        self.mode = mode
+        self.only_covid = only_covid
 
     def convert_by_columns(
         self,
@@ -50,7 +52,7 @@ class Converter:
             try:
                 writer = csv.writer(out, delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
                 writer.writerow(cols)
-                tweets = self.database.get_fields(list(cols))
+                tweets = self.database.get_fields(list(cols), self.only_covid)
                 writer.writerows(tweets)
                 print(
                     f"Table successfully converted as database/csv/{outfile}-{today}.csv"
@@ -75,7 +77,22 @@ class Converter:
                     sheet.cell(row=row_i, column=col_i).value = val
         try:
             csv_file = csv_file.strip(".csv")
+            orig_name = csv_file
+            if self.__file_exists(csv_file):
+                csv_file = orig_name + "-" + str(uuid.uuid4())
+                if self.__file_exists(csv_file):
+                    csv_file = orig_name + "-" + str(uuid.uuid4())
+
             workbook.save(f"database/xlsx/{csv_file}.xlsx")
             print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
+
+            return f"{csv_file}.xlsx"
         except openpyxl.utils.exceptions.InvalidFileException as error:
             print("Error", error)
+
+    def __file_exists(self, file_name):
+        """
+        Check if a file of that name already exists in the databvase/xlsx folder
+        """
+
+        return bool(os.path.isfile(f"database/xlsx/{file_name}.xlsx"))

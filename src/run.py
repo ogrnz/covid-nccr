@@ -2,6 +2,7 @@
 Main script
 1. scrape tweets
 2. export database to csv and convert to xlsx
+3. upload xlsx to server via WebDAV
 """
 
 import time
@@ -11,6 +12,7 @@ from common.database import Database
 
 import scrape
 import convert_csv
+import export_webdav
 
 if __name__ == "__main__":
     t1 = time.time()
@@ -25,7 +27,11 @@ if __name__ == "__main__":
     # 2.
     print("2. ----------------------------------")
     # By default, only export tweets classified as covid
-    convert_csv.main(app_run, database)
+    xls = convert_csv.main(database, app_run, only_covid=True)
+
+    # 3.
+    print("3. ----------------------------------")
+    export_webdav.main(app_run, xls)
 
     elapsed = time.time() - t1
     print(

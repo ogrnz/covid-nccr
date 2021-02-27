@@ -7,18 +7,23 @@ from common.database import Database
 from common.convert import Converter
 
 
-def main(app: App, database: Database):
-    converter = Converter(database, "convert")
+def main(database: Database, app: App = None, only_covid=True):
+    """
+    Main script
+    """
+
+    converter = Converter(database, only_covid)
 
     print("Converting table to csv...")
     csv_file = converter.convert_by_columns()
 
     print("Converting csv to xlsx...")
-    converter.csv_to_xlsx(csv_file)
+    xls = converter.csv_to_xlsx(csv_file)
+
+    return xls
 
 
 if __name__ == "__main__":
-    app_run = App(debug=False)
-    database = Database("tweets.db")
+    db = Database("tweets.db")
 
-    main(app_run, database)
+    print(main(db))

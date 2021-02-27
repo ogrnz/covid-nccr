@@ -18,7 +18,7 @@ if __name__ == "__main__":
     t1 = time.time()
 
     app_run = App(debug=False)
-    database = Database("tweets.db")
+    database = Database("tweets.db", app=app_run)
 
     # 1.
     print("1. ----------------------------------")
@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # 3.
     print("3. ----------------------------------")
-    export_webdav.main(app_run, xls)
+    export_webdav.main(xls, app=app_run)
 
     elapsed = time.time() - t1
     print(

@@ -18,9 +18,11 @@ class App:
     access_key = None
     access_secret = None
 
+    root_dir = None
+
     debug = False
 
-    def __init__(self, debug: bool = False):
+    def __init__(self, debug: bool = False, root_dir=None):
         load_dotenv(dotenv_path=".env")
 
         self.bearer_token = os.getenv("BEARER_TOKEN")
@@ -34,3 +36,9 @@ class App:
         self.webdav_pwd = os.getenv("WEBDAV_PWD")
 
         self.debug = debug
+
+        abspath = os.path.abspath(__file__)
+        dirname = os.path.dirname
+        root_dir = dirname(dirname(dirname(abspath)))
+        os.chdir(root_dir)
+        self.root_dir = root_dir

@@ -4,13 +4,16 @@ Database module
 
 import sqlite3
 
+from common.app import App
+
 
 class Database:
     """
     Class that handles database queries
     """
 
-    def __init__(self, db_name: str):
+    def __init__(self, db_name: str, app: App):
+        self.app = app
         self.db_name = db_name
         self.conn = None
         self.sql_schema = self.__retrieve_schema()
@@ -30,7 +33,7 @@ class Database:
         """
 
         try:
-            self.conn = sqlite3.connect(f"database/{self.db_name}")
+            self.conn = sqlite3.connect(f"{self.app.root_dir}/database/{self.db_name}")
         except sqlite3.Error as error:
             print(f"Error establishing connection to database {self.db_name}\n", error)
 
@@ -39,7 +42,7 @@ class Database:
         Get sql tweets table schema
         """
 
-        with open("database/schema.sql", "r") as sql:
+        with open(f"{self.app.root_dir}/database/schema.sql", "r") as sql:
             sql_lines = sql.readlines()
         return "".join(sql_lines)
 
@@ -232,6 +235,7 @@ class Database:
 
 if __name__ == "__main__":
 
-    db = Database("tweets_01.db")
+    # db = Database("tweets_01.db")
 
-    print(db.sql_schema)
+    # print(db.sql_schema)
+    pass

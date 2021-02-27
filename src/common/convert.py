@@ -9,6 +9,7 @@ from datetime import date
 
 import openpyxl
 
+from common.app import App
 from common.database import Database
 
 
@@ -17,7 +18,8 @@ class Converter:
     Convert database table to csv
     """
 
-    def __init__(self, database: Database, only_covid: bool):
+    def __init__(self, app: App, database: Database, only_covid: bool):
+        self.app = app
         self.database = database
         self.only_covid = only_covid
 
@@ -47,7 +49,10 @@ class Converter:
         outfile = outfile.strip(".db")
 
         with self.database, open(
-            f"database/csv/{outfile}-{today}.csv", "w+", encoding="utf-8", newline=""
+            f"{self.app.root_dir}/database/csv/{outfile}-{today}.csv",
+            "w+",
+            encoding="utf-8",
+            newline="",
         ) as out:
             try:
                 writer = csv.writer(out, delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
@@ -70,7 +75,12 @@ class Converter:
         workbook = openpyxl.Workbook()
         sheet = workbook.active
 
-        with open(f"database/csv/{csv_file}", "r", encoding="utf8", newline="") as file:
+        with open(
+            f"{self.app.root_dir}/database/csv/{csv_file}",
+            "r",
+            encoding="utf8",
+            newline="",
+        ) as file:
             reader = csv.reader(file)
             for row_i, row in enumerate(reader, start=1):
                 for col_i, val in enumerate(row, start=1):
@@ -83,7 +93,7 @@ class Converter:
                 if self.__file_exists(csv_file):
                     csv_file = orig_name + "-" + str(uuid.uuid4())
 
-            workbook.save(f"database/xlsx/{csv_file}.xlsx")
+            workbook.save(f"{self.app.root_dir}/database/xlsx/{csv_file}.xlsx")
             print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
 
             return f"{csv_file}.xlsx"
@@ -95,4 +105,6 @@ class Converter:
         Check if a file of that name already exists in the databvase/xlsx folder
         """
 
-        return bool(os.path.isfile(f"database/xlsx/{file_name}.xlsx"))
+        return bool(
+            os.path.isfile(f"{self.app.root_dir}/database/xlsx/{file_name}.xlsx")
+        )

@@ -12,7 +12,7 @@ def main(database: Database, app: App = None, only_covid=True):
     Main script
     """
 
-    converter = Converter(database, only_covid)
+    converter = Converter(database=database, only_covid=only_covid, app=app)
 
     print("Converting table to csv...")
     csv_file = converter.convert_by_columns()
@@ -24,6 +24,7 @@ def main(database: Database, app: App = None, only_covid=True):
 
 
 if __name__ == "__main__":
-    db = Database("tweets.db")
+    app_run = App(debug=False)
+    db = Database("tweets.db", app=app_run)
 
-    print(main(db))
+    main(db, app=app_run)

@@ -8,31 +8,32 @@ from webdav3.exceptions import WebDavException
 from common.app import App
 
 
-def main(app_run: App, filename):
+def main(filename, app: App):
     """
     Main function
     """
 
     options = {
-        "webdav_hostname": app_run.webdav_server,
-        "webdav_login": app_run.webdav_login,
-        "webdav_password": app_run.webdav_pwd,
+        "webdav_hostname": app.webdav_server,
+        "webdav_login": app.webdav_login,
+        "webdav_password": app.webdav_pwd,
     }
 
     dest = "Sent files/covid/"
-    orig = "database/xlsx/"
+    orig = f"{app.root_dir}/database/xlsx/"
 
     client = Client(options)
 
     print(f"Uploading {filename} to remote server")
     try:
         client.upload_sync(remote_path=dest + filename, local_path=orig + filename)
+        print(f"Done uploading in {dest}")
     except WebDavException as error:
         print("Error", error)
 
 
 if __name__ == "__main__":
-    app = App(debug=True)
+    app_run = App(debug=False)
     FILENAME = "tweets-2021-02-27.xlsx"
 
-    main(app, FILENAME)
+    main(FILENAME, app=app_run)

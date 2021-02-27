@@ -137,7 +137,7 @@ class Api:
 
             if self.app.debug:
                 print(f"{itera}/{iter_needed}")
-                print(f"{start=} {final=}")
+                # print(f"{start=} {final=}")
 
             try:
                 compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")
@@ -161,6 +161,7 @@ class Api:
                     full_text = compl_tweet.full_text
 
                 df.loc[df["id"] == compl_tweet.id, ["fulltext"]] = full_text
+
             # Setup request for new iteration
             last_iter_final = final
             start = last_iter_final

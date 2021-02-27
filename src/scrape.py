@@ -119,6 +119,6 @@ def main(app: App, db: Database):
 
 if __name__ == "__main__":
     app_run = App(debug=False)
-    database = Database("tweets.db")
+    database = Database("tweets.db", app=app_run)
 
     main(app_run, database)

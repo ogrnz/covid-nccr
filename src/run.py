@@ -21,19 +21,19 @@ if __name__ == "__main__":
     database = Database("tweets.db", app=app_run)
 
     # 1.
-    print("1. ----------------------------------")
+    print("\n1. ----------------------------------")
     scrape.main(app_run, database)
 
     # 2.
-    print("2. ----------------------------------")
+    print("\n2. ----------------------------------")
     # By default, only export tweets classified as covid
     xls = convert_csv.main(database, app_run, only_covid=True)
 
     # 3.
-    print("3. ----------------------------------")
+    print("\n3. ----------------------------------")
     export_webdav.main(xls, app=app_run)
 
     elapsed = time.time() - t1
     print(
-        f"Done. Total execution time {round(elapsed/60, 2)}min ({round(elapsed, 1)}s)"
+        f"Done. Total execution time {round(elapsed/60, 2)}min ({round(elapsed, 1)}s)."
     )

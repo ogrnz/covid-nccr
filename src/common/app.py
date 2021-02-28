@@ -22,18 +22,7 @@ class App:
 
     debug = False
 
-    def __init__(self, debug: bool = False, root_dir=None):
-        load_dotenv(dotenv_path=".env")
-
-        self.bearer_token = os.getenv("BEARER_TOKEN")
-        self.consumer_key = os.getenv("KEY")
-        self.consumer_secret = os.getenv("KEY_SECRET")
-        self.access_key = os.getenv("TOKEN")
-
-        self.access_secret = os.getenv("TOKEN_SECRET")
-        self.webdav_server = os.getenv("WEBDAV_SERVER")
-        self.webdav_login = os.getenv("WEBDAV_LOGIN")
-        self.webdav_pwd = os.getenv("WEBDAV_PWD")
+    def __init__(self, debug: bool = False, root_dir=""):
 
         self.debug = debug
 
@@ -42,3 +31,15 @@ class App:
         root_dir = dirname(dirname(dirname(abspath)))
         os.chdir(root_dir)
         self.root_dir = root_dir
+
+        load_dotenv(load_dotenv(dotenv_path=f"{root_dir}/.env"))
+
+        self.bearer_token = os.getenv("BEARER_TOKEN")
+        self.consumer_key = os.getenv("KEY")
+        self.consumer_secret = os.getenv("KEY_SECRET")
+        self.access_key = os.getenv("TOKEN")
+        self.access_secret = os.getenv("TOKEN_SECRET")
+
+        self.webdav_server = os.getenv("WEBDAV_SERVER")
+        self.webdav_login = os.getenv("WEBDAV_LOGIN")
+        self.webdav_pwd = os.getenv("WEBDAV_PWD")

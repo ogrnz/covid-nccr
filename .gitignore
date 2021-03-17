@@ -7,8 +7,7 @@ src/__pycache__
 src/api/__pycache__
 src/common/__pycache__
 src/db/__pycache__
-
-src/get-last-tweets
+src/lab.py
 
 src/resources/data
 

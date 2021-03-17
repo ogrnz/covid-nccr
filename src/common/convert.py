@@ -45,11 +45,12 @@ class Converter:
 
         today = str(date.today())
 
+        covid = "Covid-" if self.only_covid else "Tot-"
         outfile = self.database.db_name
         outfile = outfile.strip(".db")
 
         with self.database, open(
-            f"{self.app.root_dir}/database/csv/{outfile}-{today}.csv",
+            f"{self.app.root_dir}/database/csv/{covid}{outfile}-{today}.csv",
             "w+",
             encoding="utf-8",
             newline="",
@@ -60,10 +61,10 @@ class Converter:
                 tweets = self.database.get_fields(list(cols), self.only_covid)
                 writer.writerows(tweets)
                 print(
-                    f"Table successfully converted as database/csv/{outfile}-{today}.csv"
+                    f"Table successfully converted as database/csv/{covid}{outfile}-{today}.csv"
                 )
 
-                return f"{outfile}-{today}.csv"
+                return f"{covid}{outfile}-{today}.csv"
             except csv.Error as error:
                 print("Error while writing CSV", error)
 
@@ -89,9 +90,9 @@ class Converter:
             csv_file = csv_file.strip(".csv")
             orig_name = csv_file
             if self.__file_exists(csv_file):
-                csv_file = orig_name + "-" + str(uuid.uuid4())
+                csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
                 if self.__file_exists(csv_file):
-                    csv_file = orig_name + "-" + str(uuid.uuid4())
+                    csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
 
             workbook.save(f"{self.app.root_dir}/database/xlsx/{csv_file}.xlsx")
             print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")

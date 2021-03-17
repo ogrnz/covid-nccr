@@ -18,10 +18,11 @@ if __name__ == "__main__":
     t1 = time.time()
 
     app_run = App(debug=False)
-    database = Database("tweets_tests.db", app=app_run)
+    database = Database("tweets.db", app=app_run)
 
     # 1.
     print("\n1. ", "-" * 80)
+    # Scrape and classify tweets
     scrape.main(app_run, database)
 
     # 2.

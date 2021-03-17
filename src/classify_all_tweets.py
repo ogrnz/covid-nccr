@@ -3,12 +3,15 @@ Classify existing tweets in the database as
 being about covid or not
 """
 
+from common.app import App
 from common.database import Database
 from common.classify import Classifier
 from common.helpers import Helpers
 
 if __name__ == "__main__":
-    db = Database("tweets.db")
+    app_run = App(debug=False)
+
+    db = Database("tweets.db", app=app_run)
     classifier = Classifier()
 
     with db:
@@ -26,8 +29,9 @@ if __name__ == "__main__":
         tmp_tweet = list(tweet)
         txt = tmp_tweet[2]
 
-        if classifier.classify(txt):
-            tmp_tweet[1] = 1
+        if not classifier.classify(txt):
+            # If tweet is NOT about covid, set it as 0
+            tmp_tweet[1] = 0
             COUNT += 1
 
         tweet = (tmp_tweet[1], tmp_tweet[0])

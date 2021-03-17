@@ -92,10 +92,10 @@ def main(app: App, db: Database):
             tmp_tweet = list(tweet_entry)
 
             # Check if is about covid
-            if classifier.classify(tmp_tweet[7]):
-                tmp_tweet[1] = 1  # About covid
-            else:
+            if not classifier.classify(tmp_tweet[7]):
                 tmp_tweet[1] = 0  # Not about covid
+            else:
+                tmp_tweet[1] = 1  # About covid
 
             tweet_entry = tuple(tmp_tweet)
             tweet_entries.append(tweet_entry)

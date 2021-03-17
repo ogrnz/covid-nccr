@@ -76,7 +76,7 @@ class Database:
         finally:
             cur.close()
 
-    def get_fields(self, fields: list, only_covid: bool, limit=None):
+    def get_fields(self, fields: list, only_covid: bool = False, limit=None):
         """
         Retrieve desired fields from all tweets
         """

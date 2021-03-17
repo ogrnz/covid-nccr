@@ -106,19 +106,48 @@ class Api:
 
         return outtweets
 
-    def get_complete_tweets_by_ids(self, tweets_ids: list):
+    def get_complete_tweets_by_ids(self, tweets_ids: list, full=False):
         """
-        Retrieve a list of completed tweets for tweet ids
+        Retrieve a list of completed (text) tweets for tweet ids
+        If full==True, then retrieve all the tweet's attributes
         """
 
         tot_tweets = {}
         for i, tweet_id in enumerate(tweets_ids, start=1):
-            tot_tweets[i] = {}
-            tot_tweets[i]["id"] = int(tweet_id)
-            tot_tweets[i]["fulltext"] = None
+            # tot_tweets[i] = {}
+            # tot_tweets[i]["id"] = int(tweet_id)
+            # tot_tweets[i]["fulltext"] = None
+
+            tot_tweets[i] = {
+                "tweet_id": int(tweet_id),
+                "covid_theme": None,
+                "created_at": None,
+                "handle": None,
+                "name": None,
+                "oldText": None,
+                "text": None,
+                "URL": None,
+                "type": None,
+                "retweets": None,
+                "favorites": None,
+            }
 
         df = pd.DataFrame.from_dict(
-            data=tot_tweets, orient="index", columns=["id", "fulltext"]
+            data=tot_tweets,
+            orient="index",
+            columns=[
+                "tweet_id",
+                "covid_theme",
+                "created_at",
+                "handle",
+                "name",
+                "oldText",
+                "text",
+                "URL",
+                "type",
+                "retweets",
+                "favorites",
+            ],
         )
 
         lim_start = 100
@@ -137,7 +166,6 @@ class Api:
 
             if self.app.debug:
                 print(f"{itera}/{iter_needed}")
-                # print(f"{start=} {final=}")
 
             try:
                 compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")
@@ -149,10 +177,6 @@ class Api:
 
             # Edit tot_tweets dict
             for compl_tweet in compl_tweets:
-                if self.app.debug and compl_tweet.id == 1239689814867312641:
-                    print("Hello")
-                    print(compl_tweet)
-
                 if hasattr(compl_tweet, "retweeted_status"):
                     # Is RT
                     full_text = compl_tweet.retweeted_status.full_text
@@ -160,7 +184,25 @@ class Api:
                     # Not a Retweet
                     full_text = compl_tweet.full_text
 
-                df.loc[df["id"] == compl_tweet.id, ["fulltext"]] = full_text
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["created_at"]
+                ] = tweet.created_at.strftime("%d/%m/%Y %H:%M:%S")
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["handle"]
+                ] = f"@{tweet.user.screen_name}"
+                df.loc[df["tweet_id"] == compl_tweet.id, ["name"]] = tweet.user.name
+                df.loc[df["tweet_id"] == compl_tweet.id, ["oldText"]] = old_text
+                df.loc[df["tweet_id"] == compl_tweet.id, ["text"]] = full_text
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["URL"]
+                ] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+                df.loc[df["tweet_id"] == compl_tweet.id, ["type"]] = tweet_type
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["retweets"]
+                ] = tweet.retweet_count
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["favorites"]
+                ] = tweet.favorite_count
 
             # Setup request for new iteration
             last_iter_final = final

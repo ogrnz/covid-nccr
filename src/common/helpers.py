@@ -52,7 +52,7 @@ class Helpers:
     @staticmethod
     def extract_ids_file(file_path, col="URL") -> list:
         """
-        Extract tweeter statuses ids from
+        Extract twitter statuses ids from
         a column of a xlsx (or pkl) file
         """
 

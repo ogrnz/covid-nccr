@@ -173,8 +173,12 @@ class Database:
                         text,
                         url,
                         retweets,
-                        favorites)
-                VALUES(?,?,?,?,?,?,?,?,?,?,?) """
+                        favorites,
+                        topic,
+                        subcat,
+                        position,
+                        frame)
+                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         cur = self.conn.cursor()
 
         try:
@@ -192,7 +196,7 @@ class Database:
         Insert new tweet into database
         """
         sql = """ INSERT OR IGNORE INTO tweets
-                  VALUES(?,?,?,?,?,?,?,?,?,?,?) """
+                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         cur = self.conn.cursor()
 
         try:

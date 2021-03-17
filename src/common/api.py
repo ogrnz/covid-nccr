@@ -102,6 +102,10 @@ class Api:
                 "type": tweet_type,
                 "retweets": tweet.retweet_count,
                 "favorites": tweet.favorite_count,
+                "topic": None,
+                "subcat": None,
+                "position": None,
+                "frame": None,
             }
 
         return outtweets
@@ -128,6 +132,10 @@ class Api:
                 "type": None,
                 "retweets": None,
                 "favorites": None,
+                "topic": None,
+                "subcat": None,
+                "position": None,
+                "frame": None,
             }
 
         df = pd.DataFrame.from_dict(
@@ -145,6 +153,10 @@ class Api:
                 "type",
                 "retweets",
                 "favorites",
+                "topic",
+                "subcat",
+                "position",
+                "frame",
             ],
         )
 

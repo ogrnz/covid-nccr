@@ -10,5 +10,9 @@ CREATE TABLE IF NOT EXISTS "tweets" (
 	"type"	TEXT NOT NULL,
 	"retweets"	INTEGER,
 	"favorites"	INTEGER,
+    "topic" INTEGER,
+    "subcat" INTEGER,
+    "position" INTEGER,
+    "frame" INTEGER,
 	PRIMARY KEY("tweet_id")
 );

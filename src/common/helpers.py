@@ -79,7 +79,7 @@ class Helpers:
         """
 
         try:
-            tweet_id = re.search(r"/status/(\d+)", url).group(1)
+            tweet_id = re.search(r"/status/(\d+)", str(url)).group(1)
         except AttributeError:
             tweet_id = 0
 

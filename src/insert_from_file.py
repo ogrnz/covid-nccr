@@ -21,6 +21,11 @@ columns=[
 ]
 """
 
+#%%
+import uuid
+import hashlib
+
+import numpy as np
 import pandas as pd
 
 from common.app import App
@@ -28,43 +33,59 @@ from common.database import Database
 from common.api import Api
 from common.helpers import Helpers
 
+#%%
+app_run = App(debug=True)
+db = Database("test3.db", app=app_run)
 
-if __name__ == "__main__":
-    app_run = App(debug=True)
-    db = Database("tweets_tests.db", app=app_run)
-    filename = "FR.xlsx"
+cols_schema = 13
 
-    # xls = pd.read_excel(f"src/resources/data/{filename}")
-    # xls.to_pickle(f"src/resources/data/{filename}.pkl")
-    xls = pd.read_pickle(f"src/resources/data/{filename}.pkl")
-    print(xls.head())
+# filename = "UN_Mobility.xlsx"
+filename = "UN.xlsx"
 
-    # Add tweet_id and covid_theme columns
-    xls["covid_theme"] = 1
-    print(xls.head())
+xls = pd.read_excel(f"src/resources/data/{filename}")
+# xls.to_pickle(f"src/resources/data/{filename}.pkl")
+# xls = pd.read_pickle(f"src/resources/data/{filename}.pkl")
 
-    # Get URLs
-    # ids_xls = Helpers.extract_ids_file(f"src/resources/data/{filename}")
-    # print(len(ids_xls))
+if xls.shape[1] > cols_schema:
+    print("Too many cols", xls.shape)
+    xls.drop(xls.columns[12:].tolist(), axis=1, inplace=True)
+    print("Final shape:", xls.shape)
 
-    # Connect to the API
-    # api = Api(
-    #     app_run.consumer_key,
-    #     app_run.consumer_secret,
-    #     app_run.access_key,
-    #     app_run.access_secret,
-    #     main_app=app_run,
-    # )
+# Add tweet_id and covid_theme columns
+xls["covid_theme"] = 1
+xls["tweet_id"] = None
 
-    # Get complete tweet information
-    # completed_tweets = api.get_tweets_by_ids(ids_xls)
-    # completed_tweets.to_pickle(f"src/resources/data/{filename}.pkl")
 
-    # Insert tweets into db
-    # tweet_entries = [tuple(entry) for entry in completed_tweets.to_numpy()]
-    # with db:
-    #    inserted = db.insert_many(tweet_entries)
+# Extract ids
+xls["tweet_id"] = xls["URL"].apply(Helpers.extract_id)
 
-    # print(f"Done inserting {inserted} tweets")
+# If tweet_id==0, then it's na
+# hash the tweet with the date, oldText and text
+# and use it as id
+mask = xls["tweet_id"] == 0
 
-    # Remember to classify the database if you need to
+xls.loc[mask, ["tweet_id"]] = (
+    xls[mask]["created_at"].astype(str)
+    + xls[mask]["oldText"].astype(str)
+    + xls[mask]["text"].astype(str)
+)
+xls.loc[mask, ["tweet_id"]] = xls["tweet_id"].apply(
+    lambda x: int(str(int(hashlib.sha1(bytes(x, "utf-8")).hexdigest(), 16))[:10])
+)
+
+# Reorder columns
+cols = xls.columns.tolist()
+cols.insert(0, "covid_theme")
+cols.insert(0, "tweet_id")
+del cols[-2:]
+xls = xls[cols]
+
+# Insert tweets into db
+tweet_entries = [tuple(entry) for entry in xls.to_numpy()]
+
+with db:
+    inserted = db.insert_many(tweet_entries)
+
+print(f"Done inserting {inserted} tweets")
+
+# Remember to classify the database if you need to

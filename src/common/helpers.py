@@ -50,7 +50,7 @@ class Helpers:
         print(f"\nDone in {round(elapsed, 1)} s")
 
     @staticmethod
-    def extract_ids_file(file_path, col="URL") -> list:
+    def extract_ids_file(file_path, col="URL", retdf=False) -> list:
         """
         Extract twitter statuses ids from
         a column of a xlsx (or pkl) file
@@ -70,6 +70,8 @@ class Helpers:
         #     ids.append(tweet_id)
         ids = [Helpers.extract_id(str(url)) for url in urls]
 
+        if retdf:
+            return (ids, df)
         return ids
 
     @staticmethod
@@ -79,7 +81,7 @@ class Helpers:
         """
 
         try:
-            tweet_id = re.search(r"/status/(\d+)", url).group(1)
+            tweet_id = re.search(r"/status/(\d+)", str(url)).group(1)
         except AttributeError:
             tweet_id = 0
 

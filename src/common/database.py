@@ -173,8 +173,13 @@ class Database:
                         text,
                         url,
                         retweets,
-                        favorites)
-                VALUES(?,?,?,?,?,?,?,?,?,?,?) """
+                        favorites,
+                        topic,
+                        subcat,
+                        position,
+                        frame,
+                        theme_hardcoded)
+                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         cur = self.conn.cursor()
 
         try:
@@ -192,7 +197,25 @@ class Database:
         Insert new tweet into database
         """
         sql = """ INSERT OR IGNORE INTO tweets
-                  VALUES(?,?,?,?,?,?,?,?,?,?,?) """
+                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+        cur = self.conn.cursor()
+
+        try:
+            cur.executemany(sql, tweets)
+            self.conn.commit()
+
+            return cur.rowcount
+        except sqlite3.Error as error:
+            print(f"Error inserting new tweets \n {error}")
+        finally:
+            cur.close()
+
+    def insert_or_replace_many(self, tweets):
+        """
+        Insert new tweet into database
+        """
+        sql = """ INSERT OR REPLACE INTO tweets
+                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         cur = self.conn.cursor()
 
         try:

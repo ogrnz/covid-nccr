@@ -5,6 +5,8 @@ Complete tweets based on xlsx file
 
 import time
 
+import pandas as pd
+
 from common.app import App
 from common.api import Api
 from common.helpers import Helpers
@@ -19,7 +21,8 @@ def complete(filename):
 
     print(f"Starting length: {len(ids_xls)}")
 
-    completed_tweets = api.get_complete_tweets_by_ids(ids_xls)
+    print(pd.DataFrame(ids_xls))
+    completed_tweets = api.get_tweets_by_ids(ids_xls)
 
     print(f"Finishing length: {len(completed_tweets)}")
 
@@ -36,7 +39,8 @@ if __name__ == "__main__":
     t1 = time.time()
 
     # Input files to complete here
-    files = ["uk"]
+    # missing values with full dataset
+    files = ["full"]
     for xls in files:
         complete(xls)
 

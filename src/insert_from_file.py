@@ -21,7 +21,6 @@ columns=[
 ]
 """
 
-#%%
 import uuid
 import hashlib
 
@@ -33,14 +32,13 @@ from common.database import Database
 from common.api import Api
 from common.helpers import Helpers
 
-#%%
 app_run = App(debug=True)
-db = Database("test3.db", app=app_run)
+db = Database("tweets.db", app=app_run)
 
 cols_schema = 13
 
 # filename = "UN_Mobility.xlsx"
-filename = "UN.xlsx"
+filename = "full.xlsx"
 
 xls = pd.read_excel(f"src/resources/data/{filename}")
 # xls.to_pickle(f"src/resources/data/{filename}.pkl")
@@ -54,7 +52,6 @@ if xls.shape[1] > cols_schema:
 # Add tweet_id and covid_theme columns
 xls["covid_theme"] = 1
 xls["tweet_id"] = None
-
 
 # Extract ids
 xls["tweet_id"] = xls["URL"].apply(Helpers.extract_id)
@@ -84,7 +81,7 @@ xls = xls[cols]
 tweet_entries = [tuple(entry) for entry in xls.to_numpy()]
 
 with db:
-    inserted = db.insert_many(tweet_entries)
+    inserted = db.insert_or_replace_many(tweet_entries)
 
 print(f"Done inserting {inserted} tweets")
 

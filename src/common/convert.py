@@ -37,6 +37,11 @@ class Converter:
             "type",
             "retweets",
             "favorites",
+            "topic",
+            "subcat",
+            "position",
+            "frame",
+            "theme_hardcoded",
         ),
     ):
         """

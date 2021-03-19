@@ -25,7 +25,7 @@ def main(database: Database, app: App = None, only_covid=False):
 
 if __name__ == "__main__":
     app_run = App(debug=False)
-    db = Database("tweets_tests.db", app=app_run)
+    db = Database("tweets.db", app=app_run)
 
     main(db, app=app_run)
     main(db, app=app_run, only_covid=True)

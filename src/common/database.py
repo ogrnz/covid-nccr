@@ -115,6 +115,21 @@ class Database:
         finally:
             cur.close()
 
+    def get_tweet_by_id(self, tweet_id):
+        """
+        Retrieve tweet by id
+        """
+
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM tweets WHERE tweet_id=?", (tweet_id,))
+
+            return cur.fetchall()
+        except sqlite3.Error as error:
+            print("Error", error)
+        finally:
+            cur.close()
+
     def update_tweet_by_id(self, tweet_id: int, field: str, content: any):
         """
         Update tweet in database by id

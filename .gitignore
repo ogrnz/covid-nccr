@@ -8,6 +8,7 @@ src/api/__pycache__
 src/common/__pycache__
 src/db/__pycache__
 src/lab.py
+src/.ipynb_checkpoints
 
 src/resources/data
 

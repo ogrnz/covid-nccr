@@ -36,7 +36,7 @@ class Classifier:
         Classify a string as being about covid or not
         """
 
-        return re.search(self.reg, txt, re.I)
+        return re.search(self.reg, str(txt), re.I)
 
 
 if __name__ == "__main__":

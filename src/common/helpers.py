@@ -64,14 +64,11 @@ class Helpers:
         df[col].fillna(0, inplace=True)
         urls = df[col].values.tolist()
 
-        # ids = []
-        # for url in urls:
-        #     tweet_id = Helpers.extract_id(str(url))
-        #     ids.append(tweet_id)
         ids = [Helpers.extract_id(str(url)) for url in urls]
-
         if retdf:
+            df["tweet_id"] = df[col].apply(Helpers.extract_id)
             return (ids, df)
+
         return ids
 
     @staticmethod
@@ -79,7 +76,7 @@ class Helpers:
         """
         Extract the status id from a twitter url
         """
-
+        url = str(url)
         try:
             tweet_id = re.search(r"/status/(\d+)", str(url)).group(1)
         except AttributeError:

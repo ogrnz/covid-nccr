@@ -106,6 +106,7 @@ class Api:
                 "subcat": None,
                 "position": None,
                 "frame": None,
+                "theme_hardcoded": None,
             }
 
         return outtweets
@@ -182,7 +183,6 @@ class Api:
             except tweepy.TweepError as error:
                 if error.api_code == 38:
                     # End of loop
-                    print("Break loop", error.api_code)
                     break
                 print("Error", error)
 
@@ -248,7 +248,8 @@ class Api:
         but to return a modified df instead of a new one.
         """
 
-        df["tweet_id"] = df["URL"].apply(Helpers.extract_id)
+        # Otherwise too long to handle
+        df["tweet_id"].astype(str)
 
         lim_start = 100
         start = 0
@@ -261,6 +262,7 @@ class Api:
 
         print("Completing tweets..")
         itera = 0
+
         while itera < iter_needed + 1:
             Helpers.dynamic_text(f"{itera}/{iter_needed}")
 
@@ -278,6 +280,7 @@ class Api:
 
             # Edit tot_tweets dict
             for compl_tweet in compl_tweets:
+                compl_tweet.id = str(compl_tweet.id)
                 old_text = None
                 if hasattr(compl_tweet, "retweeted_status"):
                     # Is RT
@@ -327,9 +330,12 @@ class Api:
             ids = tweets_ids[start:final]
             itera += 1
 
-            if self.app.debug and itera == iter_needed:
-                break
-
+        # Reorder cols
+        cols = df.columns.tolist()
+        # print(cols)
+        cols.remove("tweet_id")
+        df = df[cols]
+        # print(cols)
         return df
 
     def get_complete_tweets_by_ids(self, tweets_ids: list):

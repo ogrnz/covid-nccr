@@ -4,7 +4,7 @@ Code is similar to scrape.py
 
 WARNING: The columns of the file must absolutely
 match the sql schema EXCEPT for the first "tweet_id" and "covid_theme" cols:
-columns=[
+columns_xls=[
     "created_at",
     "handle",
     "name",
@@ -18,36 +18,35 @@ columns=[
     "subcat",
     "position",
     "frame",
-    "theme_hardcoded",
 ]
+
+A "theme_hardcoded" is created by default with None values if non-existent
 """
 
-import uuid
 import hashlib
 
-import numpy as np
 import pandas as pd
 
 from common.app import App
 from common.database import Database
-from common.api import Api
 from common.helpers import Helpers
 
 app_run = App(debug=True)
-db = Database("test1.db", app=app_run)
+db = Database("tweets.db", app=app_run)
 
-cols_schema = 14
 
-filename = "full.xlsx"
+# filename = "Full_ME_covid_total.xlsx"
+filename = "subset_total.xlsx"
+# filename = "Full_ME_excluded_total.xlsx"
 
 xls = pd.read_excel(f"src/resources/data/{filename}")
-# xls.to_pickle(f"src/resources/data/{filename}.pkl")
-# xls = pd.read_pickle(f"src/resources/data/{filename}.pkl")
 
-if xls.shape[1] > cols_schema:
-    print("Too many cols", xls.shape)
-    xls.drop(xls.columns[cols_schema - 1 :].tolist(), axis=1, inplace=True)
-    print("Final shape:", xls.shape)
+# Remove empty columns
+xls = xls.loc[:, ~xls.columns.str.startswith("Unnamed:")]
+
+# Add theme_hardcoded if it does not exist
+if "theme_hardcoded" not in xls.columns:
+    xls["theme_hardcoded"] = None
 
 # Add tweet_id and covid_theme columns
 xls["covid_theme"] = 1
@@ -67,14 +66,15 @@ xls.loc[mask, ["tweet_id"]] = (
     + xls[mask]["text"].astype(str)
 )
 xls.loc[mask, ["tweet_id"]] = xls["tweet_id"].apply(
-    lambda x: int(str(int(hashlib.sha1(bytes(x, "utf-8")).hexdigest(), 16))[:10])
+    lambda x: str(int(hashlib.sha1(bytes(x, "utf-8")).hexdigest(), 16))[:10]
 )
 
 # Reorder columns
 cols = xls.columns.tolist()
+cols.remove("covid_theme")
+cols.remove("tweet_id")
 cols.insert(0, "covid_theme")
 cols.insert(0, "tweet_id")
-del cols[-2:]
 xls = xls[cols]
 
 # Insert tweets into db
@@ -85,4 +85,4 @@ with db:
 
 print(f"Done inserting {inserted} tweets")
 
-# Remember to classify the database if you need to
+# Remember to classify the database if needed

@@ -18,6 +18,7 @@ columns=[
     "subcat",
     "position",
     "frame",
+    "theme_hardcoded",
 ]
 """
 
@@ -33,11 +34,10 @@ from common.api import Api
 from common.helpers import Helpers
 
 app_run = App(debug=True)
-db = Database("tweets.db", app=app_run)
+db = Database("test1.db", app=app_run)
 
-cols_schema = 13
+cols_schema = 14
 
-# filename = "UN_Mobility.xlsx"
 filename = "full.xlsx"
 
 xls = pd.read_excel(f"src/resources/data/{filename}")
@@ -46,7 +46,7 @@ xls = pd.read_excel(f"src/resources/data/{filename}")
 
 if xls.shape[1] > cols_schema:
     print("Too many cols", xls.shape)
-    xls.drop(xls.columns[12:].tolist(), axis=1, inplace=True)
+    xls.drop(xls.columns[cols_schema - 1 :].tolist(), axis=1, inplace=True)
     print("Final shape:", xls.shape)
 
 # Add tweet_id and covid_theme columns

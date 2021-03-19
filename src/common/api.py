@@ -242,6 +242,96 @@ class Api:
 
         return df
 
+    def get_tweets_by_ids_with_nan(self, tweets_ids: list, df):
+        """
+        The idea is to do the same as the get_tweets_by_ids() method,
+        but to return a modified df instead of a new one.
+        """
+
+        df["tweet_id"] = df["URL"].apply(Helpers.extract_id)
+
+        lim_start = 100
+        start = 0
+        final = lim_start + Helpers.count_null_id(tweets_ids, finish=lim_start)
+        ids = tweets_ids[start:final]
+
+        iter_needed = math.ceil(
+            (len(tweets_ids) - Helpers.count_null_id(tweets_ids)) / 100
+        )
+
+        print("Completing tweets..")
+        itera = 0
+        while itera < iter_needed + 1:
+            Helpers.dynamic_text(f"{itera}/{iter_needed}")
+
+            if self.app.debug:
+                print(f"{itera}/{iter_needed}")
+
+            try:
+                compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")
+            except tweepy.TweepError as error:
+                if error.api_code == 38:
+                    # End of loop
+                    print("Break loop", error.api_code)
+                    break
+                print("Error", error)
+
+            # Edit tot_tweets dict
+            for compl_tweet in compl_tweets:
+                old_text = None
+                if hasattr(compl_tweet, "retweeted_status"):
+                    # Is RT
+                    old_text = compl_tweet.full_text
+                    tweet_type = "Retweet"
+                    full_text = compl_tweet.retweeted_status.full_text
+                else:  # Not a Retweet
+                    full_text = compl_tweet.full_text
+                    tweet_type = "New"
+                    if compl_tweet.in_reply_to_status_id is not None:
+                        tweet_type = "Reply"
+
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["created_at"]
+                ] = compl_tweet.created_at.strftime("%d/%m/%Y %H:%M:%S")
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["handle"]
+                ] = f"@{compl_tweet.user.screen_name}"
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["name"]
+                ] = compl_tweet.user.name
+                df.loc[df["tweet_id"] == compl_tweet.id, ["oldText"]] = old_text
+                df.loc[df["tweet_id"] == compl_tweet.id, ["text"]] = full_text
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["URL"]
+                ] = f"https://twitter.com/{compl_tweet.user.screen_name}/status/{compl_tweet.id}"
+                df.loc[df["tweet_id"] == compl_tweet.id, ["type"]] = tweet_type
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["retweets"]
+                ] = compl_tweet.retweet_count
+                df.loc[
+                    df["tweet_id"] == compl_tweet.id, ["favorites"]
+                ] = compl_tweet.favorite_count
+
+            # Setup request for new iteration
+            last_iter_final = final
+            start = last_iter_final
+            if start + 100 <= len(tweets_ids):
+                final = (
+                    last_iter_final
+                    + 100
+                    + Helpers.count_null_id(tweets_ids, start=start, finish=start + 100)
+                )
+            else:
+                final = len(tweets_ids)
+
+            ids = tweets_ids[start:final]
+            itera += 1
+
+            if self.app.debug and itera == iter_needed:
+                break
+
+        return df
+
     def get_complete_tweets_by_ids(self, tweets_ids: list):
         """
         Retrieve a list of completed tweets for tweet ids

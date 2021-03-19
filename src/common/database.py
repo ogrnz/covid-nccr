@@ -177,8 +177,9 @@ class Database:
                         topic,
                         subcat,
                         position,
-                        frame)
-                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+                        frame,
+                        theme_hardcoded)
+                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         cur = self.conn.cursor()
 
         try:
@@ -196,7 +197,7 @@ class Database:
         Insert new tweet into database
         """
         sql = """ INSERT OR IGNORE INTO tweets
-                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         cur = self.conn.cursor()
 
         try:
@@ -214,7 +215,7 @@ class Database:
         Insert new tweet into database
         """
         sql = """ INSERT OR REPLACE INTO tweets
-                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         cur = self.conn.cursor()
 
         try:

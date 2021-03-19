@@ -17,16 +17,17 @@ def complete(filename):
     Main script
     """
 
-    ids_xls = Helpers.extract_ids_file(f"src/resources/data/{filename}.xlsx")
+    (ids_xls, xls_df) = Helpers.extract_ids_file(
+        f"src/resources/data/{filename}.xlsx", retdf=True
+    )
 
     print(f"Starting length: {len(ids_xls)}")
-
-    print(pd.DataFrame(ids_xls))
-    completed_tweets = api.get_tweets_by_ids(ids_xls)
+    completed_tweets = api.get_tweets_by_ids_with_nan(ids_xls, xls_df)
 
     print(f"Finishing length: {len(completed_tweets)}")
 
     print(completed_tweets)
+    # completed_tweets.to_pickle(f"src/resources/data/{filename}.pkl")
     completed_tweets.to_excel(f"src/resources/data/{filename}_total.xlsx")
 
 
@@ -40,7 +41,7 @@ if __name__ == "__main__":
 
     # Input files to complete here
     # missing values with full dataset
-    files = ["full"]
+    files = ["full1"]
     for xls in files:
         complete(xls)
 

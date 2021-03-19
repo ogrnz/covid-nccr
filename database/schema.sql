@@ -14,5 +14,6 @@ CREATE TABLE IF NOT EXISTS "tweets" (
     "subcat" TEXT,
     "position" TEXT,
     "frame" TEXT,
+    "theme_hardcoded" TEXT,
 	PRIMARY KEY("tweet_id")
 );

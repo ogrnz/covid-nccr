@@ -23,6 +23,7 @@ if __name__ == "__main__":
     # 1.
     print("\n1. ", "-" * 80)
     # Scrape and classify tweets
+    # and insert them into db
     scrape.main(app_run, database)
 
     # 2.

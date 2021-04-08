@@ -17,3 +17,5 @@ database/*.db-journal
 database/csv/*
 database/xlsx/*
 database/test
+
+.ipynb_checkpoints

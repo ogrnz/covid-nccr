@@ -1,9 +1,10 @@
 #%%
+import pandas as pd
+
 from common.database import Database
 from common.app import App
 from common.helpers import Helpers
 from common.api import Api
-import pandas as pd
 
 #%%
 app_run = App(debug=False)
@@ -25,6 +26,7 @@ def classify(istr):
     if not classifier.classify(istr):
         return 0
     return 1
+
 
 #%%
 df = pd.DataFrame(tweets)

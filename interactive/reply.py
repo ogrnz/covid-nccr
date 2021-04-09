@@ -1,15 +1,16 @@
-#%%
+"""
+Add "RY @handle: ..." to all replies
+"""
 
-import tweepy
+#%%
 import pandas as pd
 
 from common.database import Database
 from common.app import App
-from common.helpers import Helpers
 from common.api import Api
 
 app_run = App(debug=True)
-database = Database("tweets_tests.db", app=app_run)
+db = Database("tweets.db", app=app_run)
 
 # %%
 # Connect to the API
@@ -22,12 +23,79 @@ api = Api(
 )
 
 # %%
-ids = [1263097241465769985, 1283438098391728129]
-# ids = [1263097241465769985]
-tweets = api.api.statuses_lookup(id_=ids, tweet_mode="extended")
+with db:
+    tweets = db.get_by_type("Reply")
+len(tweets)
 
 #%%
-for tweet in tweets:
-    print(tweet.in_reply_to_screen_name)
+df = pd.DataFrame(
+    tweets,
+    columns=[
+        "tweet_id",
+        "covid_theme",
+        "created_at",
+        "handle",
+        "name",
+        "oldText",
+        "text",
+        "URL",
+        "type",
+        "retweets",
+        "favorites",
+        "topic",
+        "subcat",
+        "position",
+        "frame",
+        "theme_hardcoded",
+    ],
+)
+df
+
+#%%
+tweets_ids = [tweet[0] for tweet in tweets]
+len(tweets_ids)
+tweets_ids
+
+#%%
+tot_tweets = None
+tot_tweets = api.get_tweets_by_ids_with_nan(tweets_ids, df, no_id_remove=True)
+#%%
+print(len(tot_tweets))
+print(len(tweets_ids))
+
+to_update = [
+    (
+        tweet[4],
+        tweets_ids[i],
+    )
+    for i, tweet in enumerate(tot_tweets.values.tolist())
+]
+print(len(to_update))
+
+# %%
+with db:
+    count = db.update_many("oldText", to_update)
+
+print(count, "tweets updated")
+
+
+#%%
+import pickle
+
+with open("src/resources/data/pkl/tweets.pkl", "wb") as out:
+    pickle.dump(tot_tweets, out, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(to_update, out, pickle.HIGHEST_PROTOCOL)
+# %%
+# import pickle
+
+with open("src/resources/data/pkl/tweets.pkl", "rb") as inp:
+    tot_tweets = pickle.load(inp)
+    to_update = pickle.load(inp)
+
+# %%
+totprobs = len(tot_tweets) - sum(
+    tot_tweets["oldText"].apply(lambda x: str(x).startswith("RY"))
+)
+# = 16 tweets with an issue. Most of them answer to deleted tweets
 
 # %%

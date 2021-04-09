@@ -1,5 +1,5 @@
 [MASTER]
-init-hook='import sys; sys.path.append("src/")'
+init-hook='import sys, os; sys.path.append(os.path.abspath(os.path.join("", "src")))'
 
 [MESSAGES CONTROL]
-good-names=i,j,df,db,t1
+good-names=i,j,df,db,t1,e

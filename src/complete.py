@@ -1,7 +1,7 @@
 """
 Complete tweets based on xlsx file
 
-Less headache with NaNs if the cols are as following:
+Less headache with NaNs if the cols in xlsx are as following:
 created_at; handle; name; oldText; text; URL; type; retweets; favorites; [optional_cols]
 """
 

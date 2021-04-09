@@ -85,8 +85,15 @@ class Api:
             else:  # Not a Retweet
                 full_text = tweet.full_text
                 tweet_type = "New"
+
                 if tweet.in_reply_to_status_id is not None:
                     tweet_type = "Reply"
+                    old_text = tweet.full_text
+                    prefix = "RY @", tweet.in_reply_to_screen_name, ": "
+                    prefix = "".join(prefix)
+
+                    old_text = prefix, old_text
+                    old_text = "".join(old_text)
 
             # Make final dict
             # Warning: structure should match database's schema!
@@ -114,9 +121,6 @@ class Api:
     def get_tweets_by_ids(self, tweets_ids: list):
         """
         Retrieve a list of completed (text) tweets for tweet ids
-        If full==True, then retrieve all the tweet's attributes
-
-        not elegant but it works..
         """
 
         tot_tweets = {}
@@ -137,6 +141,7 @@ class Api:
                 "subcat": None,
                 "position": None,
                 "frame": None,
+                "theme_hardcoded": None,
             }
 
         df = pd.DataFrame.from_dict(
@@ -158,6 +163,7 @@ class Api:
                 "subcat",
                 "position",
                 "frame",
+                "theme_hardcoded",
             ],
         )
 
@@ -197,8 +203,15 @@ class Api:
                 else:  # Not a Retweet
                     full_text = compl_tweet.full_text
                     tweet_type = "New"
+
                     if compl_tweet.in_reply_to_status_id is not None:
                         tweet_type = "Reply"
+                        old_text = compl_tweet.full_text
+                        prefix = "RY @", compl_tweet.in_reply_to_screen_name, ": "
+                        prefix = "".join(prefix)
+
+                        old_text = prefix, old_text
+                        old_text = "".join(old_text)
 
                 df.loc[
                     df["tweet_id"] == compl_tweet.id, ["created_at"]
@@ -242,7 +255,7 @@ class Api:
 
         return df
 
-    def get_tweets_by_ids_with_nan(self, tweets_ids: list, df):
+    def get_tweets_by_ids_with_nan(self, tweets_ids: list, df, no_id_remove=False):
         """
         The idea is to do the same as the get_tweets_by_ids() method,
         but to return a modified df instead of a new one.
@@ -290,8 +303,15 @@ class Api:
                 else:  # Not a Retweet
                     full_text = compl_tweet.full_text
                     tweet_type = "New"
+
                     if compl_tweet.in_reply_to_status_id is not None:
                         tweet_type = "Reply"
+                        old_text = compl_tweet.full_text
+                        prefix = "RY @", compl_tweet.in_reply_to_screen_name, ": "
+                        prefix = "".join(prefix)
+
+                        old_text = prefix, old_text
+                        old_text = "".join(old_text)
 
                 df.loc[
                     df["tweet_id"] == compl_tweet.id, ["created_at"]
@@ -332,8 +352,8 @@ class Api:
 
         # Reorder cols
         cols = df.columns.tolist()
-        # print(cols)
-        cols.remove("tweet_id")
+        if not no_id_remove:
+            cols.remove("tweet_id")
         df = df[cols]
         # print(cols)
         return df
@@ -369,7 +389,6 @@ class Api:
 
             if self.app.debug:
                 print(f"{itera}/{iter_needed}")
-                # print(f"{start=} {final=}")
 
             try:
                 compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")
@@ -381,10 +400,6 @@ class Api:
 
             # Edit tot_tweets dict
             for compl_tweet in compl_tweets:
-                if self.app.debug and compl_tweet.id == 1239689814867312641:
-                    print("Hello")
-                    print(compl_tweet)
-
                 if hasattr(compl_tweet, "retweeted_status"):
                     # Is RT
                     full_text = compl_tweet.retweeted_status.full_text

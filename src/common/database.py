@@ -173,6 +173,27 @@ class Database:
         finally:
             cur.close()
 
+    def update_many(self, what, params):
+        """
+        Update tweets in bulk
+        """
+
+        sql = f"""UPDATE tweets SET {what} = ? WHERE tweet_id = ?"""
+        cur = self.conn.cursor()
+
+        try:
+            cur.executemany(
+                sql,
+                params,
+            )
+            self.conn.commit()
+
+            return cur.rowcount
+        except sqlite3.Error as error:
+            print("Error updating tweets", error)
+        finally:
+            cur.close()
+
     def insert_tweet(self, tweet):
         """
         Insert new tweet into database
@@ -209,7 +230,7 @@ class Database:
 
     def insert_many(self, tweets):
         """
-        Insert new tweet into database
+        Insert new tweets into database
         """
         sql = """ INSERT OR IGNORE INTO tweets
                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """

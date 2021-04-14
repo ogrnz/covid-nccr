@@ -34,6 +34,7 @@ def main(filename, app: App):
 
 if __name__ == "__main__":
     app_run = App(debug=False)
-    FILENAME = "tweets-2021-02-27.xlsx"
+    FILES = ["Covid-tweets-2021-04-14.xlsx", "Covid-tweets-2021-04-14.xlsx"]
 
-    main(FILENAME, app=app_run)
+    for FILE in FILES:
+        main(FILE, app=app_run)

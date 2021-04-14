@@ -287,7 +287,7 @@ class Api:
             except tweepy.TweepError as error:
                 if error.api_code == 38:
                     # End of loop
-                    print("Break loop", error.api_code)
+                    # print("Break loop", error.api_code)
                     break
                 print("Error", error)
 

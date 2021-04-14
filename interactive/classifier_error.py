@@ -1,3 +1,4 @@
+# pylint: skip-file
 #%%
 import sys, os
 
@@ -42,7 +43,7 @@ df = pd.DataFrame(
 df
 
 """
-In our setting, the false-positive (falsely classified as about covid) is less harmful than a covid tweet being classified as not being one (false negative)
+In our setting, a false positive (falsely classified as about covid) is less harmful than a covid tweet being classified as not being one (false negative).
 """
 
 
@@ -58,6 +59,7 @@ all_coded = df[df["topic"].isin(topics)]
 false_neg_count = sum(all_coded["covid_theme"] == 0)
 all_count = len(all_coded["covid_theme"])
 
+print("False Negative:")
 print(
     f"Out of {all_count} manually coded tweets, {false_neg_count} were classified as not being about covid although they were. The false negative rate is {round(false_neg_count / all_count*100, 1)}%."
 )
@@ -71,11 +73,12 @@ all_excluded = pd.concat([sub_hardcoded, all_608])
 
 false_pos_count = sum(all_excluded["covid_theme"] == 1)
 
+print("False Positive:")
 print(
     f"Out of {len(all_excluded)} manually classified tweets, {false_pos_count} were classified as being about covid although they were not. The false positive rate is {round(false_pos_count / len(all_excluded)*100, 1)}%."
 )
 
 # %%
 """
-Satisfactory false negative rate. Would be nice to decrease the false positive as well.
+Satisfactory false negative rate (4.2%). Would be nice to decrease the false positive as well.
 """

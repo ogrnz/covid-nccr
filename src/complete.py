@@ -41,8 +41,7 @@ if __name__ == "__main__":
     t1 = time.time()
 
     # Input files to complete here
-    files = ["Full_ME_excluded"]
-    # files = ["subset"]
+    files = ["subset_to_complete"]
     for xls in files:
         complete(xls)
 

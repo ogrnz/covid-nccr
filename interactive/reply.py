@@ -1,9 +1,16 @@
+# pylint: skip-file
 """
 Add "RY @handle: ..." to all replies
 """
 
 #%%
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join("..", "src")))
+
+#%%
 import pandas as pd
+import numpy as np
 
 from common.database import Database
 from common.app import App
@@ -28,7 +35,7 @@ with db:
 len(tweets)
 
 #%%
-df = pd.DataFrame(
+df_replies = pd.DataFrame(
     tweets,
     columns=[
         "tweet_id",
@@ -49,28 +56,29 @@ df = pd.DataFrame(
         "theme_hardcoded",
     ],
 )
-df
+df_replies["oldText"].fillna("text", inplace=True)
+
+df = df_replies[~df_replies["oldText"].str.startswith("RY")]
+print(len(df))
 
 #%%
-tweets_ids = [tweet[0] for tweet in tweets]
-len(tweets_ids)
-tweets_ids
+tweets_ids = df["tweet_id"].values.tolist()
+print(len(tweets_ids))
 
 #%%
 tot_tweets = None
 tot_tweets = api.get_tweets_by_ids_with_nan(tweets_ids, df, no_id_remove=True)
+
 #%%
 print(len(tot_tweets))
-print(len(tweets_ids))
 
 to_update = [
     (
-        tweet[4],
+        tweet[5],
         tweets_ids[i],
     )
     for i, tweet in enumerate(tot_tweets.values.tolist())
 ]
-print(len(to_update))
 
 # %%
 with db:
@@ -78,24 +86,37 @@ with db:
 
 print(count, "tweets updated")
 
-
-#%%
-import pickle
-
-with open("src/resources/data/pkl/tweets.pkl", "wb") as out:
-    pickle.dump(tot_tweets, out, pickle.HIGHEST_PROTOCOL)
-    pickle.dump(to_update, out, pickle.HIGHEST_PROTOCOL)
 # %%
-# import pickle
+# Re-download tweets and check issues
+with db:
+    tweets = db.get_by_type("Reply")
 
-with open("src/resources/data/pkl/tweets.pkl", "rb") as inp:
-    tot_tweets = pickle.load(inp)
-    to_update = pickle.load(inp)
-
-# %%
-totprobs = len(tot_tweets) - sum(
-    tot_tweets["oldText"].apply(lambda x: str(x).startswith("RY"))
+print(len(tweets))
+tweets_df = pd.DataFrame(
+    tweets,
+    columns=[
+        "tweet_id",
+        "covid_theme",
+        "created_at",
+        "handle",
+        "name",
+        "oldText",
+        "text",
+        "URL",
+        "type",
+        "retweets",
+        "favorites",
+        "topic",
+        "subcat",
+        "position",
+        "frame",
+        "theme_hardcoded",
+    ],
 )
-# = 16 tweets with an issue. Most of them answer to deleted tweets
+totprobs = len(tweets_df) - sum(
+    tweets_df["oldText"].apply(lambda x: str(x).startswith("RY"))
+)
+print(totprobs)
+# = 26 tweets with an issue. Most of them answers to deleted tweets
 
 # %%

@@ -113,3 +113,14 @@ other - 17291
 df.to_pickle("interactive/data/db_sub_lang.pkl")
 
 # %%
+df_subs = pd.read_pickle("interactive/data/db_sub_lang.pkl")
+df_en = df_subs[df_subs["lang"] == "en"]
+df_fr = df_subs[df_subs["lang"] == "fr"]
+df_other = df_subs[df_subs["lang"] == "other"]
+
+# %%
+df_en.to_pickle("interactive/data/db_en.pkl")
+df_fr.to_pickle("interactive/data/db_fr.pkl")
+df_other.to_pickle("interactive/data/db_other.pkl")
+
+# %%

@@ -65,12 +65,13 @@ identifier.classify(df["text"][0])
 # works!
 
 #%%
-def lang_detect(txt, threshold=0.9):
+def lang_detect(txt, threshold=0.9, isnone=False):
     """
     Detect tweet language
     returns None if confidence lvl < threshold
     """
-
+    if isnone:
+        print("Is None")
     if txt is None:
         return None
 
@@ -83,8 +84,14 @@ def lang_detect(txt, threshold=0.9):
 
 
 # %%
-subs = df.head(100)
-subs["lang"] = subs["text"].apply(lang_detect)
+# If `text` is empty, use `oldText`
+subs = df[df["theme_hardcoded"] == "0"].head(100)
+subs["lang"] = subs.apply(
+    lambda row: lang_detect(row["oldText"])
+    if row["text"] is None
+    else lang_detect(row["text"]),
+    axis=1,
+)
 
 subs["lang"].unique()
 # "en", "fr", "de", "it", nan, "am"
@@ -92,21 +99,26 @@ subs["lang"].unique()
 # %%
 # For whole dataset
 tqdm.pandas()
-df["lang"] = df["text"].progress_apply(lang_detect)
+df["lang"] = df.progress_apply(
+    lambda row: lang_detect(row["oldText"])
+    if row["text"] is None
+    else lang_detect(row["text"]),
+    axis=1,
+)
 df["lang"].unique()
 
 #%%
 df.to_pickle("interactive/data/db_all_lang.pkl")
 #%%
-# If lang is not en, fr or de, set it to None
+# If lang is not en or fr, set it to None
 lang_lst = ["en", "fr"]
 df["lang"] = df["lang"].apply(lambda x: "other" if x not in lang_lst else x)
 df["lang"].unique()
 
 """
-en - 95425
-fr - 58090
-other - 17291
+en - 97078
+fr - 60186
+other - 13542
 """
 
 # %%

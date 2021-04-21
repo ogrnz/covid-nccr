@@ -142,7 +142,7 @@ nb = Pipeline(
     ]
 )
 X_train, X_test, y_train, y_test = train_test_split(
-    X_san["text"], y, test_size=0.1, random_state=69
+    X_san["text"], y, test_size=0.2, random_state=69
 )
 
 start = time.time()

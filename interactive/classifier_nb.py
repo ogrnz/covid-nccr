@@ -117,13 +117,19 @@ print(X_san[X_san["text"].str.contains("https")])  # if empty -> good
 
 # %%
 # Scikit time
-from sklearn.pipeline import Pipeline
 from sklearn.naive_bayes import MultinomialNB, ComplementNB, BernoulliNB
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.pipeline import Pipeline
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
@@ -132,55 +138,198 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import cross_val_score
 
 #%%
-nb = Pipeline(
+"""
+BerNB
+~93% accuracy
+"""
+nb_berNB = Pipeline(
     [
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
         ("clf", BernoulliNB()),
     ]
 )
-X_train, X_test, y_train, y_test = train_test_split(
-    X_san["text"], y, test_size=0.2, random_state=69
+
+start = time.time()
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+CV_berNB = cross_val_score(
+    nb_berNB, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+)
+print(f"Time {time.time() - start}")
+print(f"Mean CV accuracy: {np.mean(CV_berNB)}")
+
+# print(f"accuracy {accuracy_score(y_pred, y_test)}")
+# print(classification_report(y_test, y_pred))
+
+#%%
+"""
+SVC
+- not scalable for that amount of data
+BUT ~96% accuracy.. for 14min runtime
+"""
+nb_svc = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("clf", SVC()),
+    ]
 )
 
 start = time.time()
-
-nb.fit(X_train, y_train)
-y_pred = nb.predict(X_test)
-
-stop = time.time()
-print(stop - start)
-print(f"accuracy {accuracy_score(y_pred, y_test)}")
-print(classification_report(y_test, y_pred))
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+CV_svc = cross_val_score(
+    nb_svc, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+)
+print(f"Time {time.time() - start}")
+print(f"Mean CV accuracy: {np.mean(CV_svc)}")
 
 #%%
 """
-DecisionTreeClassifier(),
-MultinomialNB(),
-ComplementNB(),
-LogisticRegression(solver="saga"),
-RidgeClassifier(solver="auto"),
-SVC(),
-RandomForestClassifier(),
+DecisionTreeClassifier
+~87% accuracy
 """
-pipelines = []
-for model in [BernoulliNB()]:
-    pipeline = make_pipeline(TfidfVectorizer(), model)
-    pipelines.append(pipeline)
-
-#%%
-berCV = GridSearchCV(
-    estimator=ridge_reg,
-    param_grid=params_ridge,
-    scoring="neg_mean_squared_error",
-    cv=folds,
+nb_dectree = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("clf", DecisionTreeClassifier(max_features="auto")),
+    ]
 )
 
-training_time = []
-for pipeline in pipelines:
-    start = time.time()
-    pipeline.fit(X_train, y_train)
-    stop = time.time()
-    training_time.append(stop - start)
+start = time.time()
+folds = KFold(n_splits=50, shuffle=True, random_state=31415)
+CVd_dectree = cross_val_score(
+    nb_dectree, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+)
+print(f"Time {time.time() - start}")
+print(f"Mean CV accuracy: {np.mean(CVd_dectree)}")
+
+#%%
+"""
+MultinomialNB
+~88% accuracy
+"""
+nb_multiNB = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("clf", MultinomialNB(alpha=0.7)),
+    ]
+)
+
+start = time.time()
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+CV_multiNB = cross_val_score(
+    nb_multiNB, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+)
+print(f"Time {time.time() - start}")
+print(f"Mean CV accuracy: {np.mean(CV_multiNB)}")
+
+#%%
+"""
+ComplementNB
+~89% accuracy
+"""
+nb_compNB = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("clf", ComplementNB(alpha=0.8)),
+    ]
+)
+
+start = time.time()
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+CV_compNB = cross_val_score(
+    nb_compNB, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+)
+print(f"Time {time.time() - start}")
+print(f"Mean CV accuracy: {np.mean(CV_compNB)}")
+
+#%%
+"""
+LogisticRegression
+~95% accuracy for different penalty and solver
+3s l2 penalty
+"""
+nb_logreg = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("clf", LogisticRegression()),
+    ]
+)
+
+start = time.time()
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+CV_logreg = cross_val_score(
+    nb_logreg, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+)
+print(f"Time {time.time() - start}")
+print(f"Mean CV accuracy: {np.mean(CV_logreg)}")
+
+#%%
+"""
+RidgeClassifier
+~94%
+3s
+"""
+nb_ridge = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("clf", RidgeClassifier()),
+    ]
+)
+
+start = time.time()
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+CV_ridge = cross_val_score(
+    nb_ridge, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+)
+print(f"Time {time.time() - start}")
+print(f"Mean CV accuracy: {np.mean(CV_ridge)}")
+
+#%%
+"""
+kNN
+~87% best
+"""
+folds = KFold(n_splits=5, shuffle=True, random_state=31415)
+nb_knn = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("knn", KNeighborsClassifier()),
+    ]
+)
+pipeline = GridSearchCV(
+    nb_knn,
+    {
+        "knn__n_neighbors": [25, 27, 30, 32, 35],
+        "knn__weights": ["distance"],
+    },
+    cv=folds,
+    n_jobs=-1,
+)
+
+
+start = time.time()
+pipeline.fit(X_san["text"], y)
+res = pipeline.cv_results_
+print(f"Time {time.time() - start}")
+print(pd.DataFrame(res))
+
+
+# %%
+"""
+BernoulliNB - 93%
+LogReg - 95%
+RidgeClassifier - 94%
+for df_en dataset
+"""
+
+""" FR """

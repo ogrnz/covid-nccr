@@ -52,7 +52,6 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.pipeline import make_pipeline
 
-
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import GridSearchCV
@@ -74,9 +73,9 @@ df_other = pd.read_pickle("data/db_other.pkl")
 
 def covid_classify(row: pd.Series):
     if (
-        row["topic"] == "608"
-        or row["topic"] == "608.0"
-        or row["theme_hardcoded"] == "0"
+        row.loc["topic"] == "608"
+        or row.loc["topic"] == "608.0"
+        or row.loc["theme_hardcoded"] == "0"
     ):
         return 0
     return 1
@@ -123,6 +122,7 @@ pipelines = []
 for model in [LogisticRegression(), BernoulliNB(), RidgeClassifier()]:
     pipeline = make_pipeline(CountVectorizer(), TfidfTransformer(), model)
     pipelines.append(pipeline)
+
 folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 
 # %%
@@ -130,43 +130,135 @@ folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 
 # Preprocess
 # 1: keep only already coded tweets
-df_en_coded = df_en[~df_en["topic"].isnull() | ~df_en["theme_hardcoded"].isnull()]
-df_en_test = df_en[df_en["topic"].isnull() & df_en["theme_hardcoded"].isnull()]
+df_en_coded = df_en[
+    ~df_en["topic"].isnull() | ~df_en["theme_hardcoded"].isnull()
+].copy()
+df_en_test = df_en[df_en["topic"].isnull() & df_en["theme_hardcoded"].isnull()].copy()
+
 
 # 2: Set `y` column
-df_en_coded["y"] = df_en_coded.copy().progress_apply(covid_classify, axis=1)
-df_en_test["y"] = np.nan
+df_en_coded.loc[:, "y"] = df_en_coded.copy().progress_apply(covid_classify, axis=1)
+df_en_test.loc[:, "y"] = np.nan
 
 # 3: create new col "x" with text or oldText if text is nan
-df_en_coded["x"] = df_en_coded.progress_apply(
+df_en_coded.loc[:, "x"] = df_en_coded.progress_apply(
     lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
 )
-df_en_test["x"] = df_en_test.progress_apply(
+df_en_test.loc[:, "x"] = df_en_test.progress_apply(
     lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
 )
-X = df_en_coded["x"]
-y = df_en_coded["y"].ravel()
-print(X)
-print(y)
+# X_train = df_en_coded["x"]
+# X_test = df_en_test["x"]
+y_train = df_en_coded.loc[:, "y"].ravel()
 
+#%%
 # 4: Sanitize X
 # Preprocess text
-X_san = X.copy()
-X_san = X_san.progress_apply(lambda t: sanitize(t, lang="en"))
-print(X_san)
-print(X_san[X_san.str.contains("https")])
-
-#%%
-# Get rest of english tweets
+df_en_coded.loc[:, "x"] = df_en_coded["x"].progress_apply(
+    lambda t: sanitize(t, lang="en")
+)
+df_en_test.loc[:, "x"] = df_en_test["x"].progress_apply(
+    lambda t: sanitize(t, lang="en")
+)
 #%%
 for i, pipeline in enumerate(pipelines):
+    stepname = pipeline.steps[2][0]
+    print(stepname)
     start = time.time()
-    CV_scores = cross_val_score(
-        pipeline, X_san, y, scoring="accuracy", cv=folds, n_jobs=-1
-    )
-    pipeline.predict()
-    print(i)
-    print(f"Mean CV accuracy: {np.mean(CV_scores)}")
+
+    pipeline.fit(df_en_coded.loc[:, "x"], y_train)
+    df_en_test.loc[:, stepname] = pipeline.predict(df_en_test.loc[:, "x"])
+    df_en_coded.loc[:, stepname] = pipeline.predict(df_en_coded.loc[:, "x"])
+
     print(f"Computed in {time.time() - start}s")
+    score = accuracy_score(df_en_coded.loc[:, "y"], df_en_coded.loc[:, stepname])
+    print(f"Accuracy score (train set): {score}")
+
+#%%
+def get_theme(row: pd.Series):
+    ber = row.loc["bernoullinb"]
+    logreg = row.loc["logisticregression"]
+    ridge = row.loc["ridgeclassifier"]
+
+    # If < 2, then at least 2 have a 0
+    # same  weight for each model
+    if ber + logreg + ridge < 2:
+        return 0
+    return 1
+
+
+# %%
+df_en_test.loc[:, "covid_theme"] = np.nan
+df_en_test.loc[:, "covid_theme"] = df_en_test.progress_apply(get_theme, axis=1)
+df_en_coded.loc[:, "covid_theme"] = np.nan
+df_en_coded.loc[:, "covid_theme"] = df_en_coded.progress_apply(get_theme, axis=1)
+
+# %%
+# Accuracy check on total df
+df_not = df_en_coded[df_en_coded["theme_hardcoded"] == "0"].copy()
+false_neg = (df_not["covid_theme"] == 0).sum() / len(df_not)
+print(f"False negative: {false_neg}")
+
+""" END OF TESTS """
+# %%
+dfs = [df_en, df_fr, df_other]
+
+#%%
+for df in dfs:
+    # Set lang for preprocessing
+    LANG = "en"
+    if df["lang"].iloc[0] == "fr":
+        LANG = "fr"
+    elif df["lang"].iloc[0] == "other":
+        LANG = "all"
+
+    print(f"Starting for {LANG} dataset")
+
+    # Preprocess
+    # 1: keep only already coded tweets
+    df_coded = df[~df["topic"].isnull() | ~df["theme_hardcoded"].isnull()].copy()
+    df_test = df[df["topic"].isnull() & df["theme_hardcoded"].isnull()].copy()
+
+    # 2: Set `y` column
+    df_coded.loc[:, "y"] = df_coded.copy().progress_apply(covid_classify, axis=1)
+    df_test.loc[:, "y"] = np.nan
+
+    # 3: create new col "x" with text or oldText if text is nan
+    df_coded.loc[:, "x"] = df_coded.progress_apply(
+        lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+    )
+    df_test.loc[:, "x"] = df_test.progress_apply(
+        lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+    )
+
+    # 4: Sanitize text
+    df_coded.loc[:, "x"] = df_coded["x"].progress_apply(
+        lambda t: sanitize(t, lang=LANG)
+    )
+    df_test.loc[:, "x"] = df_test["x"].progress_apply(lambda t: sanitize(t, lang=LANG))
+
+    y_train = df_coded.loc[:, "y"].ravel()
+
+    for i, pipeline in enumerate(pipelines):
+        stepname = pipeline.steps[2][0]
+        print(stepname)
+        start = time.time()
+
+        pipeline.fit(df_coded.loc[:, "x"], y_train)
+        df_test.loc[:, stepname] = pipeline.predict(df_test.loc[:, "x"])
+        df_coded.loc[:, stepname] = pipeline.predict(df_coded.loc[:, "x"])
+
+        print(f"Computed in {time.time() - start}s")
+        score = accuracy_score(df_coded.loc[:, "y"], df_coded.loc[:, stepname])
+        print(f"Accuracy score (train set): {score}")
+
+    df_test.loc[:, "covid_theme"] = np.nan
+    df_test.loc[:, "covid_theme"] = df_test.progress_apply(get_theme, axis=1)
+    df_coded.loc[:, "covid_theme"] = np.nan
+    df_coded.loc[:, "covid_theme"] = df_coded.progress_apply(get_theme, axis=1)
+
+    df_not = df_coded[df_coded["theme_hardcoded"] == "0"].copy()
+    false_neg = 1 - (df_not["covid_theme"] == 0).sum() / len(df_not)
+    print(f"\nFalse negative: {false_neg}")
 
 # %%

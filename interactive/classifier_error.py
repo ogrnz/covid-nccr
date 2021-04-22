@@ -52,6 +52,7 @@ topics = list(range(601, 608))
 topics = [str(topic) for topic in topics]
 
 # All coded tweets except coded as 608
+# Have to take into account "608.0"
 all_coded = df[df["topic"].isin(topics)]
 
 # %%

@@ -116,65 +116,6 @@ def sanitize(text, lang="en"):
     return edited_text
 
 
-#%%
-# General pipeline structure
-pipelines = []
-for model in [LogisticRegression(), BernoulliNB(), RidgeClassifier()]:
-    pipeline = make_pipeline(CountVectorizer(), TfidfTransformer(), model)
-    pipelines.append(pipeline)
-
-folds = KFold(n_splits=10, shuffle=True, random_state=31415)
-
-# %%
-# Eng
-
-# Preprocess
-# 1: keep only already coded tweets
-df_en_coded = df_en[
-    ~df_en["topic"].isnull() | ~df_en["theme_hardcoded"].isnull()
-].copy()
-df_en_test = df_en[df_en["topic"].isnull() & df_en["theme_hardcoded"].isnull()].copy()
-
-
-# 2: Set `y` column
-df_en_coded.loc[:, "y"] = df_en_coded.copy().progress_apply(covid_classify, axis=1)
-df_en_test.loc[:, "y"] = np.nan
-
-# 3: create new col "x" with text or oldText if text is nan
-df_en_coded.loc[:, "x"] = df_en_coded.progress_apply(
-    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
-)
-df_en_test.loc[:, "x"] = df_en_test.progress_apply(
-    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
-)
-# X_train = df_en_coded["x"]
-# X_test = df_en_test["x"]
-y_train = df_en_coded.loc[:, "y"].ravel()
-
-#%%
-# 4: Sanitize X
-# Preprocess text
-df_en_coded.loc[:, "x"] = df_en_coded["x"].progress_apply(
-    lambda t: sanitize(t, lang="en")
-)
-df_en_test.loc[:, "x"] = df_en_test["x"].progress_apply(
-    lambda t: sanitize(t, lang="en")
-)
-#%%
-for i, pipeline in enumerate(pipelines):
-    stepname = pipeline.steps[2][0]
-    print(stepname)
-    start = time.time()
-
-    pipeline.fit(df_en_coded.loc[:, "x"], y_train)
-    df_en_test.loc[:, stepname] = pipeline.predict(df_en_test.loc[:, "x"])
-    df_en_coded.loc[:, stepname] = pipeline.predict(df_en_coded.loc[:, "x"])
-
-    print(f"Computed in {time.time() - start}s")
-    score = accuracy_score(df_en_coded.loc[:, "y"], df_en_coded.loc[:, stepname])
-    print(f"Accuracy score (train set): {score}")
-
-#%%
 def get_theme(row: pd.Series):
     ber = row.loc["bernoullinb"]
     logreg = row.loc["logisticregression"]
@@ -187,23 +128,18 @@ def get_theme(row: pd.Series):
     return 1
 
 
-# %%
-df_en_test.loc[:, "covid_theme"] = np.nan
-df_en_test.loc[:, "covid_theme"] = df_en_test.progress_apply(get_theme, axis=1)
-df_en_coded.loc[:, "covid_theme"] = np.nan
-df_en_coded.loc[:, "covid_theme"] = df_en_coded.progress_apply(get_theme, axis=1)
+#%%
+# General pipeline structure
+pipelines = []
+for model in [LogisticRegression(), BernoulliNB(), RidgeClassifier()]:
+    pipeline = make_pipeline(CountVectorizer(), TfidfTransformer(), model)
+    pipelines.append(pipeline)
 
-# %%
-# Accuracy check on total df
-df_not = df_en_coded[df_en_coded["theme_hardcoded"] == "0"].copy()
-false_neg = (df_not["covid_theme"] == 0).sum() / len(df_not)
-print(f"False negative: {false_neg}")
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 
-""" END OF TESTS """
 # %%
 dfs = [df_en, df_fr, df_other]
 
-#%%
 for df in dfs:
     # Set lang for preprocessing
     LANG = "en"
@@ -212,7 +148,8 @@ for df in dfs:
     elif df["lang"].iloc[0] == "other":
         LANG = "all"
 
-    print(f"Starting for {LANG} dataset")
+    print("\n", "-" * 50)
+    print(f"\nStarting for {LANG} dataset")
 
     # Preprocess
     # 1: keep only already coded tweets
@@ -260,5 +197,13 @@ for df in dfs:
     df_not = df_coded[df_coded["theme_hardcoded"] == "0"].copy()
     false_neg = 1 - (df_not["covid_theme"] == 0).sum() / len(df_not)
     print(f"\nFalse negative: {false_neg}")
+
+    df_yes = df_coded[
+        ~(df_coded["theme_hardcoded"] == "0")
+        & ~(df_coded["topic"] == "608")
+        & ~(df_coded["topic"] == "608.0")
+    ].copy()
+    false_pos = 1 - (df_yes["covid_theme"] == 1).sum() / len(df_yes)
+    print(f"False positive: {false_pos}")
 
 # %%

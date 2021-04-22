@@ -11,6 +11,21 @@ import time
 import pandas as pd
 import numpy as np
 import nltk
+from nltk.stem.snowball import SnowballStemmer
+
+stopwords_en = nltk.corpus.stopwords.words("english")
+stemmer_en = SnowballStemmer(language="english")
+
+stopwords_fr = nltk.corpus.stopwords.words("french")
+stemmer_fr = SnowballStemmer(language="french")
+
+stopwords_all = (
+    nltk.corpus.stopwords.words("english")
+    + nltk.corpus.stopwords.words("french")
+    + nltk.corpus.stopwords.words("german")
+    + nltk.corpus.stopwords.words("italian")
+)
+
 from tqdm import tqdm
 
 tqdm.pandas()
@@ -24,25 +39,7 @@ df_en = pd.read_pickle("data/db_en.pkl")
 df_fr = pd.read_pickle("data/db_fr.pkl")
 df_other = pd.read_pickle("data/db_other.pkl")
 
-#%%
 """ ENG """
-# Drop a few cols for readability
-df_en.drop(
-    [
-        "covid_theme",
-        "created_at",
-        "handle",
-        "name",
-        "URL",
-        "type",
-        "retweets",
-        "favorites",
-        "position",
-        "frame",
-    ],
-    axis=1,
-    inplace=True,
-)
 
 #%%
 def covid_classify(row: pd.Series):
@@ -72,13 +69,17 @@ print(X)
 print(y)
 
 #%%
-from nltk.stem.snowball import SnowballStemmer
+def sanitize(text, lang="en"):
+    if lang == "en":
+        stemmer = stemmer_en
+        stopwords = stopwords_en
+    elif lang == "fr":
+        stemmer = stemmer_fr
+        stopwords = stopwords_fr
+    elif lang == "all":
+        stemmer = stemmer_en
+        stopwords = stopwords_all
 
-stopwords = nltk.corpus.stopwords.words("english")
-snowball_stemmer = SnowballStemmer(language="english")
-
-
-def sanitize(text):
     edited_text = re.sub(
         "  ", " ", text
     )  # replace double whitespace with single whitespace
@@ -98,7 +99,7 @@ def sanitize(text):
         "\W+", edited_text
     )  # spliting based on whitespace or whitespaces
     edited_text = " ".join(
-        [snowball_stemmer.stem(word) for word in edited_text if word not in stopwords]
+        [stemmer.stem(word) for word in edited_text if word not in stopwords]
     )  # Snowball Stemmer
     return edited_text
 
@@ -114,6 +115,7 @@ print(X_san)
 print(X_san[X_san["text"].str.contains("https")])  # if empty -> good
 
 # Remove rare and frequent words?
+# Lemmatization instead of stemming?
 
 # %%
 # Scikit time
@@ -130,6 +132,8 @@ from sklearn.discriminant_analysis import (
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
+from sklearn.pipeline import make_pipeline
+
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
@@ -323,13 +327,131 @@ res = pipeline.cv_results_
 print(f"Time {time.time() - start}")
 print(pd.DataFrame(res))
 
+#%%
+# Overall pipeline
+
+pipelines = []
+for model in [LogisticRegression(), BernoulliNB(), RidgeClassifier()]:
+    pipeline = make_pipeline(CountVectorizer(), TfidfTransformer(), model)
+    pipelines.append(pipeline)
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 
 # %%
+train_times = []
+for i, pipeline in enumerate(pipelines):
+    start = time.time()
+    CV_scores = cross_val_score(
+        pipeline, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+    )
+    train_times.append(time.time() - start)
+    print(i)
+    print(f"Mean CV accuracy: {np.mean(CV_scores)}")
+    print(f"Computed in {time.time() - start}s")
+
 """
-BernoulliNB - 93%
+df_en:
 LogReg - 95%
+BernoulliNB - 93%
 RidgeClassifier - 94%
-for df_en dataset
 """
 
-""" FR """
+# %%
+"""FR"""
+
+# 1: keep only already coded tweets
+df_fr_coded = df_fr[~df_fr["topic"].isnull() | ~df_fr["theme_hardcoded"].isnull()]
+#%%
+# 2: Set `y` column
+df_fr_coded["y"] = df_fr_coded.copy().progress_apply(covid_classify, axis=1)
+
+# %%
+# 3: create new col "x" with text or oldText if text is nan
+
+df_fr_coded["x"] = df_fr_coded.apply(
+    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+)
+X = df_fr_coded["x"]
+y = df_fr_coded["y"].ravel()
+print(X)
+print(y)
+
+# %%
+# 4: Sanitize X
+# Preprocess text
+X_san = X.copy()
+X_san = X_san.progress_apply(lambda t: sanitize(t, lang="fr"))
+print(X_san)
+print(X_san[X_san.str.contains("https")])  # if empty -> good
+# Delete accent?
+
+# %%
+train_times = []
+for i, pipeline in enumerate(pipelines):
+    start = time.time()
+    CV_scores = cross_val_score(
+        pipeline, X_san, y, scoring="accuracy", cv=folds, n_jobs=-1
+    )
+    train_times.append(time.time() - start)
+    print(i)
+    print(f"Mean CV accuracy: {np.mean(CV_scores)}")
+    print(f"Computed in {time.time() - start}s")
+
+"""
+df_fr:
+LogReg - 94%
+BernoulliNB - 95%
+RidgeClassifier - 95%
+"""
+
+# %%
+# Experiment: try with "df_other" and treat it as english+french+de+it
+"""Other"""
+
+# 1: keep only already coded tweets
+df_other_coded = df_other[
+    ~df_other["topic"].isnull() | ~df_other["theme_hardcoded"].isnull()
+]
+#%%
+# 2: Set `y` column
+df_other_coded["y"] = df_other_coded.copy().progress_apply(covid_classify, axis=1)
+
+# %%
+# 3: create new col "x" with text or oldText if text is nan
+
+df_other_coded["x"] = df_other_coded.apply(
+    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+)
+X = df_other_coded["x"]
+y = df_other_coded["y"].ravel()
+print(X)
+print(y)
+
+# %%
+# 4: Sanitize X
+# Preprocess text
+X_san = X.copy()
+X_san = X_san.progress_apply(lambda t: sanitize(t, lang="all"))
+print(X_san)
+print(X_san[X_san.str.contains("https")])  # if empty -> good
+
+# %%
+train_times = []
+for i, pipeline in enumerate(pipelines):
+    start = time.time()
+    CV_scores = cross_val_score(
+        pipeline, X_san, y, scoring="accuracy", cv=folds, n_jobs=-1
+    )
+    train_times.append(time.time() - start)
+    print(i)
+    print(f"Mean CV accuracy: {np.mean(CV_scores)}")
+    print(f"Computed in {time.time() - start}s")
+
+"""
+df_other:
+LogReg - 91%
+BernoulliNB - 91%
+RidgeClassifier - 94%
+-> better use ridge classifier
+"""
+
+# %%

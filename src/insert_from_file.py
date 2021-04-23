@@ -35,7 +35,7 @@ app_run = App(debug=True)
 db = Database("tweets.db", app=app_run)
 
 
-files = ["subset_to_complete_total.xlsx"]
+files = ["excluded_23042021_total.xlsx"]
 
 for filename in files:
     xls = pd.read_excel(f"src/resources/data/{filename}")

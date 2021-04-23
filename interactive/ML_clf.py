@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 """
 After investigation (see ML_clf_lab.py), the selected models are:
 1. LogisticRegression
@@ -8,7 +10,7 @@ All have more than 94% accuracy for the english and french sets and about 90% fo
 For the final classifier, the approach is the following:
 1. For each set (en, fr, other), classify each tweets with the 3
 algorithms trained on the respective set
-2. Final choice is made if at least 2/3 algs have the same choice
+2. The final choice is the decision of the majority of the 3 modesl (2/3)
 """
 
 #%%
@@ -60,6 +62,10 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import cross_val_score
+
+#%%
+app_run = App(debug=False)
+db = Database("tweets.db", app=app_run)
 
 #%%
 # Import the sets
@@ -139,6 +145,7 @@ folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 
 # %%
 dfs = [df_en, df_fr, df_other]
+clf_dfs = []
 
 for df in dfs:
     # Set lang for preprocessing
@@ -194,6 +201,10 @@ for df in dfs:
     df_coded.loc[:, "covid_theme"] = np.nan
     df_coded.loc[:, "covid_theme"] = df_coded.progress_apply(get_theme, axis=1)
 
+    # Append to classified list
+    clf_dfs.append(df_test)
+    clf_dfs.append(df_coded)
+
     df_not = df_coded[df_coded["theme_hardcoded"] == "0"].copy()
     false_neg = 1 - (df_not["covid_theme"] == 0).sum() / len(df_not)
     print(f"\nFalse negative: {false_neg}")
@@ -206,4 +217,20 @@ for df in dfs:
     false_pos = 1 - (df_yes["covid_theme"] == 1).sum() / len(df_yes)
     print(f"False positive: {false_pos}")
 
+# %%
+# clf_dfs is a list of dfs
+# We just need to upload that to the DB
+
+df_final = pd.concat(clf_dfs)
+to_update = []
+
+for row in df_final.iterrows():
+    to_update.append((row[1].loc["covid_theme"], row[1].loc["tweet_id"]))
+
+print(len(to_update))
+
+#%%
+with db:
+    count = db.update_theme_many(to_update)
+    print(f"{count} tweets updated")
 # %%

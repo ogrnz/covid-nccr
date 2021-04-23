@@ -155,6 +155,7 @@ class Database:
     def update_theme_many(self, params):
         """
         Update tweets in bulk
+        BEWARE covid_theme comes first, tweet_id second
         """
 
         sql = """UPDATE tweets SET covid_theme = ? WHERE tweet_id = ?"""

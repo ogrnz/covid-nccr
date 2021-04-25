@@ -54,10 +54,6 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.pipeline import make_pipeline
 
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
-from sklearn.model_selection import GridSearchCV
-
 from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
@@ -69,9 +65,9 @@ db = Database("tweets.db", app=app_run)
 
 #%%
 # Import the sets
-df_en = pd.read_pickle("data/db_en.pkl")
-df_fr = pd.read_pickle("data/db_fr.pkl")
-df_other = pd.read_pickle("data/db_other.pkl")
+df_en = pd.read_pickle("interactive/data/db_en.pkl")
+df_fr = pd.read_pickle("interactive/data/db_fr.pkl")
+df_other = pd.read_pickle("interactive/data/db_other.pkl")
 
 #%%
 # Preprocessing fcts
@@ -141,8 +137,6 @@ for model in [LogisticRegression(), BernoulliNB(), RidgeClassifier()]:
     pipeline = make_pipeline(CountVectorizer(), TfidfTransformer(), model)
     pipelines.append(pipeline)
 
-folds = KFold(n_splits=10, shuffle=True, random_state=31415)
-
 # %%
 dfs = [df_en, df_fr, df_other]
 clf_dfs = []
@@ -159,6 +153,7 @@ for df in dfs:
     print(f"\nStarting for {LANG} dataset")
 
     # Preprocess
+    print("Preprocessing..\n")
     # 1: keep only already coded tweets
     df_coded = df[~df["topic"].isnull() | ~df["theme_hardcoded"].isnull()].copy()
     df_test = df[df["topic"].isnull() & df["theme_hardcoded"].isnull()].copy()
@@ -183,6 +178,8 @@ for df in dfs:
 
     y_train = df_coded.loc[:, "y"].ravel()
 
+    # Predict
+    print("Predicting..")
     for i, pipeline in enumerate(pipelines):
         stepname = pipeline.steps[2][0]
         print(stepname)
@@ -192,7 +189,7 @@ for df in dfs:
         df_test.loc[:, stepname] = pipeline.predict(df_test.loc[:, "x"])
         df_coded.loc[:, stepname] = pipeline.predict(df_coded.loc[:, "x"])
 
-        print(f"Computed in {time.time() - start}s")
+        print(f"Computed in {round(time.time() - start, 3)}s")
         score = accuracy_score(df_coded.loc[:, "y"], df_coded.loc[:, stepname])
         print(f"Accuracy score (train set): {score}")
 
@@ -205,6 +202,7 @@ for df in dfs:
     clf_dfs.append(df_test)
     clf_dfs.append(df_coded)
 
+    # Compute false neg/pos
     df_not = df_coded[df_coded["theme_hardcoded"] == "0"].copy()
     false_neg = 1 - (df_not["covid_theme"] == 0).sum() / len(df_not)
     print(f"\nFalse negative: {false_neg}")
@@ -217,11 +215,129 @@ for df in dfs:
     false_pos = 1 - (df_yes["covid_theme"] == 1).sum() / len(df_yes)
     print(f"False positive: {false_pos}")
 
-# %%
-# clf_dfs is a list of dfs
-# We just need to upload that to the DB
-
 df_final = pd.concat(clf_dfs)
+df_final["covid_theme"].unique()
+
+#%%
+df_final.to_pickle("interactive/data/db_ML.pkl")
+
+#%%
+# After ML, correct with some manual changes
+df_final = pd.read_pickle("interactive/data/db_ML.pkl")
+
+def classify(row, clf):
+    txt = row.loc["oldText"] if row.loc["text"] is None else row.loc["text"]
+
+    topics_cov = [
+        "601",
+        "601.0",
+        "602",
+        "602.0",
+        "603",
+        "603.0",
+        "604",
+        "604.0",
+        "605",
+        "605.0",
+        "606",
+        "606.0",
+        "607",
+        "607.0",
+    ]
+    topics_not_cov = ["608", "608.0"]
+
+    # if (clf.classify(txt) \
+    #     or row.loc["topic"] in topics_cov):
+    if clf.classify(txt): #Otherwise, artificially bring down misslassification rate
+        return 1  # About covid
+    # elif (row.loc["topic"] in topics_not_cov \
+    #     or row.loc["theme_hardcoded"] == "0"):
+    #     return 0 # Not about covid
+    # Artificially brings down the misslassification rate for false positive
+    else:
+        return row.loc["covid_theme"]
+
+
+#%%
+from common.classify import Classifier
+%load_ext autoreload
+%autoreload 2
+
+classifier = Classifier(keywords_file="covid_final.txt")
+
+df_final["covid_theme"] = df_final.progress_apply(
+    lambda row: classify(row, classifier), axis=1
+)
+
+#%%
+topics_cov = [
+    "601",
+    "601.0",
+    "602",
+    "602.0",
+    "603",
+    "603.0",
+    "604",
+    "604.0",
+    "605",
+    "605.0",
+    "606",
+    "606.0",
+    "607",
+    "607.0",
+]
+topics_not_cov = ["608", "608.0"]
+
+
+# All coded tweets
+all_coded = df_final[
+    (df_final["topic"].isin(topics_cov + topics_not_cov)) | (df_final["theme_hardcoded"] == "0")
+]
+all_yes = all_coded[all_coded["topic"].isin(topics_cov)]
+all_no = all_coded[
+    all_coded["topic"].isin(topics_not_cov) | (all_coded["theme_hardcoded"] == "0")
+]
+
+"""
+"Real" false negative: 0%
+"Fake" (with manual changes to have a clean database): 0%
+"""
+# %%
+# Calculate false negative
+false_neg_count = sum(all_yes["covid_theme"] == "0")
+all_count = len(all_yes)
+
+print("False Negative:")
+print(
+    f"Out of {all_count} manually coded tweets about covid, {false_neg_count} were classified as not being about covid although they were. The false negative rate is {round(false_neg_count / all_count*100, 1)}%."
+)
+
+"""
+"Real" false negative: 1.8%
+"Fake" (with manual changes to have a clean database): 0.1%
+"""
+#%%
+# Calculate false positive
+
+false_pos_count = sum(all_no["covid_theme"] == 1)
+all_excluded_count = len(all_no)
+
+print("False Positive:")
+print(
+    f"Out of {all_excluded_count} manually classified tweets, {false_pos_count} were classified as being about covid although they were not. The false positive rate is {round(false_pos_count / all_excluded_count*100, 1)}%."
+)
+
+
+#%%
+# Check a few tweets
+df_final[df_final["theme_hardcoded"] == "0"]
+df_final["covid_theme"].unique()
+df_final[df_final["tweet_id"] == "1212681570710151168"]
+df_final[df_final["tweet_id"] == "1287812564"]
+df_final[df_final["tweet_id"] == "1248928528525115392"]
+# %%
+# Extract theme and tweet_id
+
 to_update = []
 
 for row in df_final.iterrows():
@@ -230,7 +346,10 @@ for row in df_final.iterrows():
 print(len(to_update))
 
 #%%
+# Upload to the DB
+
 with db:
     count = db.update_theme_many(to_update)
     print(f"{count} tweets updated")
+
 # %%

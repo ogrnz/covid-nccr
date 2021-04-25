@@ -18,4 +18,6 @@ database/csv/*
 database/xlsx/*
 database/test
 
+interactive/data/db_ML.pkl
+
 .ipynb_checkpoints

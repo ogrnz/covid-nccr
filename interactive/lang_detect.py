@@ -1,7 +1,7 @@
 # pylint: skip-file
 
 """
-Detect language (en, fr, de)
+Detect language (en, fr)
 """
 
 #%%
@@ -10,6 +10,8 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join("..", "src")))
 
 #%%
+import math
+
 import pandas as pd
 import numpy as np
 
@@ -66,20 +68,19 @@ df = pd.DataFrame(
     ],
 )
 df["text"].isna().sum()
-# 3902 NA's -> tweets with no URL
+# 3903 NA's -> tweets with no URL
 
 #%%
 identifier.classify(df["text"][0])
 # works!
 
 #%%
-def lang_detect(txt, threshold=0.9, isnone=False):
+def lang_detect(txt, threshold=0.9):
     """
     Detect tweet language
     returns None if confidence lvl < threshold
     """
-    if isnone:
-        print("Is None")
+
     if txt is None:
         return None
 
@@ -118,7 +119,7 @@ df["lang"].unique()
 #%%
 df.to_pickle("interactive/data/db_all_lang.pkl")
 #%%
-# If lang is not en or fr, set it to None
+# If lang is not en or fr, set it to `other``
 lang_lst = ["en", "fr"]
 df["lang"] = df["lang"].apply(lambda x: "other" if x not in lang_lst else x)
 df["lang"].unique()
@@ -133,18 +134,21 @@ other - 13542
 df.to_pickle("interactive/data/db_sub_lang.pkl")
 
 # %%
-df_subs = pd.read_pickle("interactive/data/db_sub_lang.pkl")
-df_en = df_subs[df_subs["lang"] == "en"]
-df_fr = df_subs[df_subs["lang"] == "fr"]
-df_other = df_subs[df_subs["lang"] == "other"]
+# READ
+df_all = pd.read_pickle("interactive/data/db_sub_lang.pkl")
+df_en = df_all[df_all["lang"] == "en"]
+df_fr = df_all[df_all["lang"] == "fr"]
+df_other = df_all[df_all["lang"] == "other"]
 
 # %%
+# TO PICKLE
 df_en.to_pickle("interactive/data/db_en.pkl")
 df_fr.to_pickle("interactive/data/db_fr.pkl")
 df_other.to_pickle("interactive/data/db_other.pkl")
 
 # %%
 """
+Other experiment, non conclusive
 Check if we can get the lang from twitter for the `other`
 """
 df_other = pd.read_pickle("interactive/data/db_other.pkl")
@@ -154,9 +158,6 @@ tweet = api.api.statuses_lookup(id_=tw_id, tweet_mode="extended")
 tweet[0].lang
 
 #%%
-import math
-
-
 def get_tweets_by_ids_with_nan(df):
     # Otherwise too long to handle
     df["tweet_id"].astype(str)

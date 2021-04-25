@@ -48,38 +48,55 @@ In our setting, a false positive (falsely classified as about covid) is less har
 
 
 #%%
-topics = list(range(601, 608))
-topics = [str(topic) for topic in topics]
+topics_cov = [
+    "601",
+    "601.0",
+    "602",
+    "602.0",
+    "603",
+    "603.0",
+    "604",
+    "604.0",
+    "605",
+    "605.0",
+    "606",
+    "606.0",
+    "607",
+    "607.0",
+]
+topics_not_cov = ["608", "608.0"]
 
-# All coded tweets except coded as 608
-# Have to take into account "608.0"
-all_coded = df[df["topic"].isin(topics)]
+
+# All coded tweets
+all_coded = df[
+    (df["topic"].isin(topics_cov + topics_not_cov)) | (df["theme_hardcoded"] == "0")
+]
+all_yes = all_coded[all_coded["topic"].isin(topics_cov)]
+all_no = all_coded[
+    all_coded["topic"].isin(topics_not_cov) | (all_coded["theme_hardcoded"] == "0")
+]
 
 # %%
 # Calculate false negative
-false_neg_count = sum(all_coded["covid_theme"] == 0)
-all_count = len(all_coded["covid_theme"])
+false_neg_count = sum(all_yes["covid_theme"] == "0")
+all_count = len(all_yes)
 
 print("False Negative:")
 print(
-    f"Out of {all_count} manually coded tweets, {false_neg_count} were classified as not being about covid although they were. The false negative rate is {round(false_neg_count / all_count*100, 1)}%."
+    f"Out of {all_count} manually coded tweets about covid, {false_neg_count} were classified as not being about covid although they were. The false negative rate is {round(false_neg_count / all_count*100, 1)}%."
 )
+# 0%, but it's on the train data, so it's quite normal
 
 #%%
 # Calculate false positive
 
-sub_hardcoded = df[df["theme_hardcoded"] == "0"]
-all_608 = df[df["topic"] == "608"]
-all_excluded = pd.concat([sub_hardcoded, all_608])
-
-false_pos_count = sum(all_excluded["covid_theme"] == 1)
+false_pos_count = sum(all_no["covid_theme"] == 1)
+all_excluded_count = len(all_no)
 
 print("False Positive:")
 print(
-    f"Out of {len(all_excluded)} manually classified tweets, {false_pos_count} were classified as being about covid although they were not. The false positive rate is {round(false_pos_count / len(all_excluded)*100, 1)}%."
+    f"Out of {all_excluded_count} manually classified tweets, {false_pos_count} were classified as being about covid although they were not. The false positive rate is {round(false_pos_count / all_excluded_count*100, 1)}%."
 )
+# 0.1% but "real" is 1.8%
 
 # %%
-"""
-Satisfactory false negative rate (4.2%). Would be nice to decrease the false positive as well.
-"""

@@ -10,7 +10,7 @@ class Classifier:
     Classify a text as being about covid or not
     """
 
-    def __init__(self, keywords_file="covid_keywords.txt"):
+    def __init__(self, keywords_file="covid_final.txt"):
         self.keywords = self.load_keywords(keywords_file)
         self.reg = self.create_reg()
 
@@ -35,8 +35,10 @@ class Classifier:
         """
         Classify a string as being about covid or not
         """
-
-        return re.search(self.reg, str(txt), re.I)
+        if re.search(self.reg, str(txt), re.I):
+            return True
+        else:
+            return False
 
 
 if __name__ == "__main__":

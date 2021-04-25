@@ -4,7 +4,6 @@ import sys, os
 
 sys.path.append(os.path.abspath(os.path.join("..", "src")))
 
-#%%
 import re
 import time
 
@@ -34,6 +33,33 @@ tqdm.pandas()
 from common.database import Database
 from common.app import App
 
+# %%
+# Scikit time
+from sklearn.naive_bayes import MultinomialNB, ComplementNB, BernoulliNB
+from sklearn.linear_model import LogisticRegression, RidgeClassifier, SGDClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.pipeline import make_pipeline
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
+from sklearn.model_selection import GridSearchCV
+
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import cross_val_score
+
 #%%
 df_en = pd.read_pickle("data/db_en.pkl")
 df_fr = pd.read_pickle("data/db_fr.pkl")
@@ -52,23 +78,6 @@ def covid_classify(row: pd.Series):
     return 1
 
 
-#%%
-# Only keep already coded tweets (6XX or "theme_hardcoded == 0")
-df_en = df_en[~df_en["topic"].isnull() | ~df_en["theme_hardcoded"].isnull()]
-
-# If 608 or theme_hardcoded == 0, then set new col `y` = 0
-df_en["y"] = df_en.apply(covid_classify, axis=1)
-
-# %%
-X = pd.DataFrame({"text": []})
-X["text"] = df_en.apply(
-    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
-)
-y = df_en["y"].ravel()
-print(X)
-print(y)
-
-#%%
 def sanitize(text, lang="en"):
     if lang == "en":
         stemmer = stemmer_en
@@ -107,47 +116,40 @@ def sanitize(text, lang="en"):
 tmp_tweet = "We proved that women’s active participation in a peace process can make a significant difference. -- Nobel Laureate @LeymahRGbowee on the important role of women for peace.\xa0https://t.co/XHnRXGPlQk\xa0via @AfricaRenewal\xa0https://t.co/1XH5JbBegt\xa0Feb 01, 2020\xa0'"
 sanitize(tmp_tweet)
 
+#%%
+# Only keep already coded tweets (6XX or "theme_hardcoded == 0")
+df_en = df_en[~df_en["topic"].isnull() | ~df_en["theme_hardcoded"].isnull()]
+df_en["text"] = df_en.apply(
+    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+)
+
+# If 608 or theme_hardcoded == 0, then set new col `y` = 0
+df_en["y"] = df_en.apply(covid_classify, axis=1)
+
 # %%
 # Preprocess text
-X_san = X.copy()
-X_san["text"] = X_san["text"].progress_apply(sanitize)
-print(X_san)
-print(X_san[X_san["text"].str.contains("https")])  # if empty -> good
-
+df_en_san = df_en.copy()
+df_en_san["x"] = df_en_san["text"].progress_apply(sanitize)
+print(df_en_san)
+print(df_en_san[df_en_san["x"].str.contains("https")])  # if empty -> good
 # Remove rare and frequent words?
 # Lemmatization instead of stemming?
 
-# %%
-# Scikit time
-from sklearn.naive_bayes import MultinomialNB, ComplementNB, BernoulliNB
-from sklearn.linear_model import LogisticRegression, RidgeClassifier
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.discriminant_analysis import (
-    LinearDiscriminantAnalysis,
-    QuadraticDiscriminantAnalysis,
+#%%
+# 5. train/test split to have an accurate score
+X_train, X_test, y_train, y_test = train_test_split(
+    df_en_san.drop("y", axis=1),
+    df_en_san.loc[:, "y"],
+    random_state=31415,
+    test_size=0.2,
+    shuffle=True,
 )
 
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.pipeline import make_pipeline
-
-
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
-from sklearn.model_selection import GridSearchCV
-
-from sklearn.metrics import classification_report
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import cross_val_score
 
 #%%
 """
 BerNB
-~93% accuracy
+~87% accuracy
 """
 nb_berNB = Pipeline(
     [
@@ -160,13 +162,55 @@ nb_berNB = Pipeline(
 start = time.time()
 folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 CV_berNB = cross_val_score(
-    nb_berNB, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+    nb_berNB, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
 )
+
+nb_berNB.fit(X_train["x"], y_train)
+y_pred = nb_berNB.predict(X_test["x"])
+score = accuracy_score(y_test, y_pred)
 print(f"Time {time.time() - start}")
 print(f"Mean CV accuracy: {np.mean(CV_berNB)}")
+print(f"Test accuracy: {score}")
 
-# print(f"accuracy {accuracy_score(y_pred, y_test)}")
-# print(classification_report(y_test, y_pred))
+
+#%%
+"""
+SGDClassifier
+# Try with other hyperparams
+# first try 92% accuracy with:
+array([{'clf__alpha': 0.0001, 'clf__eta0': 1.7143, 'clf__learning_rate': 'adaptive', 'clf__loss': 'hinge'}]
+"""
+nb_sgd = Pipeline(
+    [
+        ("vect", CountVectorizer()),
+        ("tfidf", TfidfTransformer()),
+        ("clf", SGDClassifier(random_state=31415)),
+    ]
+)
+
+start = time.time()
+folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+pipeline = GridSearchCV(
+    nb_sgd,
+    {
+        "clf__loss": [
+            "hinge",
+        ],
+        "clf__alpha": [0.0001],
+        "clf__learning_rate": ["adaptive"],
+        "clf__eta0": np.linspace(0.0001, 2, 50),
+    },
+    scoring="accuracy",
+    cv=folds,
+    verbose=1,
+    n_jobs=-1,
+)
+
+pipeline.fit(X_train["x"], y_train)
+res = pipeline.cv_results_
+print(f"Time {time.time() - start}")
+print(pd.DataFrame(res))
+
 
 #%%
 """
@@ -185,15 +229,20 @@ nb_svc = Pipeline(
 start = time.time()
 folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 CV_svc = cross_val_score(
-    nb_svc, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+    nb_svc, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
 )
+
+nb_svc.fit(X_train["x"], y_train)
+y_pred = nb_svc.predict(X_test["x"])
+score = accuracy_score(y_test, y_pred)
+
 print(f"Time {time.time() - start}")
 print(f"Mean CV accuracy: {np.mean(CV_svc)}")
-
+print(f"Test accuracy: {score}")
 #%%
 """
 DecisionTreeClassifier
-~87% accuracy
+~79% accuracy
 """
 nb_dectree = Pipeline(
     [
@@ -205,16 +254,22 @@ nb_dectree = Pipeline(
 
 start = time.time()
 folds = KFold(n_splits=50, shuffle=True, random_state=31415)
-CVd_dectree = cross_val_score(
-    nb_dectree, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+CV_dectree = cross_val_score(
+    nb_dectree, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
 )
+
+nb_dectree.fit(X_train["x"], y_train)
+y_pred = nb_dectree.predict(X_test["x"])
+score = accuracy_score(y_test, y_pred)
+
 print(f"Time {time.time() - start}")
-print(f"Mean CV accuracy: {np.mean(CVd_dectree)}")
+print(f"Mean CV accuracy: {np.mean(CV_dectree)}")
+print(f"Test accuracy: {score}")
 
 #%%
 """
 MultinomialNB
-~88% accuracy
+~84% accuracy
 """
 nb_multiNB = Pipeline(
     [
@@ -225,17 +280,23 @@ nb_multiNB = Pipeline(
 )
 
 start = time.time()
-folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+folds = KFold(n_splits=50, shuffle=True, random_state=31415)
 CV_multiNB = cross_val_score(
-    nb_multiNB, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+    nb_multiNB, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
 )
+
+nb_multiNB.fit(X_train["x"], y_train)
+y_pred = nb_multiNB.predict(X_test["x"])
+score = accuracy_score(y_test, y_pred)
+
 print(f"Time {time.time() - start}")
 print(f"Mean CV accuracy: {np.mean(CV_multiNB)}")
+print(f"Test accuracy: {score}")
 
 #%%
 """
 ComplementNB
-~89% accuracy
+~84% accuracy
 """
 nb_compNB = Pipeline(
     [
@@ -246,56 +307,89 @@ nb_compNB = Pipeline(
 )
 
 start = time.time()
-folds = KFold(n_splits=10, shuffle=True, random_state=31415)
+folds = KFold(n_splits=20, shuffle=True, random_state=31415)
 CV_compNB = cross_val_score(
-    nb_compNB, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+    nb_compNB, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
 )
+
+nb_compNB.fit(X_train["x"], y_train)
+y_pred = nb_compNB.predict(X_test["x"])
+score = accuracy_score(y_test, y_pred)
+
 print(f"Time {time.time() - start}")
 print(f"Mean CV accuracy: {np.mean(CV_compNB)}")
+print(f"Test accuracy: {score}")
 
 #%%
 """
 LogisticRegression
-~95% accuracy for different penalty and solver
-3s l2 penalty
+~91% accuracy
+{'clf__C': 1.60002, 'clf__l1_ratio': 0.75, 'clf__penalty': 'elasticnet', 'clf__solver': 'saga'}
 """
 nb_logreg = Pipeline(
     [
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
-        ("clf", LogisticRegression()),
+        ("clf", LogisticRegression(random_state=31415)),
     ]
 )
 
 start = time.time()
-folds = KFold(n_splits=10, shuffle=True, random_state=31415)
-CV_logreg = cross_val_score(
-    nb_logreg, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+folds = KFold(n_splits=6, shuffle=True, random_state=31415)
+pipeline = GridSearchCV(
+    nb_logreg,
+    {
+        "clf__penalty": ["l1", "l2", "elasticnet", "none"],
+        "clf__C": np.linspace(0.0001, 2, 6),
+        "clf__solver": ["saga"],
+        "clf__l1_ratio": np.linspace(0, 1, 5),
+    },
+    scoring="accuracy",
+    cv=folds,
+    verbose=1,
+    n_jobs=-1,
 )
-print(f"Time {time.time() - start}")
-print(f"Mean CV accuracy: {np.mean(CV_logreg)}")
 
+pipeline.fit(X_train["x"], y_train)
+res = pipeline.cv_results_
+resdf = pd.DataFrame(res)
+print(f"Time {time.time() - start}")
+print(resdf)
+print(resdf[resdf["rank_test_score"] == 1])
 #%%
 """
 RidgeClassifier
-~94%
-3s
+~90%
+{'clf__alpha': 1.0, 'clf__solver': 'sparse_cg'}
 """
 nb_ridge = Pipeline(
     [
         ("vect", CountVectorizer()),
         ("tfidf", TfidfTransformer()),
-        ("clf", RidgeClassifier()),
+        ("clf", RidgeClassifier(random_state=31415)),
     ]
 )
 
 start = time.time()
-folds = KFold(n_splits=10, shuffle=True, random_state=31415)
-CV_ridge = cross_val_score(
-    nb_ridge, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+folds = KFold(n_splits=5, shuffle=True, random_state=31415)
+pipeline = GridSearchCV(
+    nb_ridge,
+    {
+        "clf__alpha": np.linspace(0.0001, 1, 10),
+        "clf__solver": ["svd", "lsqr", "sparse_cg", "sag", "saga"],
+    },
+    scoring="accuracy",
+    cv=folds,
+    verbose=1,
+    n_jobs=-1,
 )
+
+pipeline.fit(X_train["x"], y_train)
+res = pipeline.cv_results_
+resdf = pd.DataFrame(res)
 print(f"Time {time.time() - start}")
-print(f"Mean CV accuracy: {np.mean(CV_ridge)}")
+print(resdf)
+print(resdf[resdf["rank_test_score"] == 1])
 
 #%%
 """
@@ -330,128 +424,171 @@ print(pd.DataFrame(res))
 #%%
 # Overall pipeline
 
+params_sgd = {
+    "sgdclassifier__eta0": 1.7143,
+    "sgdclassifier__learning_rate": "adaptive",
+    "sgdclassifier__loss": "hinge",
+}
+params_logreg = {
+    "logisticregression__C": 1.6,
+    "logisticregression__l1_ratio": 0.75,
+    "logisticregression__penalty": "elasticnet",
+    "logisticregression__solver": "saga",
+}
+params_ridge = {"ridgeclassifier__solver": "sparse_cg"}
+optimal_params = {
+    "sgdclassifier": params_sgd,
+    "logisticregression": params_logreg,
+    "ridgeclassifier": params_ridge,
+}
+
 pipelines = []
-for model in [LogisticRegression(), BernoulliNB(), RidgeClassifier()]:
+for i, model in enumerate(
+    [
+        SGDClassifier(random_state=31415),
+        LogisticRegression(random_state=31415),
+        RidgeClassifier(),
+    ]
+):
     pipeline = make_pipeline(CountVectorizer(), TfidfTransformer(), model)
     pipelines.append(pipeline)
+    pipeline.set_params(**optimal_params[pipeline.steps[2][0]])
+
 folds = KFold(n_splits=10, shuffle=True, random_state=31415)
 
+#%%
+def prepare_df(df, lang="en"):
+    df_do = df.copy()
+
+    # Only keep already coded tweets (6XX or "theme_hardcoded == 0")
+    df_do = df_do[~df_do["topic"].isnull() | ~df_do["theme_hardcoded"].isnull()]
+    df_do["text"] = df_do.apply(
+        lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+    )
+
+    # If 608 or theme_hardcoded == 0, then set new col `y` = 0
+    df_do["y"] = df_do.apply(covid_classify, axis=1)
+
+    # Make "x" col
+    df_do["x"] = df_do["text"].progress_apply(lambda x: sanitize(x, lang))
+    print(df_do[df_do["x"].str.contains("https")])  # if empty -> good
+
+    return df_do
+
+
+#%%
+df_en_ready = prepare_df(df_en, lang="en")
+
+#%%
+# Train/test split to have an accurate score
+X_train, X_test, y_train, y_test = train_test_split(
+    df_en_ready.drop("y", axis=1),
+    df_en_ready.loc[:, "y"],
+    random_state=31415,
+    test_size=0.2,
+    shuffle=True,
+)
+
+
 # %%
-train_times = []
 for i, pipeline in enumerate(pipelines):
     start = time.time()
     CV_scores = cross_val_score(
-        pipeline, X_san["text"], y, scoring="accuracy", cv=folds, n_jobs=-1
+        pipeline, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
     )
-    train_times.append(time.time() - start)
-    print(i)
+
+    pipeline.fit(X_train["x"], y_train)
+    y_pred = pipeline.predict(X_test["x"])
+    score = accuracy_score(y_test, y_pred)
+
+    print(pipeline.steps[2][0])
     print(f"Mean CV accuracy: {np.mean(CV_scores)}")
     print(f"Computed in {time.time() - start}s")
+    print(f"Test accuracy: {score}")
+    print(classification_report(y_test, y_pred))
 
 """
 df_en:
-LogReg - 95%
-BernoulliNB - 93%
-RidgeClassifier - 94%
+SGD - 92%
+LogReg - 92%
+Ridge - 91%
 """
 
 # %%
 """FR"""
 
-# 1: keep only already coded tweets
-df_fr_coded = df_fr[~df_fr["topic"].isnull() | ~df_fr["theme_hardcoded"].isnull()]
-#%%
-# 2: Set `y` column
-df_fr_coded["y"] = df_fr_coded.copy().progress_apply(covid_classify, axis=1)
+df_fr_ready = prepare_df(df_fr, lang="fr")
 
-# %%
-# 3: create new col "x" with text or oldText if text is nan
-
-df_fr_coded["x"] = df_fr_coded.apply(
-    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+# Train/test split to have an accurate score
+X_train, X_test, y_train, y_test = train_test_split(
+    df_fr_ready.drop("y", axis=1),
+    df_fr_ready.loc[:, "y"],
+    random_state=31415,
+    test_size=0.2,
+    shuffle=True,
 )
-X = df_fr_coded["x"]
-y = df_fr_coded["y"].ravel()
-print(X)
-print(y)
 
 # %%
-# 4: Sanitize X
-# Preprocess text
-X_san = X.copy()
-X_san = X_san.progress_apply(lambda t: sanitize(t, lang="fr"))
-print(X_san)
-print(X_san[X_san.str.contains("https")])  # if empty -> good
-# Delete accent?
-
-# %%
-train_times = []
 for i, pipeline in enumerate(pipelines):
     start = time.time()
     CV_scores = cross_val_score(
-        pipeline, X_san, y, scoring="accuracy", cv=folds, n_jobs=-1
+        pipeline, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
     )
-    train_times.append(time.time() - start)
-    print(i)
+
+    pipeline.fit(X_train["x"], y_train)
+    y_pred = pipeline.predict(X_test["x"])
+    score = accuracy_score(y_test, y_pred)
+
+    print(pipeline.steps[2][0])
     print(f"Mean CV accuracy: {np.mean(CV_scores)}")
     print(f"Computed in {time.time() - start}s")
+    print(f"Test accuracy: {score}")
+    print(classification_report(y_test, y_pred))
 
 """
 df_fr:
-LogReg - 94%
-BernoulliNB - 95%
-RidgeClassifier - 95%
+SGD - 91%
+LogReg - 91%
+Ridge - 91%
 """
 
 # %%
 # Experiment: try with "df_other" and treat it as english+french+de+it
 """Other"""
 
-# 1: keep only already coded tweets
-df_other_coded = df_other[
-    ~df_other["topic"].isnull() | ~df_other["theme_hardcoded"].isnull()
-]
-#%%
-# 2: Set `y` column
-df_other_coded["y"] = df_other_coded.copy().progress_apply(covid_classify, axis=1)
+df_other_ready = prepare_df(df_other, lang="all")
 
-# %%
-# 3: create new col "x" with text or oldText if text is nan
-
-df_other_coded["x"] = df_other_coded.apply(
-    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+# Train/test split to have an accurate score
+X_train, X_test, y_train, y_test = train_test_split(
+    df_other_ready.drop("y", axis=1),
+    df_other_ready.loc[:, "y"],
+    random_state=31415,
+    test_size=0.2,
+    shuffle=True,
 )
-X = df_other_coded["x"]
-y = df_other_coded["y"].ravel()
-print(X)
-print(y)
 
 # %%
-# 4: Sanitize X
-# Preprocess text
-X_san = X.copy()
-X_san = X_san.progress_apply(lambda t: sanitize(t, lang="all"))
-print(X_san)
-print(X_san[X_san.str.contains("https")])  # if empty -> good
-
-# %%
-train_times = []
 for i, pipeline in enumerate(pipelines):
     start = time.time()
     CV_scores = cross_val_score(
-        pipeline, X_san, y, scoring="accuracy", cv=folds, n_jobs=-1
+        pipeline, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
     )
-    train_times.append(time.time() - start)
-    print(i)
+
+    pipeline.fit(X_train["x"], y_train)
+    y_pred = pipeline.predict(X_test["x"])
+    score = accuracy_score(y_test, y_pred)
+
+    print(pipeline.steps[2][0])
     print(f"Mean CV accuracy: {np.mean(CV_scores)}")
     print(f"Computed in {time.time() - start}s")
+    print(f"Test accuracy: {score}")
+    print(classification_report(y_test, y_pred))
 
 """
 df_other:
-LogReg - 91%
-BernoulliNB - 91%
-RidgeClassifier - 94%
--> better use ridge classifier
+SGD - 89%
+LogReg - 90%
+Ridge - 90%
 """
 
 # %%

@@ -1,7 +1,7 @@
 # pylint: skip-file
 
 """
-Detect language (en, fr)
+Detect language (en, fr, other)
 """
 
 #%%
@@ -121,7 +121,7 @@ df.to_pickle("interactive/data/db_all_lang.pkl")
 #%%
 # If lang is not en or fr, set it to `other``
 lang_lst = ["en", "fr"]
-df["lang"] = df["lang"].apply(lambda x: "other" if x not in lang_lst else x)
+df["lang"] = df["lang"].progress_apply(lambda x: "other" if x not in lang_lst else x)
 df["lang"].unique()
 
 """

@@ -12,6 +12,24 @@ class Helpers:
     Class that contains helper functions
     """
 
+    topics_cov = [
+        "601",
+        "601.0",
+        "602",
+        "602.0",
+        "603",
+        "603.0",
+        "604",
+        "604.0",
+        "605",
+        "605.0",
+        "606",
+        "606.0",
+        "607",
+        "607.0",
+    ]
+    topics_not_cov = ["608", "608.0"]
+
     def __init__(self):
         pass
 
@@ -100,6 +118,38 @@ class Helpers:
         """
 
         return sum(elem is None for elem in lst[start:finish])
+
+    @staticmethod
+    def df_from_db(tweets) -> pd.DataFrame:
+        """Transform list of tweets from database into pd.DataFrame
+
+        Args:
+            tweets (list): list of tweets
+        """
+
+        df = pd.DataFrame(
+            tweets,
+            columns=[
+                "tweet_id",
+                "covid_theme",
+                "created_at",
+                "handle",
+                "name",
+                "oldText",
+                "text",
+                "URL",
+                "type",
+                "retweets",
+                "favorites",
+                "topic",
+                "subcat",
+                "position",
+                "frame",
+                "theme_hardcoded",
+            ],
+        )
+
+        return df
 
 
 if __name__ == "__main__":

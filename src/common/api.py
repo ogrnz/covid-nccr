@@ -20,6 +20,7 @@ class Api:
 
     api = None
     connected = False
+    COUNT = 500  # Academic account
 
     def __init__(self, cons_key, cons_scrt, acc_key, acc_scrt, main_app: App = None):
         self.app = main_app
@@ -49,7 +50,7 @@ class Api:
 
         all_tweets = []
         new_tweets = self.api.user_timeline(
-            screen_name=screen_name, count=200, tweet_mode="extended"
+            screen_name=screen_name, count=self.COUNT, tweet_mode="extended"
         )
         all_tweets.extend(new_tweets)
         oldest = all_tweets[-1].id - 1
@@ -63,7 +64,10 @@ class Api:
             print(f"Getting tweets before {oldest} ({screen_name})")
 
             new_tweets = self.api.user_timeline(
-                screen_name=screen_name, count=200, max_id=oldest, tweet_mode="extended"
+                screen_name=screen_name,
+                count=self.COUNT,
+                max_id=oldest,
+                tweet_mode="extended",
             )
             all_tweets.extend(new_tweets)
             oldest = all_tweets[-1].id - 1

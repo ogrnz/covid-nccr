@@ -86,7 +86,7 @@ def main(app: App, db: Database):
             )
 
             tweet_entry = ()
-            for key, val in total_tweets[actor][tweet].items():
+            for _, val in total_tweets[actor][tweet].items():
                 tweet_entry += (val,)
 
             tmp_tweet = list(tweet_entry)
@@ -119,6 +119,6 @@ def main(app: App, db: Database):
 
 if __name__ == "__main__":
     app_run = App(debug=False)
-    database = Database("tweets.db", app=app_run)
+    database = Database("tweets_tests.db", app=app_run)
 
     main(app_run, database)

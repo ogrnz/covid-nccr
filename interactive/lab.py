@@ -1,6 +1,6 @@
 # pylint: skip-file
 """
-Debug
+Lab interactive file
 """
 
 #%%
@@ -15,18 +15,23 @@ import numpy as np
 from common.database import Database
 from common.app import App
 from common.api import Api
+from common.helpers import Helpers
 
 app_run = App(debug=True)
-db = Database("lab.db", app=app_run)
+db = Database("tweets.db", app=app_run)
 
 # %%
 # Connect to the API
-api = Api(
-    app_run.consumer_key,
-    app_run.consumer_secret,
-    app_run.access_key,
-    app_run.access_secret,
-    main_app=app_run,
-)
+api = Api(app_run)
+
+# %%
+with db:
+    tweets = db.get_all_tweets()
+len(tweets)
+
+# %%
+df = Helpers.df_from_db(tweets)
+
+# %%
 
 # %%

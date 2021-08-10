@@ -22,20 +22,19 @@ class Api:
     connected = False
     COUNT = 500  # Academic account
 
-    def __init__(self, cons_key, cons_scrt, acc_key, acc_scrt, main_app: App = None):
-        self.app = main_app
-        if App is None:
-            self.app = App()
-        self.connect_api(cons_key, cons_scrt, acc_key, acc_scrt)
+    def __init__(self, main_app: App = None):
+        self.app = main_app if not None else App()
+        self.connect_api()
 
-    def connect_api(self, cons_key, cons_scrt, acc_key, acc_scrt):
+    def connect_api(self):
         """
         Connect to twitter API through tweepy
         """
 
         try:
-            auth = tweepy.OAuthHandler(cons_key, cons_scrt)
-            auth.set_access_token(acc_key, acc_scrt)
+            auth = tweepy.AppAuthHandler(
+                self.app.consumer_key, self.app.consumer_secret
+            )
             self.api = tweepy.API(auth)
             self.connected = True
         except tweepy.TweepError as error:
@@ -259,7 +258,7 @@ class Api:
 
         return df
 
-    def get_tweets_by_ids_with_nan(self, tweets_ids: list, df, no_id_remove=False):
+    def get_tweets_by_ids_with_nan(self, tweets_ids: list, df=None, no_id_remove=False):
         """
         The idea is to do the same as the get_tweets_by_ids() method,
         but to return a modified df instead of a new one.
@@ -436,7 +435,7 @@ class Api:
 
 if __name__ == "__main__":
     app = App(debug=True)
-    api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)
+    api = Api(app)
 
     tweets_ids_xls = Helpers.extract_ids_file("src/resources/data/fr.pkl")
     print(f"Starting ids length: {len(tweets_ids_xls)}")

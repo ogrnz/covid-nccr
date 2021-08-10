@@ -121,7 +121,8 @@ class Helpers:
 
     @staticmethod
     def df_from_db(tweets) -> pd.DataFrame:
-        """Transform list of tweets from database into pd.DataFrame
+        """
+        Transform list of tweets from database into pd.DataFrame
 
         Args:
             tweets (list): list of tweets

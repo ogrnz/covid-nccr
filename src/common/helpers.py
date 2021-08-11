@@ -30,8 +30,25 @@ class Helpers:
     ]
     topics_not_cov = ["608", "608.0"]
 
-    def __init__(self):
-        pass
+    # !! Structure should match SQL schema. !!
+    schema_cols = [
+        "tweet_id",
+        "covid_theme",
+        "created_at",
+        "handle",
+        "name",
+        "oldText",
+        "text",
+        "URL",
+        "type",
+        "retweets",
+        "favorites",
+        "topic",
+        "subcat",
+        "position",
+        "frame",
+        "theme_hardcoded",
+    ]
 
     @staticmethod
     def get_actors_url(filename: str) -> list:
@@ -65,6 +82,7 @@ class Helpers:
         """
         Print elapsed time in terminal
         """
+
         print(f"\nDone in {round(elapsed, 1)} s")
 
     @staticmethod
@@ -120,34 +138,14 @@ class Helpers:
         return sum(elem is None for elem in lst[start:finish])
 
     @staticmethod
-    def df_from_db(tweets) -> pd.DataFrame:
+    def df_from_db(tweets: list) -> pd.DataFrame:
         """
         Transform list of tweets from database into pd.DataFrame
-
-        Args:
-            tweets (list): list of tweets
         """
 
         df = pd.DataFrame(
             tweets,
-            columns=[
-                "tweet_id",
-                "covid_theme",
-                "created_at",
-                "handle",
-                "name",
-                "oldText",
-                "text",
-                "URL",
-                "type",
-                "retweets",
-                "favorites",
-                "topic",
-                "subcat",
-                "position",
-                "frame",
-                "theme_hardcoded",
-            ],
+            columns=Helpers.schema_cols,
         )
 
         return df

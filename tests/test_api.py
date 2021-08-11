@@ -46,12 +46,15 @@ class TestApi(unittest.TestCase):
         retrieving an old tweet.
         """
 
-        tws_list = [20, 1211942570244231169]
+        tws_list = [20, -10, 1211942570244231169]
         tweets = self.api.get_tweets_by_ids(tws_list)
 
         self.assertEqual(len(tws_list), len(tweets))
+        self.assertIsNotNone(tweets.iloc[0, :][2])
+        self.assertIsNone(tweets.iloc[1, :][2])
 
-    # TODO:
-    # test_get_tweets_by_ids_with_nan
-    # test_get_complete_tweets_by_ids
-    #
+    def test_get_complete_tweets_by_ids(self):
+        tws_list = [20, -10, 1425382732230807561]
+        tweets = self.api.get_complete_tweets_by_ids(tws_list)
+
+        self.assertGreater(len(tweets.loc[3, "fulltext"]), 140)

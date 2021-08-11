@@ -20,4 +20,6 @@ database/test
 
 interactive/data/db_ML.pkl
 
+tests/__pycache__
+
 .ipynb_checkpoints

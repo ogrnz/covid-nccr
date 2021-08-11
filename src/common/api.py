@@ -99,25 +99,21 @@ class Api:
                     old_text = "".join(old_text)
 
             # Make final dict
-            # Warning: structure should match database's schema!
-            outtweets[index] = {
-                "tweet_id": tweet.id,
-                "covid_theme": None,
-                "created_at": tweet.created_at.strftime("%d/%m/%Y %H:%M:%S"),
-                "handle": f"@{tweet.user.screen_name}",
-                "name": tweet.user.name,
-                "oldText": old_text,
-                "text": full_text,
-                "URL": f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}",
-                "type": tweet_type,
-                "retweets": tweet.retweet_count,
-                "favorites": tweet.favorite_count,
-                "topic": None,
-                "subcat": None,
-                "position": None,
-                "frame": None,
-                "theme_hardcoded": None,
-            }
+            outtweets[index] = {col: None for col in Helpers.schema_cols}
+            outtweets[index]["tweet_id"] = tweet.id
+            outtweets[index]["created_at"] = tweet.created_at.strftime(
+                "%d/%m/%Y %H:%M:%S"
+            )
+            outtweets[index]["handle"] = f"@{tweet.user.screen_name}"
+            outtweets[index]["name"] = tweet.user.name
+            outtweets[index]["oldText"] = old_text
+            outtweets[index]["text"] = full_text
+            outtweets[index][
+                "URL"
+            ] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+            outtweets[index]["type"] = tweet_type
+            outtweets[index]["retweets"] = tweet.retweet_count
+            outtweets[index]["favorites"] = tweet.favorite_count
 
         return outtweets
 
@@ -128,46 +124,13 @@ class Api:
 
         tot_tweets = {}
         for i, tweet_id in enumerate(tweets_ids, start=1):
-            tot_tweets[i] = {
-                "tweet_id": int(tweet_id),
-                "covid_theme": None,
-                "created_at": None,
-                "handle": None,
-                "name": None,
-                "oldText": None,
-                "text": None,
-                "URL": None,
-                "type": None,
-                "retweets": None,
-                "favorites": None,
-                "topic": None,
-                "subcat": None,
-                "position": None,
-                "frame": None,
-                "theme_hardcoded": None,
-            }
+            tot_tweets[i] = {col: None for col in Helpers.schema_cols}
+            tot_tweets[i]["tweet_id"] = int(tweet_id)
 
         df = pd.DataFrame.from_dict(
             data=tot_tweets,
             orient="index",
-            columns=[
-                "tweet_id",
-                "covid_theme",
-                "created_at",
-                "handle",
-                "name",
-                "oldText",
-                "text",
-                "URL",
-                "type",
-                "retweets",
-                "favorites",
-                "topic",
-                "subcat",
-                "position",
-                "frame",
-                "theme_hardcoded",
-            ],
+            columns=Helpers.schema_cols,
         )
 
         lim_start = 100
@@ -198,8 +161,7 @@ class Api:
             # Edit tot_tweets dict
             for compl_tweet in compl_tweets:
                 old_text = None
-                if hasattr(compl_tweet, "retweeted_status"):
-                    # Is RT
+                if hasattr(compl_tweet, "retweeted_status"):  # Is RT
                     old_text = compl_tweet.full_text
                     tweet_type = "Retweet"
                     full_text = compl_tweet.retweeted_status.full_text
@@ -253,12 +215,9 @@ class Api:
             ids = tweets_ids[start:final]
             itera += 1
 
-            if self.app.debug and itera == iter_needed:
-                break
-
         return df
 
-    def get_tweets_by_ids_with_nan(self, tweets_ids: list, df=None, no_id_remove=False):
+    def get_tweets_by_ids_with_nan(self, tweets_ids: list, df, no_id_remove=False):
         """
         The idea is to do the same as the get_tweets_by_ids() method,
         but to return a modified df instead of a new one.
@@ -281,9 +240,6 @@ class Api:
 
         while itera < iter_needed + 1:
             Helpers.dynamic_text(f"{itera}/{iter_needed}")
-
-            if self.app.debug:
-                print(f"{itera}/{iter_needed}")
 
             try:
                 compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")
@@ -315,6 +271,13 @@ class Api:
 
                         old_text = prefix, old_text
                         old_text = "".join(old_text)
+
+                """
+                TODO: replace horrible df instantiation
+                new_tweet = {col: None for col in Helpers.schema_cols}
+                for coded_col in ["topic", "subcat", "position", "frame", "theme_hardcoded"]:
+                    del new_tweet[coded_col]
+                """
 
                 df.loc[
                     df["tweet_id"] == compl_tweet.id, ["created_at"]
@@ -358,7 +321,7 @@ class Api:
         if not no_id_remove:
             cols.remove("tweet_id")
         df = df[cols]
-        # print(cols)
+
         return df
 
     def get_complete_tweets_by_ids(self, tweets_ids: list):
@@ -426,9 +389,6 @@ class Api:
 
             ids = tweets_ids[start:final]
             itera += 1
-
-            if self.app.debug and itera == iter_needed:
-                break
 
         return df
 

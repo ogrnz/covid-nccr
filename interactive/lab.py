@@ -25,13 +25,6 @@ db = Database("tweets.db", app=app_run)
 api = Api(app_run)
 
 # %%
-with db:
-    tweets = db.get_all_tweets()
-len(tweets)
-
-# %%
-df = Helpers.df_from_db(tweets)
-
-# %%
+tw = api.get_tweets_by_ids([1215573600821903360])
 
 # %%

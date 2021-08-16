@@ -21,19 +21,19 @@ if __name__ == "__main__":
     database = Database("tweets.db", app=app_run)
 
     # 1.
-    print("\n1. ", "-" * 80)
+    print("\n1. Scrape and classify tweets ", "-" * 60)
     # Scrape and classify tweets
     # and insert them into db
     scrape.main(app_run, database)
 
     # 2.
-    print("\n2. ", "-" * 80)
+    print("\n2. Exporting to xls ", "-" * 60)
     # Export one time total db, one time only covid
     xls_covid = convert_csv.main(database, app_run, only_covid=True)
     xls_total = convert_csv.main(database, app_run, only_covid=False)
 
     # 3.
-    print("\n3. ", "-" * 80)
+    print("\n3. Exporting to nextcloud server ", "-" * 60)
     export_webdav.main(xls_covid, app=app_run)
     export_webdav.main(xls_total, app=app_run)
 

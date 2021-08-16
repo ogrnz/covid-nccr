@@ -5,6 +5,7 @@ Database module
 import sqlite3
 
 from common.app import App
+from common.helpers import Helpers
 
 
 class Database:
@@ -19,6 +20,7 @@ class Database:
         self.sql_schema = self.__retrieve_schema()
         self.create_table()
         self.db_name = db_name
+        self.prep_req = self.__prepare_req()
 
     def __enter__(self):
         self.connect()
@@ -26,6 +28,24 @@ class Database:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.conn:
             self.conn.close()
+
+    def __prepare_req(self):
+        """
+        Generate a string with number of necessary "?" to prepare requests.
+        returns str("(?,?,?)")
+        """
+
+        prep_req_tmp = tuple("?" for _ in range(len(Helpers.schema_cols)))
+        return str(prep_req_tmp).replace("'", "")
+
+    def __retrieve_schema(self):
+        """
+        Get sql tweets table schema
+        """
+
+        with open(f"{self.app.root_dir}/database/schema.sql", "r") as sql:
+            sql_lines = sql.readlines()
+        return "".join(sql_lines)
 
     def connect(self):
         """
@@ -36,15 +56,6 @@ class Database:
             self.conn = sqlite3.connect(f"{self.app.root_dir}/database/{self.db_name}")
         except sqlite3.Error as error:
             print(f"Error establishing connection to database {self.db_name}\n", error)
-
-    def __retrieve_schema(self):
-        """
-        Get sql tweets table schema
-        """
-
-        with open(f"{self.app.root_dir}/database/schema.sql", "r") as sql:
-            sql_lines = sql.readlines()
-        return "".join(sql_lines)
 
     def create_table(self):
         """
@@ -199,24 +210,9 @@ class Database:
         """
         Insert new tweet into database
         """
-        sql = """ INSERT OR IGNORE INTO tweets(
-                        tweet_id,
-                        covid_theme,
-                        type,
-                        created_at,
-                        handle,
-                        name,
-                        oldtext,
-                        text,
-                        url,
-                        retweets,
-                        favorites,
-                        topic,
-                        subcat,
-                        position,
-                        frame,
-                        theme_hardcoded)
-                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+
+        sql = f"""INSERT OR IGNORE INTO tweets({col for col in Helpers.schema_cols})
+                VALUES{self.prep_req}"""
         cur = self.conn.cursor()
 
         try:
@@ -233,8 +229,9 @@ class Database:
         """
         Insert new tweets into database
         """
-        sql = """ INSERT OR IGNORE INTO tweets
-                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+
+        sql = f"""INSERT OR IGNORE INTO tweets
+                  VALUES{self.prep_req}"""
         cur = self.conn.cursor()
 
         try:
@@ -251,8 +248,9 @@ class Database:
         """
         Insert new tweet into database
         """
-        sql = """ INSERT OR REPLACE INTO tweets
-                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+
+        sql = f"""INSERT OR REPLACE INTO tweets
+                  VALUES{self.prep_req}"""
         cur = self.conn.cursor()
 
         try:

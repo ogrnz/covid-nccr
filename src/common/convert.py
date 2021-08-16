@@ -11,6 +11,7 @@ import openpyxl
 
 from common.app import App
 from common.database import Database
+from common.helpers import Helpers
 
 
 class Converter:
@@ -23,27 +24,7 @@ class Converter:
         self.database = database
         self.only_covid = only_covid
 
-    def convert_by_columns(
-        self,
-        cols: tuple = (
-            "tweet_id",
-            "covid_theme",
-            "created_at",
-            "handle",
-            "name",
-            "oldtext",
-            "text",
-            "url",
-            "type",
-            "retweets",
-            "favorites",
-            "topic",
-            "subcat",
-            "position",
-            "frame",
-            "theme_hardcoded",
-        ),
-    ):
+    def convert_by_columns(self, cols=tuple(col for col in Helpers.schema_cols)):
         """
         Convert tweets table to csv by columns
         """

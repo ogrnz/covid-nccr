@@ -37,7 +37,7 @@ def main(app: App, db: Database):
                 last_ids[name] = 0
 
     # Connect to the API
-    api = Api(app.consumer_key, app.consumer_secret, app.access_key, app.access_secret)
+    api = Api(app)
 
     # Retrieve all new tweets per actor
     t1 = time.time()

@@ -150,6 +150,14 @@ class Helpers:
 
         return df
 
+    @staticmethod
+    def update_df_with_dict(df: pd.DataFrame, d: dict):
+        """
+        Update rows of pandas DataFrame with a dict.
+        """
+
+        df.loc[df["tweet_id"] == d["tweet_id"], d.keys()] = d.values()
+
 
 if __name__ == "__main__":
     Helpers.extract_ids_file("src/resources/data/fr.pkl")

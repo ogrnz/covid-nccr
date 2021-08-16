@@ -178,27 +178,35 @@ class Api:
                         old_text = prefix, old_text
                         old_text = "".join(old_text)
 
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["created_at"]
-                ] = compl_tweet.created_at.strftime("%d/%m/%Y %H:%M:%S")
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["handle"]
-                ] = f"@{compl_tweet.user.screen_name}"
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["name"]
-                ] = compl_tweet.user.name
-                df.loc[df["tweet_id"] == compl_tweet.id, ["oldText"]] = old_text
-                df.loc[df["tweet_id"] == compl_tweet.id, ["text"]] = full_text
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["URL"]
+                # Create a dict for each retrieved tweet and update all fields of the original df
+                new_tweet = {col: None for col in Helpers.schema_cols}
+                for coded_col in [
+                    "topic",
+                    "subcat",
+                    "position",
+                    "frame",
+                    "theme_hardcoded",
+                ]:
+                    del new_tweet[coded_col]
+
+                # Generate dict of the new tweet
+                new_tweet["tweet_id"] = compl_tweet.id
+                new_tweet["created_at"] = compl_tweet.created_at.strftime(
+                    "%d/%m/%Y %H:%M:%S"
+                )
+                new_tweet["handle"] = f"@{compl_tweet.user.screen_name}"
+                new_tweet["name"] = compl_tweet.user.name
+                new_tweet["oldText"] = old_text
+                new_tweet["text"] = full_text
+                new_tweet[
+                    "URL"
                 ] = f"https://twitter.com/{compl_tweet.user.screen_name}/status/{compl_tweet.id}"
-                df.loc[df["tweet_id"] == compl_tweet.id, ["type"]] = tweet_type
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["retweets"]
-                ] = compl_tweet.retweet_count
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["favorites"]
-                ] = compl_tweet.favorite_count
+                new_tweet["type"] = tweet_type
+                new_tweet["retweets"] = compl_tweet.retweet_count
+                new_tweet["favorites"] = compl_tweet.favorite_count
+
+                # Update df with dict
+                Helpers.update_df_with_dict(df, new_tweet)
 
             # Setup request for new iteration
             last_iter_final = final
@@ -272,34 +280,34 @@ class Api:
                         old_text = prefix, old_text
                         old_text = "".join(old_text)
 
-                """
-                TODO: replace horrible df instantiation
                 new_tweet = {col: None for col in Helpers.schema_cols}
-                for coded_col in ["topic", "subcat", "position", "frame", "theme_hardcoded"]:
+                for coded_col in [
+                    "topic",
+                    "subcat",
+                    "position",
+                    "frame",
+                    "theme_hardcoded",
+                ]:
                     del new_tweet[coded_col]
-                """
 
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["created_at"]
-                ] = compl_tweet.created_at.strftime("%d/%m/%Y %H:%M:%S")
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["handle"]
-                ] = f"@{compl_tweet.user.screen_name}"
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["name"]
-                ] = compl_tweet.user.name
-                df.loc[df["tweet_id"] == compl_tweet.id, ["oldText"]] = old_text
-                df.loc[df["tweet_id"] == compl_tweet.id, ["text"]] = full_text
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["URL"]
+                # Generate dict of the new tweet
+                new_tweet["tweet_id"] = compl_tweet.id
+                new_tweet["created_at"] = compl_tweet.created_at.strftime(
+                    "%d/%m/%Y %H:%M:%S"
+                )
+                new_tweet["handle"] = f"@{compl_tweet.user.screen_name}"
+                new_tweet["name"] = compl_tweet.user.name
+                new_tweet["oldText"] = old_text
+                new_tweet["text"] = full_text
+                new_tweet[
+                    "URL"
                 ] = f"https://twitter.com/{compl_tweet.user.screen_name}/status/{compl_tweet.id}"
-                df.loc[df["tweet_id"] == compl_tweet.id, ["type"]] = tweet_type
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["retweets"]
-                ] = compl_tweet.retweet_count
-                df.loc[
-                    df["tweet_id"] == compl_tweet.id, ["favorites"]
-                ] = compl_tweet.favorite_count
+                new_tweet["type"] = tweet_type
+                new_tweet["retweets"] = compl_tweet.retweet_count
+                new_tweet["favorites"] = compl_tweet.favorite_count
+
+                # Update df with dict
+                Helpers.update_df_with_dict(df, new_tweet)
 
             # Setup request for new iteration
             last_iter_final = final
@@ -352,9 +360,6 @@ class Api:
         itera = 0
         while itera < iter_needed + 1:
             Helpers.dynamic_text(f"{itera}/{iter_needed}")
-
-            if self.app.debug:
-                print(f"{itera}/{iter_needed}")
 
             try:
                 compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")

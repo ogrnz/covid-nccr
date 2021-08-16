@@ -16,7 +16,7 @@ def main(database: Database, app: App = None, only_covid=False):
 
     print("Converting table to csv...")
     csv_file = converter.convert_by_columns()
-    print(csv_file)
+
     print("Converting csv to xlsx...")
     xls = converter.csv_to_xlsx(csv_file)
 

@@ -24,10 +24,30 @@ class Converter:
         self.database = database
         self.only_covid = only_covid
 
+    def __file_exists(self, file_name):
+        """
+        Check if a file of that name already exists in the database/xlsx folder
+        """
+
+        return bool(
+            os.path.isfile(f"{self.app.root_dir}/database/xlsx/{file_name}.xlsx")
+        )
+
+    def __dir_exists(self, dirname: str) -> bool:
+        """
+        Check if directory exists in database folder
+        """
+
+        return bool(os.path.isdir(f"{self.app.root_dir}/database/{dirname}"))
+
     def convert_by_columns(self, cols=tuple(col for col in Helpers.schema_cols)):
         """
         Convert tweets table to csv by columns
         """
+
+        # Check if database/csv/ dir exists
+        if not self.__dir_exists("csv"):
+            os.mkdir(f"{self.app.root_dir}/database/csv/")
 
         today = str(date.today())
 
@@ -59,6 +79,10 @@ class Converter:
         Export a csv file to xlsx
         """
 
+        # Check if database/xlsx/ dir exists
+        if not self.__dir_exists("xlsx"):
+            os.mkdir(f"{self.app.root_dir}/database/xlsx/")
+
         workbook = openpyxl.Workbook()
         sheet = workbook.active
 
@@ -86,12 +110,3 @@ class Converter:
             return f"{csv_file}.xlsx"
         except openpyxl.utils.exceptions.InvalidFileException as error:
             print("Error", error)
-
-    def __file_exists(self, file_name):
-        """
-        Check if a file of that name already exists in the databvase/xlsx folder
-        """
-
-        return bool(
-            os.path.isfile(f"{self.app.root_dir}/database/xlsx/{file_name}.xlsx")
-        )

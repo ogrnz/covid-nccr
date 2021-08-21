@@ -22,7 +22,6 @@ def main(database: Database, app: App = None, only_covid=False):
 
     return xls
 
-
 if __name__ == "__main__":
     app_run = App(debug=False)
     db = Database("tweets.db", app=app_run)

@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 """
 Add "RY @handle: ..." to all replies
 """

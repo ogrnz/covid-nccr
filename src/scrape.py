@@ -16,9 +16,6 @@ from common.classify import Classifier
 
 
 def main(app: App, db: Database):
-    """
-    Main function
-    """
 
     # Instanciate needed class
     classifier = Classifier()

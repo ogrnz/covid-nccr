@@ -13,7 +13,7 @@ from common.convert import Converter
 
 def profiling(file):
     with cProfile.Profile() as profile:
-        converter.csv_to_xlsx_pyexcel(file)
+        converter.csv_to_xlsx(file)
 
     stats = pstats.Stats(profile)
     stats.sort_stats(pstats.SortKey.TIME)
@@ -27,14 +27,7 @@ if __name__ == "__main__":
 
     converter = Converter(database=db, only_covid=False, app=app_run)
 
-    funcs = [
-        converter.csv_to_xlsx_v3,
-        converter.csv_to_xlsx,
-        converter.csv_to_xlsx_v2,
-        converter.csv_to_xlsx_pd,
-        converter.csv_to_xlsx_pd_v2,
-        converter.csv_to_xlsx_pyexcel,
-    ]
+    funcs = [converter.csv_to_xlsx_v4]
 
     for i, func in enumerate(funcs):
         start = time.time()

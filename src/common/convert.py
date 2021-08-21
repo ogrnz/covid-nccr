@@ -8,6 +8,7 @@ import os.path
 from datetime import date
 
 import openpyxl
+import xlsxwriter
 import pandas as pd
 
 from common.app import App
@@ -173,7 +174,6 @@ class Converter:
 
         csv_gen = self.__gen_csv_reader(csv_file)
         for row in csv_gen:
-            # print(row)
             sheet.append(row)
 
         try:
@@ -192,86 +192,40 @@ class Converter:
         except openpyxl.utils.exceptions.InvalidFileException as error:
             print("Error", error)
 
-    def csv_to_xlsx_pd(self, csv_file):
+    def csv_to_xlsx_v4(self, csv_file):
         """
         Export a csv file to xlsx
-        New implementation, less memory-hungry.
         """
 
         # Check if database/xlsx/ dir exists
         if not self.__dir_exists("xlsx"):
             os.mkdir(f"{self.app.root_dir}/database/xlsx/")
 
-        df = pd.read_csv(f"{self.app.root_dir}/database/csv/{csv_file}")
-
         csv_file = csv_file.strip(".csv")
         orig_name = csv_file
-
         if self.__file_exists(csv_file):
             csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
             if self.__file_exists(csv_file):
                 csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
 
-        df.to_excel(f"{self.app.root_dir}/database/xlsx/{csv_file}.xlsx", index=False)
-        print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
-
-        return f"{csv_file}.xlsx"
-
-    def csv_to_xlsx_pd_v2(self, csv_file):
-        """
-        Export a csv file to xlsx
-        New implementation, less memory-hungry.
-        """
-
-        # Check if database/xlsx/ dir exists
-        if not self.__dir_exists("xlsx"):
-            os.mkdir(f"{self.app.root_dir}/database/xlsx/")
-
-        df = pd.read_csv(f"{self.app.root_dir}/database/csv/{csv_file}")
-
-        csv_file = csv_file.strip(".csv")
-        orig_name = csv_file
-
-        if self.__file_exists(csv_file):
-            csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
-            if self.__file_exists(csv_file):
-                csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
-
-        writer = pd.ExcelWriter(
-            f"{self.app.root_dir}/database/xlsx/{csv_file}.xlsx", enginge="xlswriter"
+        workbook = xlsxwriter.Workbook(
+            f"{self.app.root_dir}/database/xlsx/{csv_file}.xlsx",
+            {"constant_memory": True, "strings_to_urls": False},
         )
-        df.to_excel(writer, index=False)
-        writer.save()
+        wk_sheet = workbook.add_worksheet()
 
-        print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
+        with open(
+            f"{self.app.root_dir}/database/csv/{orig_name}.csv",
+            "r",
+            encoding="utf8",
+            newline="",
+        ) as file:
+            reader = csv.reader(file)
+            for row_i, row in enumerate(reader):
+                for col_i, val in enumerate(row):
+                    wk_sheet.write(row_i, col_i, val)
 
-        return f"{csv_file}.xlsx"
-
-    def csv_to_xlsx_pyexcel(self, csv_file):
-        """
-        Export a csv file to xlsx
-        New implementation, less memory-hungry.
-        """
-
-        import pyexcel
-
-        # Check if database/xlsx/ dir exists
-        if not self.__dir_exists("xlsx"):
-            os.mkdir(f"{self.app.root_dir}/database/xlsx/")
-
-        sheet = pyexcel.get_sheet(
-            file_name=f"{self.app.root_dir}/database/csv/{csv_file}", delimiter=","
-        )
-
-        csv_file = csv_file.strip(".csv")
-        orig_name = csv_file
-
-        if self.__file_exists(csv_file):
-            csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
-            if self.__file_exists(csv_file):
-                csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
-
-        sheet.save_as(f"{self.app.root_dir}/database/xlsx/{csv_file}.xlsx")
+        workbook.close()
         print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
 
         return f"{csv_file}.xlsx"

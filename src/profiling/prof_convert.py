@@ -18,7 +18,7 @@ def profiling(file):
     stats = pstats.Stats(profile)
     stats.sort_stats(pstats.SortKey.TIME)
     stats.print_stats()
-    stats.dump_stats(filename="convert_csv.prof")
+    # stats.dump_stats(filename="convert_csv.prof")
 
 
 if __name__ == "__main__":

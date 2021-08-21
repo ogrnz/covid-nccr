@@ -27,13 +27,8 @@ if __name__ == "__main__":
 
     converter = Converter(database=db, only_covid=False, app=app_run)
 
-    print("Converting table to csv...")
-    csv_file = converter.convert_by_columns()
-
-    print("Converting csv to xlsx...")
-    # profiling(csv_file)
-
     funcs = [
+        converter.csv_to_xlsx_v3,
         converter.csv_to_xlsx,
         converter.csv_to_xlsx_v2,
         converter.csv_to_xlsx_pd,
@@ -44,6 +39,6 @@ if __name__ == "__main__":
     for i, func in enumerate(funcs):
         start = time.time()
         print(i)
-        func(csv_file)
+        func("Tot-tweets-2021-08-21.csv")
         print(i, time.time() - start)
         time.sleep(2)

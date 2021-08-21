@@ -41,6 +41,14 @@ class Converter:
 
         return bool(os.path.isdir(f"{self.app.root_dir}/database/{dirname}"))
 
+    def __gen_csv_reader(self, file):
+        with open(
+            f"{self.app.root_dir}/database/csv/{file}", encoding="utf8", newline=""
+        ) as f:
+            reader = csv.reader(f)
+            for row in reader:
+                yield row
+
     def convert_by_columns(self, cols=tuple(col for col in Helpers.schema_cols)):
         """
         Convert tweets table to csv by columns
@@ -134,6 +142,40 @@ class Converter:
             reader = csv.reader(file)
             for row in reader:
                 sheet.append(row)
+        try:
+            csv_file = csv_file.strip(".csv")
+            orig_name = csv_file
+
+            if self.__file_exists(csv_file):
+                csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
+                if self.__file_exists(csv_file):
+                    csv_file = orig_name + "-" + str(uuid.uuid4())[:7]
+
+            workbook.save(f"{self.app.root_dir}/database/xlsx/{csv_file}.xlsx")
+            print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
+
+            return f"{csv_file}.xlsx"
+        except openpyxl.utils.exceptions.InvalidFileException as error:
+            print("Error", error)
+
+    def csv_to_xlsx_v3(self, csv_file):
+        """
+        Export a csv file to xlsx
+        New implementation, less memory-hungry.
+        """
+
+        # Check if database/xlsx/ dir exists
+        if not self.__dir_exists("xlsx"):
+            os.mkdir(f"{self.app.root_dir}/database/xlsx/")
+
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+
+        csv_gen = self.__gen_csv_reader(csv_file)
+        for row in csv_gen:
+            # print(row)
+            sheet.append(row)
+
         try:
             csv_file = csv_file.strip(".csv")
             orig_name = csv_file

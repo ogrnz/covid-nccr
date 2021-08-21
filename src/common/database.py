@@ -4,8 +4,12 @@ Database module
 
 import sqlite3
 
-from common.app import App
-from common.helpers import Helpers
+if __name__ == "__main__":
+    from app import App
+    from helpers import Helpers
+else:
+    from common.app import App
+    from common.helpers import Helpers
 
 
 class Database:

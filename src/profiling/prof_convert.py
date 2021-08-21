@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     converter = Converter(database=db, only_covid=False, app=app_run)
 
-    funcs = [converter.csv_to_xlsx_v4]
+    funcs = [converter.csv_to_xlsx]
 
     for i, func in enumerate(funcs):
         start = time.time()

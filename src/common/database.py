@@ -4,12 +4,8 @@ Database module
 
 import sqlite3
 
-if __name__ == "__main__":
-    from app import App
-    from helpers import Helpers
-else:
-    from common.app import App
-    from common.helpers import Helpers
+from common.app import App
+from common.helpers import Helpers
 
 
 class Database:
@@ -110,14 +106,14 @@ class Database:
 
             return cur.fetchall()
         except sqlite3.Error as error:
-            print("Error", error)
+            print("get_fields: Error", error)
         finally:
             cur.close()
 
     def get_by_type(self, tweet_type: str):
         """
         Retrieve tweets by type
-        :param type: available types are ['Retweet','New', 'Reply']
+        :param type: available types are ['Retweet', 'New', 'Reply']
         """
 
         try:
@@ -126,7 +122,7 @@ class Database:
 
             return cur.fetchall()
         except sqlite3.Error as error:
-            print("Error", error)
+            print("get_by_type: Error", error)
         finally:
             cur.close()
 
@@ -141,7 +137,7 @@ class Database:
 
             return cur.fetchall()
         except sqlite3.Error as error:
-            print("Error", error)
+            print("get_tweet_by_id: Error", error)
         finally:
             cur.close()
 
@@ -163,7 +159,7 @@ class Database:
             )
             self.conn.commit()
         except sqlite3.Error as error:
-            print(f"Error updating tweet {tweet_id} ", error)
+            print(f"update_tweet_by_id: Error updating tweet {tweet_id} ", error)
         finally:
             cur.close()
 
@@ -185,7 +181,7 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print("Error updating tweets", error)
+            print("update_theme_many: Error updating tweets", error)
         finally:
             cur.close()
 
@@ -206,7 +202,7 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print("Error updating tweets", error)
+            print("update_many: Error updating tweets", error)
         finally:
             cur.close()
 
@@ -215,7 +211,7 @@ class Database:
         Insert new tweet into database
         """
 
-        sql = f"""INSERT OR IGNORE INTO tweets({col for col in Helpers.schema_cols})
+        sql = f"""INSERT OR IGNORE INTO tweets{Helpers.get_cols_as_tuple_str()}
                 VALUES{self.prep_req}"""
         cur = self.conn.cursor()
 
@@ -225,13 +221,15 @@ class Database:
 
             return cur.lastrowid
         except sqlite3.Error as error:
-            print(f"Error inserting new tweet \n {tweet} \n {error}")
+            print(sql)
+            print(f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}")
         finally:
             cur.close()
 
     def insert_many(self, tweets):
         """
-        Insert new tweets into database
+        Insert new tweets into database.
+        Tweets already in the database are not inserted.
         """
 
         sql = f"""INSERT OR IGNORE INTO tweets
@@ -244,13 +242,13 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print(f"Error inserting new tweets \n {error}")
+            print(f"insert_many: Error inserting new tweets \n {error}")
         finally:
             cur.close()
 
     def insert_or_replace_many(self, tweets):
         """
-        Insert new tweet into database
+        Insert new tweets into database. If tweet already exists, values are overwritten.
         """
 
         sql = f"""INSERT OR REPLACE INTO tweets
@@ -263,14 +261,14 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print(f"Error inserting new tweets \n {error}")
+            print(f"insert_or_replace_many: Error inserting new tweets \n {error}")
         finally:
             cur.close()
 
     def get_last_id_by_handle(self, screen_name):
         """
         Retrieve last inserted tweet id in database for a given
-        username
+        username.
         """
 
         screen_name = f"@{screen_name}"
@@ -288,7 +286,7 @@ class Database:
             return cur.fetchone()
         except sqlite3.Error as error:
             print(
-                f"Error retrieving last tweet in db for {screen_name}\
+                f"get_last_id_by_handle: Error retrieving last tweet in db for {screen_name}\
                     \n {error}"
             )
         finally:

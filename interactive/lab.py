@@ -24,11 +24,14 @@ api = Api(app_run)
 # %%
 tw = api.get_tweets_by_ids([1215573600821903360])
 tw
+
 # %%
-
-
 def update_df(df: pd.DataFrame, d: dict):
     df.loc[df["tweet_id"] == d["tweet_id"], d.keys()] = d.values()
 
+
+# %%
+with db:
+    tweets = db.get_all_tweets()
 
 # %%

@@ -151,12 +151,21 @@ class Helpers:
         return df
 
     @staticmethod
-    def update_df_with_dict(df: pd.DataFrame, d: dict):
+    def update_df_with_dict(df: pd.DataFrame, new_vals: dict):
         """
         Update rows of pandas DataFrame with a dict.
         """
 
-        df.loc[df["tweet_id"] == d["tweet_id"], d.keys()] = d.values()
+        df.loc[
+            df["tweet_id"] == new_vals["tweet_id"], new_vals.keys()
+        ] = new_vals.values()
+
+    @staticmethod
+    def get_cols_as_tuple_str():
+        """
+        Return database's columns in string surrounded by parentheses
+        """
+        return str(tuple(col for col in Helpers.schema_cols))
 
 
 if __name__ == "__main__":

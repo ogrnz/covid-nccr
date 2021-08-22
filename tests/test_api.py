@@ -6,16 +6,15 @@ sys.path.append(os.path.abspath(os.path.join("..", "src")))
 
 import unittest
 
-from common.api import Api
 from common.app import App
+from common.api import Api
 
 
 class TestApi(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.app = App(debug=False)
-        self.api = Api(self.app)
+    @classmethod
+    def setUpClass(cls):
+        cls.app = App(debug=False)
+        cls.api = Api(self.app)
 
     def test_api_connection(self):
         self.api = Api(self.app)

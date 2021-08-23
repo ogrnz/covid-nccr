@@ -8,12 +8,8 @@ from datetime import datetime as dt
 import tweepy
 import pandas as pd
 
-if __name__ == "__main__":
-    from app import App
-    from helpers import Helpers
-else:
-    from common.app import App
-    from common.helpers import Helpers
+from common.app import App
+from common.helpers import Helpers
 
 
 class Api:

@@ -14,7 +14,7 @@ class TestApi(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = App(debug=False)
-        cls.api = Api(self.app)
+        cls.api = Api(cls.app)
 
     def test_api_connection(self):
         self.api = Api(self.app)

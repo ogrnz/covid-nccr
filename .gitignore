@@ -18,9 +18,12 @@ database/*.db-journal
 database/csv/*
 database/xlsx/*
 database/test
+database/jsonl
 
 interactive/data/db_ML.pkl
 
 tests/__pycache__
 
 .ipynb_checkpoints
+
+twarc.log

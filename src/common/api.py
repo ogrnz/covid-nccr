@@ -397,6 +397,18 @@ class Api:
 
         return df
 
+    def get_user_id_from_handle(self, handles):
+        """
+        Returns either a list of ids (if more than 1 handle) or a unique id.
+        """
+
+        if isinstance(handles, list):
+            users_idx = [self.api.get_user(handle).id for handle in handles]
+            return users_idx
+
+        user = self.api.get_user(handles)
+        return user.id
+
 
 if __name__ == "__main__":
     app = App(debug=True)

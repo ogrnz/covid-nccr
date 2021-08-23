@@ -4,6 +4,7 @@
 Get tweets from database
 Complete the tweet if it is truncated
 """
+
 import os
 import sqlite3
 from sqlite3 import Error

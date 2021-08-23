@@ -22,3 +22,14 @@ db = Database("test.db", app=app_run)
 api = Api(app_run)
 
 # %%
+user = api.get_user_id_from_handle("opotrac")
+
+# %%
+with open("./src/resources/actors_handles.txt") as f:
+    handles = f.readlines()
+handles = [handle.strip("\n") for handle in handles]
+
+# %%
+users = api.get_user_id_from_handle(handles)
+
+# %%

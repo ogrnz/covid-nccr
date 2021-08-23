@@ -178,6 +178,7 @@ class TestDatabase(unittest.TestCase):
             inserted_tweet = self.db.get_tweet_by_id("1")
 
         self.assertEqual(inserted_tweet[0][0], "1")
+        # self.assertEqual(inserted_tweet[0][0], 1)
 
     def test_e_get_fields(self):
         fields = ["tweet_id"]
@@ -189,6 +190,7 @@ class TestDatabase(unittest.TestCase):
         [self.assertEqual(len(tweet), len(fields)) for tweet in tweets]
         self.assertEqual(len(tweets_covid), 1)
         self.assertEqual(tweets_covid[0][0], "8826085549")
+        # self.assertEqual(tweets_covid[0][0], 8826085549)
         self.assertEqual(len(tweets_limit), 2)
 
     def test_f_get_by_type(self):
@@ -201,17 +203,40 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(len(tweets[2]), 1)
 
     def test_g_update_tweet_by_id(self):
-        # TODO
-        pass
+        with self.db:
+            self.db.update_tweet_by_id(1, "text", "UPDATED")
+            updated = self.db.get_tweet_by_id("1")
+
+        self.assertEqual(updated[0][6], "UPDATED")
 
     def test_h_update_theme_many(self):
-        # TODO
-        pass
+        to_update = [(1, "1427204514906529792"), (1, "1211853090552332289")]
+
+        with self.db:
+            self.db.update_theme_many(to_update)
+            updated = [
+                self.db.get_tweet_by_id(idx)
+                for idx in ["1427204514906529792", "1211853090552332289"]
+            ]
+
+        self.assertEqual(updated[0][0][1], 1)
+        self.assertEqual(updated[1][0][1], 1)
 
     def test_i_update_many(self):
-        # TODO
-        pass
+        to_update = [(111, "1427204514906529792"), (222, "1211853090552332289")]
+
+        with self.db:
+            self.db.update_many("frame", to_update)
+            updated = [
+                self.db.get_tweet_by_id(idx)
+                for idx in ["1427204514906529792", "1211853090552332289"]
+            ]
+        self.assertEqual(updated[0][0][-2], "111")
+        self.assertEqual(updated[1][0][-2], "222")
 
     def test_j_get_last_id_by_handle(self):
-        # TODO
-        pass
+        with self.db:
+            last_id = self.db.get_last_id_by_handle("NHSuk")
+
+        self.assertEqual(last_id[0], "1427204514906529792")
+        # self.assertEqual(last_id[0], 1427204514906529792)

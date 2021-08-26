@@ -4,7 +4,7 @@ Helpers module
 
 import re
 import hashlib
-import datetime
+from datetime import datetime
 
 import pandas as pd
 
@@ -35,8 +35,8 @@ class Helpers:
     # !! Structure should match SQL schema. !!
     schema_cols = [
         "tweet_id",
-        "hash",
-        "retrieved_at",
+        # "hash",
+        # "retrieved_at",
         "covid_theme",
         "created_at",
         "handle",

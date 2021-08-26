@@ -34,9 +34,7 @@ def complete(filename):
 
 if __name__ == "__main__":
     app = App(debug=False)
-    api = Api(
-        app.consumer_key, app.consumer_secret, app.access_key, app.access_secret, app
-    )
+    api = Api(app)
 
     t1 = time.time()
 

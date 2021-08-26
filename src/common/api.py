@@ -23,7 +23,7 @@ class Api:
     COUNT = 500  # Academic account
 
     def __init__(self, main_app: App = None):
-        self.app = main_app if not None else App()
+        self.app = main_app if not None else App(debug=True)
         self.connect_api()
 
     def connect_api(self):

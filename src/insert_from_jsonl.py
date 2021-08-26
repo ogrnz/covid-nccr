@@ -13,6 +13,7 @@ from common.helpers import Helpers
 from common.classify import Classifier
 from common.insertor import InsertFromJsonl
 
+
 def main():
     test_file = "UDCch_flat.jsonl"
     app = App()
@@ -20,10 +21,10 @@ def main():
     insertor = InsertFromJsonl(app)
 
     jsonl = insertor.read(test_file)
-    
-    for tweet in jsonl:
-        
-        break
+
+    for i, tweet in enumerate(jsonl):
+        print(i)
+
 
 if __name__ == "__main__":
     main()

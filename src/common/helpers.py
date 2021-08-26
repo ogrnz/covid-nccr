@@ -3,6 +3,8 @@ Helpers module
 """
 
 import re
+import hashlib
+import datetime
 
 import pandas as pd
 
@@ -33,6 +35,8 @@ class Helpers:
     # !! Structure should match SQL schema. !!
     schema_cols = [
         "tweet_id",
+        "hash",
+        "retrieved_at",
         "covid_theme",
         "created_at",
         "handle",
@@ -166,6 +170,16 @@ class Helpers:
         Return database's columns in string surrounded by parentheses
         """
         return str(tuple(col for col in Helpers.schema_cols))
+
+    @staticmethod
+    def get_hash(created_at, old_text, text):
+        # Check if created_at has the correct format
+
+        # Concatenate the fields as strings
+        to_hash = created_at + old_text + text
+
+        # Return the hash
+        return hashlib.sha1(bytes(to_hash, "utf-8")).hexdigest()
 
 
 if __name__ == "__main__":

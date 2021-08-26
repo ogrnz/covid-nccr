@@ -10,19 +10,14 @@ import pandas as pd
 from common.database import Database
 from common.app import App
 from common.api import Api
+from common.helpers import Helpers
 
 app_run = App(debug=True)
 db = Database("tweets.db", app=app_run)
 
 # %%
 # Connect to the API
-api = Api(
-    app_run.consumer_key,
-    app_run.consumer_secret,
-    app_run.access_key,
-    app_run.access_secret,
-    main_app=app_run,
-)
+api = Api()
 
 # %%
 with db:
@@ -32,24 +27,7 @@ len(tweets)
 #%%
 df = pd.DataFrame(
     tweets,
-    columns=[
-        "tweet_id",
-        "covid_theme",
-        "created_at",
-        "handle",
-        "name",
-        "oldText",
-        "text",
-        "URL",
-        "type",
-        "retweets",
-        "favorites",
-        "topic",
-        "subcat",
-        "position",
-        "frame",
-        "theme_hardcoded",
-    ],
+    columns=Helpers.schema_cols,
 )
 df
 
@@ -61,6 +39,7 @@ tweets_ids
 #%%
 tot_tweets = None
 tot_tweets = api.get_tweets_by_ids_with_nan(tweets_ids, df, no_id_remove=True)
+
 #%%
 print(len(tot_tweets))
 print(len(tweets_ids))
@@ -87,8 +66,8 @@ import pickle
 with open("src/resources/data/pkl/tweets.pkl", "wb") as out:
     pickle.dump(tot_tweets, out, pickle.HIGHEST_PROTOCOL)
     pickle.dump(to_update, out, pickle.HIGHEST_PROTOCOL)
+
 # %%
-import pickle
 
 with open("src/resources/data/pkl/tweets.pkl", "rb") as inp:
     tot_tweets = pickle.load(inp)

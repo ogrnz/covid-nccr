@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 import os.path
 
-#from commmon.app import App
+# from commmon.app import App
 # from common.api import Api
 # from commmon.database import Database
 # from commmon.helpers import Helpers
+
 
 class Insertor(ABC):
     """
@@ -12,16 +13,17 @@ class Insertor(ABC):
     """
 
     @abstractmethod
-    def read(self):
+    def read(self, filename):
         pass
 
     @abstractmethod
     def preprocess(self):
         pass
-    
+
     @abstractmethod
     def insert(self):
         pass
+
 
 class InsertFromJsonl(Insertor):
     """
@@ -33,14 +35,14 @@ class InsertFromJsonl(Insertor):
         self.app = app
         self.jsonl_path = os.path.join(self.app.root_dir, "database", "jsonl", "flat")
 
-
     def read(self, filename):
         """
         Open and extract each line with this generator.
         """
 
         with open(
-            os.path.join(self.jsonl_path, filename), encoding="utf8",
+            os.path.join(self.jsonl_path, filename),
+            encoding="utf8",
         ) as open_f:
             for line in open_f:
                 yield line
@@ -50,7 +52,6 @@ class InsertFromJsonl(Insertor):
 
     def insert(self):
         pass
-        
 
 
 # TODO:

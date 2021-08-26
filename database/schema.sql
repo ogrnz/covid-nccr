@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS "tweets" (
 	"covid_theme"	INTEGER,
 	"created_at"	TEXT,
 	"handle"	TEXT,
-	"name"	TEXT,
+	"name" TEXT,
 	"oldtext"	TEXT,
 	"text"	TEXT,
 	"url"	TEXT,
@@ -14,6 +14,6 @@ CREATE TABLE IF NOT EXISTS "tweets" (
     "subcat" TEXT,
     "position" TEXT,
     "frame" TEXT,
-    "theme_hardcoded" TEXT,
+    "theme_hardcoded" INTEGER,
 	PRIMARY KEY("tweet_id")
 );

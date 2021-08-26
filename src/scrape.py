@@ -8,10 +8,10 @@ import json
 
 import tweepy
 
-from common.database import Database
 from common.app import App
-from common.helpers import Helpers
 from common.api import Api
+from common.database import Database
+from common.helpers import Helpers
 from common.classify import Classifier
 
 
@@ -116,6 +116,6 @@ def main(app: App, db: Database):
 
 if __name__ == "__main__":
     app_run = App(debug=False)
-    database = Database("tweets_tests.db", app=app_run)
+    database = Database("tweets.db", app=app_run)
 
     main(app_run, database)

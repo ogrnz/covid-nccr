@@ -15,8 +15,8 @@ src/resources/data
 
 database/*.db
 database/*.db-journal
-database/csv/*
-database/xlsx/*
+database/csv
+database/xlsx
 database/test
 database/jsonl
 

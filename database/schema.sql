@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS "tweets" (
 	"created_at"	TEXT,
 	"handle"	TEXT,
 	"name" TEXT,
-	"oldtext"	TEXT,
+	"old_text"	TEXT,
 	"text"	TEXT,
 	"url"	TEXT,
 	"type"	TEXT,

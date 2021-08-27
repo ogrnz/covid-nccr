@@ -185,18 +185,37 @@ class Database:
         finally:
             cur.close()
 
-    def update_many(self, what, params):
+    def update_many_v2(self, fields, cond, values):
         """
         Update tweets in bulk
+
+        If fields is a list, multiple fields will be updated.
+        The condition value must be the last value of values.
+        values can be an iterable such as tuple(field1_value, field2_value, cond_value)
         """
 
-        sql = f"""UPDATE tweets SET {what} = ? WHERE tweet_id = ?"""
+        if cond not in Helpers.schema_cols:
+            print(
+                "InvalidConditionError: This condition is not valid. There is no column of that name."
+            )
+        if len(fields) + 1 != len(values[0]):
+            print("Error: You forgot to supply some values (condition?).")
+
+        if isinstance(fields, list):
+            cols = str([field + " = ?" for field in fields])
+            cols = cols.replace("[", "")
+            cols = cols.replace("]", "")
+            cols = cols.replace("'", "")
+            sql = f"""UPDATE tweets SET {cols} WHERE {cond} = ?"""
+        else:
+            sql = f"""UPDATE tweets SET {fields} = ? WHERE {cond} = ?"""
+
         cur = self.conn.cursor()
 
         try:
             cur.executemany(
                 sql,
-                params,
+                values,
             )
             self.conn.commit()
 

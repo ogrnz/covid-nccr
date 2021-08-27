@@ -41,9 +41,9 @@ class Helpers:
         "created_at",
         "handle",
         "name",
-        "oldText",
+        "old_text",
         "text",
-        "URL",
+        "url",
         "type",
         "retweets",
         "favorites",
@@ -53,6 +53,9 @@ class Helpers:
         "frame",
         "theme_hardcoded",
     ]
+
+    twitter_time_format = "%Y-%m-%dT%H:%M:%S.000Z"
+    database_time_format = "%d/%m/%Y %H:%M:%S"
 
     @staticmethod
     def get_actors_url(filename: str) -> list:
@@ -169,10 +172,15 @@ class Helpers:
         """
         Return database's columns in string surrounded by parentheses
         """
+
         return str(tuple(col for col in Helpers.schema_cols))
 
     @staticmethod
     def get_hash(created_at, old_text, text):
+        """
+        Not in use yet.
+        """
+
         # Check if created_at has the correct format
 
         # Concatenate the fields as strings
@@ -180,6 +188,25 @@ class Helpers:
 
         # Return the hash
         return hashlib.sha1(bytes(to_hash, "utf-8")).hexdigest()
+
+    @staticmethod
+    def build_tweet_url(tweet_id: str, handle: str):
+        """
+        Build a valid tweet (RT, RY, New) URL with the tweet id and handle.
+        https://twitter.com/{handle}/status/{id}
+        """
+
+        return f"https://twitter.com/{handle}/status/{str(tweet_id)}"
+
+    @staticmethod
+    def twitter_to_db_time(date: str):
+        """
+        Convert a datetime string from twitter format ("%Y-%m-%dT%H:%M:%S.000Z") to
+        chosen database format (Helpers.database_time_format).
+        """
+
+        tmp_date = datetime.strptime(date, Helpers.twitter_time_format)
+        return datetime.strftime(tmp_date, Helpers.database_time_format)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import os.path
+import json
 
 # from commmon.app import App
 # from common.api import Api
@@ -45,7 +46,21 @@ class InsertFromJsonl(Insertor):
             encoding="utf8",
         ) as open_f:
             for line in open_f:
-                yield line
+                yield json.loads(line)
+
+    def get_tot_lines(self, filename):
+        """
+        Return the total number of lines of a file.
+        """
+
+        with open(
+            os.path.join(self.jsonl_path, filename),
+            encoding="utf8",
+        ) as open_f:
+            tot_lines = 0
+            for _ in open_f:
+                tot_lines += 1
+        return tot_lines
 
     def preprocess(self):
         pass

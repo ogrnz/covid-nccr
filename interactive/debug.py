@@ -76,7 +76,7 @@ print(len(to_update))
 
 # %%
 with db:
-    count = db.update_many("type", to_update)
+    count = db.update_many("type", "tweet_id", to_update)
 
 print(count, "tweets updated")
 

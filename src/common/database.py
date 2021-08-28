@@ -185,7 +185,7 @@ class Database:
         finally:
             cur.close()
 
-    def update_many_v2(self, fields, cond, values):
+    def update_many(self, fields, cond, values):
         """
         Update tweets in bulk
 
@@ -196,10 +196,9 @@ class Database:
 
         if cond not in Helpers.schema_cols:
             print(
-                "InvalidConditionError: This condition is not valid. There is no column of that name."
+                "InvalidConditionError: This condition is not valid. \
+                There is no column of that name."
             )
-        if len(fields) + 1 != len(values[0]):
-            print("Error: You forgot to supply some values (condition?).")
 
         if isinstance(fields, list):
             cols = str([field + " = ?" for field in fields])

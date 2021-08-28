@@ -226,7 +226,7 @@ class TestDatabase(unittest.TestCase):
         to_update = [(111, "1427204514906529792"), (222, "1211853090552332289")]
 
         with self.db:
-            self.db.update_many("frame", to_update)
+            self.db.update_many("frame", "tweet_id", to_update)
             updated = [
                 self.db.get_tweet_by_id(idx)
                 for idx in ["1427204514906529792", "1211853090552332289"]

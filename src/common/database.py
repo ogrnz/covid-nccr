@@ -72,14 +72,27 @@ class Database:
             if self.conn:
                 self.conn.close()
 
-    def get_all_tweets(self):
+    def get_all_tweets(
+        self,
+        condition: tuple = None,
+    ):
         """
         Retrieve all tweets
+        condition = tuple("condition_field", condition_value)
         """
 
         try:
             cur = self.conn.cursor()
-            cur.execute("SELECT * FROM tweets")
+            sql = "SELECT * FROM tweets"
+            if condition:
+                sql = f"SELECT * FROM tweets WHERE {condition[0]} = ?"
+
+                cur.execute(
+                    sql,
+                    condition[1],
+                )
+            else:
+                cur.execute(sql)
 
             return cur.fetchall()
         except sqlite3.Error as error:

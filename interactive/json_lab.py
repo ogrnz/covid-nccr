@@ -510,12 +510,13 @@ with db_UN:
 
 # 2nd issue:
 # line 6088 of "UN_flat.jsonl"
+# line 1589 of "UN_flat_test.jsonl"
 # -> \n not included in old db.
 # -> strip \n of jsonl tweets
 # hash 1384336018, real tweet_id 1223607433484034048
 
 # 3
-# line 1590 of UN test
+# line 1591 of UN test
 # hash 2797333945 real 1223517591223832577
 
 #%%

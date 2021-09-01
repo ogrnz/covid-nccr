@@ -84,19 +84,21 @@ class Database:
         try:
             cur = self.conn.cursor()
             sql = "SELECT * FROM tweets"
+
             if condition:
                 sql = f"SELECT * FROM tweets WHERE {condition[0]} = ?"
 
                 cur.execute(
                     sql,
-                    condition[1],
+                    (condition[1],),
                 )
+
             else:
                 cur.execute(sql)
 
             return cur.fetchall()
         except sqlite3.Error as error:
-            print("Error", error)
+            print("get_all_tweets: Error", error)
         finally:
             cur.close()
 
@@ -320,6 +322,21 @@ class Database:
                 f"get_last_id_by_handle: Error retrieving last tweet in db for {screen_name}\
                     \n {error}"
             )
+        finally:
+            cur.close()
+
+    def delete_by_id(self, tweet_id):
+        """
+        Remove entry from database by id.
+        If tweet_id is a list, remove multiple entries.
+        """
+
+        try:
+            cur = self.conn.cursor()
+            cur.execute("DELETE FROM tweets WHERE tweet_id = ?", (tweet_id,))
+            self.conn.commit()
+        except sqlite3.Error as error:
+            print("delete_by_id: Error", error)
         finally:
             cur.close()
 

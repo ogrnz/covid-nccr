@@ -468,7 +468,6 @@ tws_all.insert(0, fake_tw)
 
 
 def sanitize(txt: str):
-    # return txt.replace("\n", "").replace(" ", "") if txt is not None else None
     return txt[:140].replace("\n", "").replace(" ", "") if txt is not None else None
 
 
@@ -506,7 +505,6 @@ def check_in_db(tw_flat):
 #%%
 # Multiprocessing
 import multiprocessing
-import concurrent.futures
 from tqdm.contrib.concurrent import process_map
 import time
 
@@ -514,7 +512,6 @@ if __name__ == "__main__":
     # From 23min down to 6min30s!
 
     # print("Multiproc")
-    # times = []
     # start = time.time()
 
     # with multiprocessing.Pool() as pool:

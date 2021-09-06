@@ -1,16 +1,14 @@
 # pylint: skip-file
-
+# 12h43
 """
-With tweets that had "0" as URL, only the ones from @MinSolSante (account deleted)
-could not be updated and:
-9394673300	@WHO
-1336509324	@WHO
-3905736213	@DrTedros (deleted)
-1350303674	@WHO
-5056838657	@WHO
-1550741163	@WHO
-=> The 5 that still had an issue from @WHO
-and the deleted one from @DrTedros. Pretty good!
+Still tweets with NULL as url.
+value_counts:
+@WHO             2222
+@DrTedros         331
+@MinSoliSante     267
+@UN                17
+@enmarchefr         1
+TOT:             2838
 """
 
 #%%
@@ -49,19 +47,19 @@ df = Helpers.df_from_db(tws_probs_all)
 
 #%%
 # Problematic tweets from
-# ['@WHO', '(@MinSoliSante)', '@DrTedros', '@UN']
-# counts = 1675, (706), 107, 494 -> tot = (2982) 2276
-# retrieved = 626, NA, 51, 190 = 855
+# ['@WHO', '(@MinSoliSante)', '@DrTedros', '@UN', '@enmarchef']
 # @MinSoliSante account doesn't exist anymore, won't be possible to retrieve real ids
 # @MinSoliSante ok
-# @DrTedros ok
-# @UN ok
-# @WHO ok (15 with issue) -> only 5 with issue if we use the non-stripped version of the code.
+# @DrTedros 
+# @UN 
+# @WHO
+# @enmarchefr
 
 jsonl_path = os.path.join(app_run.root_dir, "database", "jsonl")
 # test_file = "WHO_flat.jsonl"
-# test_file = "DrTedros_flat.jsonl"
-test_file = "UN_flat.jsonl"
+# test_file = "DrTedr_flat.jsonl"
+# test_file = "UN_flat.jsonl"
+test_file = "enmarchefr_flat.jsonl"
 jsonl_file_flat = os.path.join(jsonl_path, "flat", test_file)
 
 with open(jsonl_file_flat) as jsonl_flat:
@@ -123,22 +121,13 @@ if __name__ == "__main__":
 
 #%%
 # If no more issues, update in db.
-# "9080847841" (1248922700724256768 WHO) should keep its coding
-# -> duplicate record, old manually deleted
-# "1440976960" should not be updated (@MinSolSante)
-# "4981266496" (UN) should keep "theme_hardcoded == 0"
-# with db:
-#     fields = ["tweet_id", "url", "created_at"]
-#     updated = db.update_many(fields, "tweet_id", to_update)
-# print(updated)
-
 with db:
     fields = ["tweet_id", "url", "created_at"]
     # updated = db.update_many(fields, "tweet_id", to_update)
 
     # Update single row at a time, easier to catch problems
-    for tw in tqdm.tqdm(to_update):
-        db.update(fields, "tweet_id", tw)
+    # for tw in tqdm.tqdm(to_update):
+    #     db.update(fields, "tweet_id", tw)
 
 # %%
 # WHO
@@ -152,38 +141,12 @@ df_prob_who = df_who[~df_who["tweet_id"].isin(who_ha)]
 # line 6450 of WHO_flat.jsonl
 # hash 9394673300 tweet_id 1212554603281039360
 # again duplicate issue
-
+#
 tw_flat = 'Did You Know\u2753\n\u2611 1 in 8 #nurses works in a country other than where they were born or trained\n\u2611 &gt;80% of the world\u2019s nurses work in countries that are home to 50% of the world\u2019s population\n\u2611 90% of all nurses are female\n\nMore facts: https://t.co/YvbxNqrFUO\n\n#WorldHealthDay https://t.co/fDXoKXauSd'
 tw_db = 'Did You Know❓ ☑ 1 in 8 #nurses works in a country other than where they were born or trained ☑ >80% of the world’s nurses work in countries that are home to 50% of the world’s population ☑ 90% of all nurses are female More facts:\xa0https://t.co/YvbxNqrFUO\xa0#WorldHealthDay\xa0https://t.co/fDXoKXauSd\xa0Apr 07, 2020\xa0'
 print(insertor.preprocess(tw_flat))
 print(insertor.preprocess(tw_db))
 print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
-
-# %%
-# Issue
-# line 9477, 9478, 9485, 10722, 10727, 10823, 10824, 10827, of UN_flat.jsonl
-# hash 4871311712 tweet_id 1212554603281039360
-# those tweets only differ at the very end, so no unique result is found when compared
-# because of preprocessing.
-
-lines = [9485, 10827]
-flats_prep = [insertor.preprocess(tws_flat[line - 1]["text"]) for line in lines]
-flats = [tws_flat[line - 1]["text"] for line in lines]
-tw_db = '#SupportNursesAndMidwives: They are critical health workers. Investment in their education and training is vital to ensuring #HealthForAll. 👉\xa0https://t.co/YvbxNqrFUO\xa0#WorldHealthDay\xa0https://t.co/oMjVcpTChb\xa0Apr 07, 2020\xa0'
-
-# %%
-# Issue
-# line 6450 of
-# hash 9394673300 tweet_id 1212554603281039360
-# again duplicate issue
-#
-tw_flat = 'Did You Know\u2753\n\u2611 1 in 8 #nurses works in a country other than where they were born or trained\n\u2611 &gt;80% of the world\u2019s nurses work in countries that are home to 50% of the world\u2019s population\n\u2611 90% of all nurses are female\n\nMore facts: https://t.co/YvbxNqrFUO\n\n#WorldHealthDay https://t.co/fDXoKXauSd'
-tw_db = 'Vaccines protect us against harmful diseases like polio & measles, by: ✅Using our body’s natural defenses to protect against infections ✅Training our immune system to create antibodies This prevents us from getting sick. 👉\xa0https://t.co/RA8yheDUXR\xa0#VaccinesWork\xa0https://t.co/Kvx5QJFNUw\xa0Apr 24, 2020\xa0'
-
-print(insertor.preprocess(tw_flat))
-print(insertor.preprocess(tw_db))
-print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
-
 
 # %%
 # Fix duplicates (remove if theme_hardoced != "0")
@@ -214,18 +177,6 @@ un_ha = [up[-1] for up in to_update]
 df_un = df[df["handle"] == "@UN"]
 df_prob_un = df_un[~df_un["tweet_id"].isin(un_ha)]
 
-#%%
-# Issue
-# line 6450 of UN_flat.jsonl
-# hash 5979491293 AND 7619916019 tweet_id 1212554603281039360
-# again duplicate issue
-#
-tw_flat = '"We proved that women’s active participation in a peace process can make a significant difference."\n\n-- Nobel Laureate @LeymahRGbowee on the important role of women for peace. https://t.co/XHnRXGPlQk via @AfricaRenewal https://t.co/1XH5JbBegt'
-tw_db = '"We proved that women’s active participation in a peace process can make a significant difference." -- Nobel Laureate @LeymahRGbowee on the important role of women for peace.\xa0https://t.co/XHnRXGPlQk\xa0via @AfricaRenewal\xa0https://t.co/1XH5JbBegt\xa0Feb 01, 2020\xa0'
-print(insertor.preprocess(tw_flat))
-print(insertor.preprocess(tw_db))
-print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
-
 # %%
 # Still problematic tweets from @DrTedros
 dr_ha = [up[-1] for up in to_update]
@@ -233,111 +184,23 @@ df_dr = df[df["handle"] == "@DrTedros"]
 df_prob_dr = df_dr[~df_dr["tweet_id"].isin(dr_ha)]
 
 #%%
-# Issue
-# line 5851 of DrTedros_flat.jsonl
-# hash 1526566693 tweet_id 1239591758520029185
-# &amp; not stripped
-# -> solved
-
-tw_flat = 'RT @mugecevik: Dr @DrTedros "we have seen a rapid escalation in social distancing measures, like closing schools &amp; cancelling events &amp; othe…'
-tw_db = 'RT @mugecevik: Dr @DrTedros "we have seen a rapid escalation in social distancing measures, like closing schools & cancelling events & othe…\xa0Mar 16, 2020\xa0'
-print(insertor.preprocess(tw_flat))
-print(insertor.preprocess(tw_db))
-print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+# Still problematic tweets from @enmarchefr
+en_ha = [up[-1] for up in to_update]
+df_en = df[df["handle"] == "@enmarchefr"]
+df_prob_en = df_en[~df_en["tweet_id"].isin(en_ha)]
 
 #%%
 # Issue
-# line 6173 of DrTedros flat
-# hash 1139880183 tweet_id 1234951668044894214
-# "\xa0" (non-breaking space) was not stripped
-# -> solved
-tw_flat = "I and my daughter Blen really appreciate the lovely birthday wishes you sent us. Much gratitude! https://t.co/ww6voBnJfu"
-tw_db = "I and my daughter Blen really appreciate the lovely birthday wishes you sent us. Much gratitude!\xa0https://t.co/ww6voBnJfu\xa0Mar 03, 2020\xa0"
-print(insertor.preprocess(tw_flat))
-print(insertor.preprocess(tw_db))
-print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+# line 2932 of enmarchefr_flat.jsonl
+# hash 1103496708 tweet_id 1243467431533858822 
 
-# %%
-# Still only 51/107 of DrTedros are found
-# Issue
-# hash 1449155825 tweet_id NA
-# account "@toto_sparrow" deleted
-# impossible to know exactly how many
-# -> this tweet was manually deleted
-tw_flat = None
-tw_db = 'RT @toto_sparrow: Today is World Hearing Day. Remember that with a little extra attention, people with hearing impairment can be full parti…\xa0Mar 03, 2020\xa0'
+tw_flat = 'RT @murielpenicaud: Chômage partiel : ce soir, ce sont\n➡️ 150 000 entreprises et 1,6 million de salariés qui sont protégés. \n➡️ + 50% d’ent…'
+tw_db = "RT @murielpenicaud: Chômage partiel : ce soir, ce sont\n➡️ 150 000 entreprises et 1,6 million de salariés qui sont protégés. \n➡️ + 50% d'ent…"
+print(insertor_multi.preprocess(tw_flat))
+print(insertor_multi.preprocess(tw_db))
+print(insertor_multi.preprocess(tw_flat) == insertor_multi.preprocess(tw_db))
 
-#%%
-# Issue
-# line 6175 of DrTedros flat
-# hash 1100886297 tweet_id 1234947288725966849
-# for short tweets, the date "Mar03,2020" is still included in the comparison
-# -> solved 58/107
-tw_flat = 'Thanks so much my friend Toto. How thoughtful of you! https://t.co/rR08hxnv7q'
-tw_db = 'Thanks so much my friend Toto. How thoughtful of you!\xa0https://t.co/rR08hxnv7q\xa0Mar 03, 2020\xa0'
-print(insertor.preprocess(tw_flat))
-print(insertor.preprocess(tw_db))
-print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
-
-#%%
-# Issue
-# line 6207 of DrTedros flat
-# hash 1165309955 AND 1451999741 tweet_id 1234077816897097728
-# can be multiple matches
-# -> solved: notify and print the multiple ids but keep the last one found
-# manually purge database of duplicates
-# Duplicates are tweets with "theme_hardcoded" set to NULL instead of 0, must have been
-# introduced then.
-tw_flat = 'I am grateful for the contribution being announced @KSRelief_EN of $10.5 million to support @WHO to #EndMalaria in Yemen for almost 7 million people and the treatment of nearly 780,000 people over 18 months. #RIHF'
-tw_db = 'I am grateful for the contribution being announced @KSRelief_EN of $10.5 million to support @WHO to #EndMalaria in Yemen for almost 7 million people and the treatment of nearly 780,000 people over 18 months. #RIHF\xa0Mar 01, 2020\xa0'
-
-fake_db = [(
-    "1165309955",
-    0,
-    "00/00/0000",
-    "@DrTedros",
-    "United Nations",
-    None,
-    tw_db,
-    "0",
-    "New",
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-),
-(
-    "1451999741",
-    0,
-    "00/00/0000",
-    "@DrTedros",
-    "United Nations",
-    tw_db,
-    None,
-    "0",
-    "New",
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-),]
-
-print(insertor.preprocess(tw_flat))
-print(insertor.preprocess(tw_db))
-print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
-print(insertor.check_in_db(tws_flat[6206], fake_db))
 
 # %%
 # Issue
 # check @RY ...:
-
-# %%
-# Issue
-# url field in db can also be Null (and not simply == "0")
-# -> see "url_null.py"

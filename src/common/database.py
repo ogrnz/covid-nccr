@@ -86,7 +86,7 @@ class Database:
             sql = "SELECT * FROM tweets"
 
             if condition:
-                sql = f"SELECT * FROM tweets WHERE {condition[0]} = ?"
+                sql = f"SELECT * FROM tweets WHERE {condition[0]} IS ?"
 
                 cur.execute(
                     sql,

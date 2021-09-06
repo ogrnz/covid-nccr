@@ -81,10 +81,10 @@ class InsertFromJsonl(Insertor):
         regex = r"(\xa0\w{3}\s\d{2}.\s\d{4}\xa0)"  #  "\xa0Mar 03, 2020\xa0"
         txt = re.sub(regex, "", txt, 1)
         txt = unicodedata.normalize("NFKD", txt)
-        txt = txt.replace("\n", "").replace(" ", "")
+        txt = txt.replace("\n", "").replace(" ", "").replace("’", "'")
         # txt = txt.replace("&amp;", "&")
         txt = unescape(txt)  # for & and >
-
+        
         # return txt[:100]
         return txt
 

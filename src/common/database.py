@@ -200,6 +200,43 @@ class Database:
         finally:
             cur.close()
 
+    def update(self, fields, cond, values):
+        """
+        Update multiple fields from a tweet
+
+        If fields is a list, multiple fields will be updated.
+        The condition value must be the last value of values.
+        values can be an iterable such as tuple(field1_value, field2_value, cond_value)
+        """
+
+        if cond not in Helpers.schema_cols:
+            print(
+                "InvalidConditionError: This condition is not valid. \
+                There is no column of that name."
+            )
+
+        if isinstance(fields, list):
+            cols = str([field + " = ?" for field in fields])
+            cols = cols.replace("[", "")
+            cols = cols.replace("]", "")
+            cols = cols.replace("'", "")
+            sql = f"""UPDATE tweets SET {cols} WHERE {cond} = ?"""
+        else:
+            sql = f"""UPDATE tweets SET {fields} = ? WHERE {cond} = ?"""
+
+        cur = self.conn.cursor()
+
+        try:
+            cur.execute(
+                sql,
+                values,
+            )
+            self.conn.commit()
+        except sqlite3.Error as error:
+            print("update: Error updating tweets", error, values)
+        finally:
+            cur.close()
+
     def update_many(self, fields, cond, values):
         """
         Update tweets in bulk

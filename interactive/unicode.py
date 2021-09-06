@@ -43,18 +43,20 @@ df = Helpers.df_from_db(tws_probs_all)
 # @MinSoliSante ok
 # @DrTedros ok
 # @UN ok
-# @WHO ok (15 with issue)
+# @WHO ok (15 with issue) -> only 5 with issue if we use the non-stripped version of the code.
 
 jsonl_path = os.path.join(app_run.root_dir, "database", "jsonl")
-# test_file = "WHO_flat.jsonl"
+test_file = "WHO_flat.jsonl"
 # test_file = "DrTedros_flat.jsonl"
-test_file = "UN_flat.jsonl"
+# test_file = "UN_flat.jsonl"
 jsonl_file_flat = os.path.join(jsonl_path, "flat", test_file)
 
 with open(jsonl_file_flat) as jsonl_flat:
     tws_flat = [json.loads(line) for line in jsonl_flat]
 
 #%%
+# When testing, insert a fake tweet that we are sure is in the database
+# so we, at least, have one match.
 fake_tw = (
     "123",
     0,
@@ -105,6 +107,29 @@ if __name__ == "__main__":
 
     print(len(to_update))
     print(f"Took {time.time() - start}s")
+
+#%%
+# If no more issues, update in db.
+# "9080847841" (1248922700724256768 WHO) should keep its coding
+# -> duplicate record, old manually deleted
+# "1440976960" should not be updated (@MinSolSante)
+# "4981266496" (UN) should keep "theme_hardcoded == 0"
+# with db:
+#     fields = ["tweet_id", "url", "created_at"]
+#     updated = db.update_many(fields, "tweet_id", to_update)
+# print(updated)
+
+with db:
+    fields = ["tweet_id", "url", "created_at"]
+    # updated = db.update_many(fields, "tweet_id", to_update)
+
+    # Update single row at a time, easier to catch problems
+    for tw in tqdm.tqdm(to_update):
+        db.update(fields, "tweet_id", tw)
+
+# WHO update 1 issue:
+# UNIQUE constraint failed
+# ('1248922700724256768', 'https://twitter.com/WHO/status/1248922700724256768', '11/04/2020 10:35:50', '9080847841')
 
 # %%
 # WHO

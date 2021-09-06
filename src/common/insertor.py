@@ -81,11 +81,12 @@ class InsertFromJsonl(Insertor):
         regex = r"(\xa0\w{3}\s\d{2}.\s\d{4}\xa0)"  #  "\xa0Mar 03, 2020\xa0"
         txt = re.sub(regex, "", txt, 1)
         txt = unicodedata.normalize("NFKD", txt)
+        txt = unescape(txt)  # for & and >
         txt = txt.replace("\n", "").replace(" ", "").replace("’", "'")
         # txt = txt.replace("&amp;", "&")
-        txt = unescape(txt)  # for & and >
-        
+
         # return txt[:100]
+        # return txt[:140]
         return txt
 
     def check_in_db(self, tw_flat, tws_db: list = None):
@@ -111,7 +112,7 @@ class InsertFromJsonl(Insertor):
             old_url = tw_db[7]
             flat_txt = self.preprocess(tw_flat["text"])
 
-            if old_url == "0" and flat_txt in (old_text, text):
+            if old_url == "0" or old_url is None and flat_txt in (old_text, text):
                 found_count += 1
                 idx_found.append(old_id)
                 new_id = tw_flat["id"]
@@ -119,6 +120,8 @@ class InsertFromJsonl(Insertor):
                 new_created_at = Helpers.twitter_to_db_time(tw_flat["created_at"])
 
                 new_tweet = (new_id, new_url, new_created_at, old_id)
+
+                print(new_tweet)
 
             if found_count > 1 and self.mode == "multiproc":
                 print(f"\nMultiple matching tweets found for {new_id}")

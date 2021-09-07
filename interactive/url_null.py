@@ -8,7 +8,7 @@ value_counts:
 @MinSoliSante     267
 @UN                17
 @enmarchefr         1
-TOT:             2838
+TOT              2838
 """
 
 #%%
@@ -52,7 +52,7 @@ df = Helpers.df_from_db(tws_probs_all)
 # @MinSoliSante ok
 # @DrTedros ok
 # @UN ok
-# @WHO
+# @WHO ok
 # @enmarchefr ok
 
 jsonl_path = os.path.join(app_run.root_dir, "database", "jsonl")
@@ -136,6 +136,14 @@ who_ha = [up[-1] for up in to_update]
 df_who = df[df["handle"] == "@WHO"]
 df_prob_who = df_who[~df_who["tweet_id"].isin(who_ha)]
 
+#%%
+def get_correct_infos(correct_line):
+    print(Helpers.twitter_to_db_time(tws_flat[correct_line]["created_at"]))
+    print(Helpers.build_tweet_url(tws_flat[correct_line]["id"], "@WHO"))
+
+
+# https://www.mobilefish.com/services/unicode_escape_sequence_converter/unicode_escape_sequence_converter.php useful
+
 # %%
 # Issue
 # lines 10287, 10725
@@ -167,7 +175,7 @@ print(insertor.preprocess(tw_db))
 print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
 
 # %%
-# Issue 3/12
+# Issue
 # hash 9183277323 tweet_id 1250811001970319362
 # lines 9044 10276
 # diff is a \n, which gets stripped
@@ -175,6 +183,134 @@ print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
 tw_flat = tws_flat[9043]["text"]  # 1261995580060053504
 tw_flat = tws_flat[10275]["text"]  # 1250784508519108608
 tw_db ='Let’s grab your book 📚 & watch @HowardDonald reading “My Hero is You, How kids can fight #COVID19!” Books:\xa0https://t.co/E8EBarFxqU\xa0#HealthyAtHome #coronavirus\xa0Apr 16, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 9085616260 tweet_id 1257065499776647169
+# lines  8080 9576
+# same text diff dates
+# -> real is 1257065499776647169
+tw_flat = tws_flat[8079]["text"]  # 1269974797318062081
+tw_flat = tws_flat[9575]["text"]  # 1257065499776647169
+tw_db = 'Make your own avatar using @Genies & support WHO’s #StaySafe initiative with personalized stickers you can use on messaging & social media! To make your Genie, simply download the Genies app from App Store and Android #COVID19 #coronavirus\xa0https://t.co/KjinQhhjs7\xa0May 03, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 6530936744 tweet_id 1257959657479581704
+# line 9447
+# Twitonomy was stripping "clean/aseptic" to "cleaseptic"
+# -> corrected original text in db
+tw_flat = tws_flat[9446]["text"]
+tw_db = 'RT @WHOWPRO: 5 moments for #HandHygiene: 1. Before touching a patient 2. Before a cleaseptic procedure 3. After body fluid exposure…\xa0May 06, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 7245775725 tweet_id
+# line 8044 9396
+# only diff is date
+# -> real is 1270070716331950086
+# -> manually corrected in db
+
+tw_flat = tws_flat[8043]["text"]  # 1270070716331950086
+tw_flat = tws_flat[9395]["text"]  # 1258475306425257984
+tw_db = 'Make your own avatar using @Genies and spread WHO’s #HealthyAtHome messages with personalised stickers that you can use on messaging & social media! To make your own, simply download the Genies app from App Store or Play Store. #COVID19 #coronavirus\xa0https://t.co/DhWJaeJU7c\xa0May 07, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 9369928032 tweet_id 1260587043790471170
+# line 8074 9214
+# only diff is date
+# -> real is 1260587043790471170
+# -> manually corrected
+tw_flat = tws_flat[8073]["text"]  # 1269993933951598593
+tw_flat = tws_flat[9213]["text"]  # 1260587043790471170
+tw_db = 'RT @WHO: Assista à conferência de imprensa da OMS para conhecer as últimas informações sobre a resposta mundial à COVID19, na sua própria l…\xa0May 13, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+
+# %%
+# Issue
+# hash 1239883852
+# line 8077 9217
+# only diff is date
+# -> real is 1260584060558204937
+# -> manually corrected
+tw_flat = tws_flat[8076]["text"]  #
+tw_flat = tws_flat[9216]["text"]  # 1260584060558204937
+tw_db = 'RT @WHO: Regardez la conférence de presse de @WHO pour obtenir les dernières informations sur la riposte mondiale à la #COVID19 dans votre…\xa0May 13, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 5348925980
+# line 8076  9216
+# only diff is date
+# -> real is 1260584722742345728
+# -> manually corrected
+# tw_flat = tws_flat[8075]["text"]  #
+tw_flat = tws_flat[9215]["text"]  # 1260584722742345728
+tw_db = 'RT @WHO: Для получения самой актуальной информации о глобальной борьбе с #COVID19 следите за пресс-конференциями ВОЗ (@WHO) на вашем родном…\xa0May 13, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 4010458404
+# line 8072 9213
+# only diff is date
+# -> real is 1260587319905718275
+# -> manually corrected
+tw_flat = tws_flat[8071]["text"]  #
+tw_flat = tws_flat[9212]["text"]  # 1260587319905718275
+tw_db = 'RT @WHO: विश्व स्वास्थय संगठन (WHO) के #COVID19 प्रेस कांफ्रेंस से जुड़ें हर सोमवार, बुधवार और शुक्रवार को रात 8.30 बजे (IST) क्लिक करें h…\xa0May 13, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 8502062226
+# line 8039
+# -> manually corrected
+tw_flat = tws_flat[8038]["text"]
+tw_db = 'The @Minions & Gru are supporting WHO in making sure people of all ages stay safe and healthy during this #COVID19 pandemic: 💛 physically distancing 💛 being active at home 💛 being kind to each other\xa0https://t.co/yLAKK2veHy\xa0May 27, 2020\xa0'
+
+print(insertor.preprocess(tw_flat))
+print(insertor.preprocess(tw_db))
+print(insertor.preprocess(tw_flat) == insertor.preprocess(tw_db))
+
+# %%
+# Issue
+# hash 4714318639
+# line 8038
+# ->  manually corrected
+tw_flat = tws_flat[8037]["text"]
+tw_db = 'Wash your hands for 40 seconds and sing along "Wash Wash Wash Your Hands" with @peppapig and and her friends, Rebecca Rabbit and Mr Badger! Washing your hands can help to stop the spread of #COVID19\xa0https://t.co/tE2kdLUiz7\xa0Jun 03, 2020\xa0'
 
 print(insertor.preprocess(tw_flat))
 print(insertor.preprocess(tw_db))

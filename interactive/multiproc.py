@@ -435,7 +435,7 @@ prob_idx = [
     "1448347409",
 ]
 with db_tweets:
-    prob_tweets_db = [db_tweets.get_tweet_by_id(tweet_id)[0] for tweet_id in prob_idx]
+    prob_tweets_db = [db_tweets.get_tweet_by_id(tweet_id) for tweet_id in prob_idx]
 
 with db_tweets:
     tws_all = db_tweets.get_all_tweets()

@@ -501,7 +501,7 @@ prob_idx = [
     "1448347409",
 ]
 with db_UN:
-    prob_tweets_db = [db_UN.get_tweet_by_id(tweet_id)[0] for tweet_id in prob_idx]
+    prob_tweets_db = [db_UN.get_tweet_by_id(tweet_id) for tweet_id in prob_idx]
 
 
 # %%

@@ -198,7 +198,7 @@ with db:
     for tw_id in tqdm.tqdm(idx_search):
         tw = db.get_tweet_by_id(tw_id)
         try:
-            fields = tw[0][-5:]  # Also check that no coded tweets are deleted
+            fields = tw[-5:]  # Also check that no coded tweets are deleted
         except Exception as e:  # If tweet_id not in db
             print(e)
         if not any(fields):

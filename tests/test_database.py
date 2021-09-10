@@ -169,16 +169,16 @@ class TestDatabase(unittest.TestCase):
             ]
 
         self.assertEqual(len(tweets), len(self.tweets_duplicate))
-        self.assertEqual(tweets[0][0][5], "UPDATED")
-        self.assertEqual(tweets[1][0][5], "UPDATED")
+        self.assertEqual(tweets[0][5], "UPDATED")
+        self.assertEqual(tweets[1][5], "UPDATED")
 
     def test_d_insert_tweet(self):
         with self.db:
             self.db.insert_tweet(self.tweet_newer)
             inserted_tweet = self.db.get_tweet_by_id("1")
 
-        self.assertEqual(inserted_tweet[0][0], "1")
-        # self.assertEqual(inserted_tweet[0][0], 1)
+        self.assertEqual(inserted_tweet[0], "1")
+        # self.assertEqual(inserted_tweet[0], 1)
 
     def test_e_get_fields(self):
         fields = ["tweet_id"]
@@ -207,7 +207,7 @@ class TestDatabase(unittest.TestCase):
             self.db.update_tweet_by_id(1, "text", "UPDATED")
             updated = self.db.get_tweet_by_id("1")
 
-        self.assertEqual(updated[0][6], "UPDATED")
+        self.assertEqual(updated[6], "UPDATED")
 
     def test_h_update_theme_many(self):
         to_update = [(1, "1427204514906529792"), (1, "1211853090552332289")]
@@ -219,8 +219,8 @@ class TestDatabase(unittest.TestCase):
                 for idx in ["1427204514906529792", "1211853090552332289"]
             ]
 
-        self.assertEqual(updated[0][0][1], 1)
-        self.assertEqual(updated[1][0][1], 1)
+        self.assertEqual(updated[0][1], 1)
+        self.assertEqual(updated[1][1], 1)
 
     def test_i_update_many(self):
         to_update = [(111, "1427204514906529792"), (222, "1211853090552332289")]
@@ -231,8 +231,8 @@ class TestDatabase(unittest.TestCase):
                 self.db.get_tweet_by_id(idx)
                 for idx in ["1427204514906529792", "1211853090552332289"]
             ]
-        self.assertEqual(updated[0][0][-2], "111")
-        self.assertEqual(updated[1][0][-2], "222")
+        self.assertEqual(updated[0][-2], "111")
+        self.assertEqual(updated[1][-2], "222")
 
     def test_j_get_last_id_by_handle(self):
         with self.db:

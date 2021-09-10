@@ -150,7 +150,6 @@ class Database:
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM tweets WHERE tweet_id=?", (tweet_id,))
 
-            # return cur.fetchall()
             return cur.fetchone()
         except sqlite3.Error as error:
             print("get_tweet_by_id: Error", error)

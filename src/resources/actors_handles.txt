@@ -62,3 +62,5 @@ UKLabour
 Mitte_Centre
 reformparty_uk
 WHOSEARO
+Sante_Gouv
+Left_EU

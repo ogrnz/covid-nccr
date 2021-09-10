@@ -36,4 +36,4 @@ Their URL and created_at fields were updated but their tweet_id kept to the old 
 ('1243467431533858822', 'https://twitter.com/enmarchefr/status/1243467431533858822', '27/03/2020 09:18:32', '1103496708'),
 
 @WHO:
-('1269974797318062081', 'https://twitter.com/WHO/status/1269974797318062081', '08/06/2020 12:49:21', '9085616260')
+# ('1269974797318062081', 'https://twitter.com/WHO/status/1269974797318062081', '08/06/2020 12:49:21', '9085616260')

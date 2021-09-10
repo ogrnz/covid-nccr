@@ -276,9 +276,10 @@ class Database:
         finally:
             cur.close()
 
-    def insert_tweet(self, tweet):
+    def insert_tweet(self, tweet: tuple):
         """
-        Insert new tweet into database
+        Insert new tweet into database.
+        Tweet already in the database is not inserted.
         """
 
         sql = f"""INSERT OR IGNORE INTO tweets{Helpers.get_cols_as_tuple_str()}
@@ -296,7 +297,7 @@ class Database:
         finally:
             cur.close()
 
-    def insert_many(self, tweets):
+    def insert_many(self, tweets: list) -> int:
         """
         Insert new tweets into database.
         Tweets already in the database are not inserted.
@@ -318,7 +319,8 @@ class Database:
 
     def insert_or_replace_many(self, tweets):
         """
-        Insert new tweets into database. If tweet already exists, values are overwritten.
+        Insert new tweets into database.
+        If tweet already exists, values are overwritten.
         """
 
         sql = f"""INSERT OR REPLACE INTO tweets

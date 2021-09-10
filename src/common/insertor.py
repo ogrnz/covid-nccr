@@ -42,6 +42,7 @@ class InsertFromJsonl(Insertor):
         self.tws = tws_db
         self.idx_found = []
         self.mode = mode
+        self.to_insert = []
 
     def read(self, filename):
         """
@@ -68,6 +69,44 @@ class InsertFromJsonl(Insertor):
             for _ in open_f:
                 tot_lines += 1
         return tot_lines
+
+    def ret_tw_from_line(self, line):
+        """
+        Return a tweet tuple in db's format from a flattened jsonl file.
+        """
+
+        tweet_type = Helpers.get_type_from_json(line)
+        old_text = None
+        txt = line["text"]
+
+        if tweet_type in ("Retweet", "Reply"):
+            old_text = line["text"]
+            txt = None
+
+        tweet = (
+            line["id"],  # tweet_id
+            1,  # covid_theme
+            Helpers.twitter_to_db_time(line["created_at"]),  # created_at
+            "@" + line["author"]["username"],  # handle
+            line["author"]["name"],  # name
+            old_text,  # old_text
+            txt,  # text
+            Helpers.build_tweet_url(line["id"], line["author"]["username"]),  # url
+            tweet_type,  # type
+            line["public_metrics"]["retweet_count"],  # retweets
+            line["public_metrics"]["like_count"],  # favorites
+            None,  # topic
+            None,  # subcat
+            None,  # position
+            None,  # frame
+            None,  # theme_hardcoded
+        )
+
+        # Small check to prevent breaking the function if we change the number of cols.
+        if len(tweet) != len(Helpers.schema_cols):
+            print("Error: number of columns in function does not match schema.")
+
+        return tweet
 
     def preprocess(self, txt: str):
         """

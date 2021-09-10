@@ -56,7 +56,7 @@ df = Helpers.df_from_db(tws_probs_all)
 # @enmarchefr ok
 
 jsonl_path = os.path.join(app_run.root_dir, "database", "jsonl")
-test_file = "WHO_flat.jsonl"
+test_file = "UN_flat_test.jsonl"
 # test_file = "DrTedros_flat.jsonl"
 # test_file = "UN_flat.jsonl"
 # test_file = "enmarchefr_flat.jsonl"

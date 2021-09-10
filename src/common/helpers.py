@@ -196,6 +196,8 @@ class Helpers:
         https://twitter.com/{handle}/status/{id}
         """
 
+        if handle[0] == "@":
+            handle = handle[1:]
         return f"https://twitter.com/{handle}/status/{str(tweet_id)}"
 
     @staticmethod
@@ -207,6 +209,24 @@ class Helpers:
 
         tmp_date = datetime.strptime(date, Helpers.twitter_time_format)
         return datetime.strftime(tmp_date, Helpers.database_time_format)
+
+    @staticmethod
+    def get_type_from_json(line: str):
+        """
+        Detects if a given tweet (jsonl format) is Retweet, Reply or New.
+        """
+        # print(line.keys())
+        # print(type(line))tws_flat[]
+
+        if line["text"][:2] == "RT":  # Is RT
+            # if "retweeted_status" in line:  # Not in jsonl...
+            tweet_type = "Retweet"
+        else:  # Not a Retweet
+            tweet_type = "New"
+            if "in_reply_to_user_id" in line:
+                tweet_type = "Reply"
+
+        return tweet_type
 
 
 if __name__ == "__main__":

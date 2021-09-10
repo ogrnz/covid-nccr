@@ -150,7 +150,8 @@ class Database:
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM tweets WHERE tweet_id=?", (tweet_id,))
 
-            return cur.fetchall()
+            # return cur.fetchall()
+            return cur.fetchone()
         except sqlite3.Error as error:
             print("get_tweet_by_id: Error", error)
         finally:
@@ -294,6 +295,8 @@ class Database:
         except sqlite3.Error as error:
             print(sql)
             print(f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}")
+
+            return None
         finally:
             cur.close()
 
@@ -334,6 +337,28 @@ class Database:
             return cur.rowcount
         except sqlite3.Error as error:
             print(f"insert_or_replace_many: Error inserting new tweets \n {error}")
+        finally:
+            cur.close()
+
+    def insert_no_ignore(self, tweet: tuple):
+        """
+        Insert new tweet into database.
+        """
+
+        sql = f"""INSERT INTO tweets{Helpers.get_cols_as_tuple_str()}
+                VALUES{self.prep_req}"""
+        cur = self.conn.cursor()
+
+        try:
+            cur.execute(sql, tweet)
+            self.conn.commit()
+
+            return cur.lastrowid
+        except sqlite3.Error as error:
+            print(sql)
+            print(f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}")
+
+            return None
         finally:
             cur.close()
 

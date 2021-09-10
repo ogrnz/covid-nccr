@@ -3,8 +3,8 @@
 #%%
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join("..", "src")))
-# sys.path.append(os.path.abspath(os.path.join("src")))
+# sys.path.append(os.path.abspath(os.path.join("..", "src")))
+sys.path.append(os.path.abspath(os.path.join("src")))
 
 import subprocess
 import json
@@ -20,7 +20,8 @@ from common.insertor import InsertFromJsonl
 app = App()
 #%%
 jsonl_path = os.path.join(app.root_dir, "database", "jsonl")
-jsonl_fs = os.listdir(jsonl_path)
+# jsonl_fs = os.listdir(jsonl_path)
+jsonl_fs = ["Sante_Gouv.jsonl", "Left_EU.jsonl"]
 
 #%%
 # Flatten all jsonl files
@@ -29,17 +30,19 @@ for jsonl_f in jsonl_fs:
     infile = os.path.join(jsonl_path, jsonl_f)
     outfile = f"{os.path.join(jsonl_path, 'flat', new_jsonl_f)}_flat.jsonl"
 
-    # subprocess.run(
-    #     [
-    #         "twarc2",
-    #         "flatten",
-    #         infile,
-    #         outfile,
-    #     ],
-    #     shell=True,
-    # )
+    subprocess.run(
+        [
+            "twarc2",
+            "flatten",
+            infile,
+            outfile,
+        ],
+        shell=True,
+    )
     print("From", infile)
     print("To", outfile)
+
+exit()
 
 # %%
 

@@ -5,6 +5,7 @@ API module
 import math
 from datetime import datetime as dt
 
+from tqdm import tqdm
 import tweepy
 import pandas as pd
 
@@ -20,7 +21,7 @@ class Api:
 
     api = None
     connected = False
-    COUNT = 500  # Academic account
+    COUNT = 100
 
     def __init__(self, main_app: App = None):
         self.app = main_app if main_app is not None else App(debug=True)
@@ -334,7 +335,7 @@ class Api:
 
     def get_complete_tweets_by_ids(self, tweets_ids: list):
         """
-        Retrieve a list of completed tweets for tweet ids
+        Retrieve a list of completed tweets for tweet ids.
         """
 
         tot_tweets = {}
@@ -408,6 +409,82 @@ class Api:
 
         user = self.api.get_user(handles)
         return user.id
+
+    def get_user(self, handles):
+        """
+        Returns either a list or a unique tweepy.user object.
+        If there are more than 300 users to get, you should use the get_many_users method.
+        """
+
+        if isinstance(handles, list):
+            users = [self.api.get_user(handle) for handle in handles]
+            return users
+
+        user = self.api.get_user(handles)
+        return user
+
+    def get_many_users(self, handles, mode="screen_names"):
+        """
+        Get many users objects.
+        mode can be {"screen_names", "user_ids"}
+        """
+
+        users = []
+
+        lim_start = self.COUNT
+        start = 0
+        final = lim_start + Helpers.count_null_id(handles, finish=lim_start)
+        screen_names = handles[start:final]
+
+        iter_needed = math.ceil(
+            (len(handles) - Helpers.count_null_id(handles)) / self.COUNT
+        )
+
+        nomatch = 0
+        itera = 0
+        with tqdm(total=len(handles)) as pbar:
+            # while itera < iter_needed + 1:
+            while itera <= iter_needed:
+                try:
+                    if mode == "user_ids":
+                        next_users = self.api.lookup_users(user_ids=screen_names)
+                    else:
+                        next_users = self.api.lookup_users(screen_names=screen_names)
+                    users.append(next_users)
+                except tweepy.TweepError as error:
+                    if error.api_code == 38:  # End of loop
+                        break
+                    if error.api_code == 88:  # RateLimiteError
+                        print("Error", error)
+                        break
+                    if error.api_code == 17:  # NoUserMatch
+                        nomatch += 1
+                    else:
+                        print("Error", error)
+
+                # Setup request for new iteration
+                last_iter_final = final
+                start = last_iter_final
+                if start + self.COUNT <= len(handles):
+                    final = (
+                        last_iter_final
+                        + self.COUNT
+                        + Helpers.count_null_id(
+                            handles, start=start, finish=start + self.COUNT
+                        )
+                    )
+                else:
+                    final = len(handles)
+
+                screen_names = handles[start:final]
+                itera += 1
+                pbar.update(self.COUNT)
+
+        if nomatch > 0:
+            print(
+                "NoUserMatch: Some requests have returned no matches for some queried users."
+            )
+        return users
 
 
 if __name__ == "__main__":

@@ -124,6 +124,10 @@ def sanitize(text, lang="en"):
 
 
 def get_theme(row: pd.Series):
+    """
+    After classification by the 3 algorithms, return the majority vote.
+    """
+
     sgd = row.loc["sgdclassifier"]
     logreg = row.loc["logisticregression"]
     ridge = row.loc["ridgeclassifier"]

@@ -1,6 +1,8 @@
 # pylint: skip-file
 
 """
+This script is in the context of updating tweets from the DB with flattened tweets retrieved with twarc2. It is a debugging script.
+
 Still tweets with NULL as url.
 value_counts:
 @WHO             2222

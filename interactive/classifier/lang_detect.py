@@ -1,7 +1,8 @@
 # pylint: skip-file
 
 """
-Detect language (en, fr, other)
+Detect language (en, fr, other) of a tweet.
+Currently used in the classifier.
 """
 
 #%%

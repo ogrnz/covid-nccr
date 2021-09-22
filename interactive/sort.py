@@ -1,4 +1,10 @@
 # pylint: skip-file
+
+"""
+Download and keep only the tweets that we are interested in from the db.
+-> Tweets in the range (first 2 waves) that are [...]
+"""
+
 #%%
 import sys, os
 

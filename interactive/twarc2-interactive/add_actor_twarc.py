@@ -1,5 +1,9 @@
 # pylint: skip-file
 
+"""
+This file is using the twarc2 tool to retrieve all the tweets for a list of actors in the given period.
+"""
+
 #%%
 import sys, os
 

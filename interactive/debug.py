@@ -1,6 +1,6 @@
 # pylint: skip-file
 """
-Debug
+Random interactive debug file.
 """
 
 #%%

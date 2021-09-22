@@ -1,6 +1,9 @@
 # pylint: skip-file
 
 """
+This script is in the context of updating tweets from the DB with flattened tweets retrieved with twarc2. It is a debugging script.
+
+
 With tweets that had "0" as URL, only the ones from @MinSolSante (account deleted)
 could not be updated and:
 9394673300	@WHO

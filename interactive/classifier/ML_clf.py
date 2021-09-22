@@ -1,6 +1,8 @@
 # pylint: skip-file
 
 """
+ML classifier file.
+
 After investigation (see ML_clf_lab.py), the selected models are:
 1. SGDClassifier
 2. LogisticRegression

@@ -1,10 +1,14 @@
 # pylint: skip-file
 
+"""
+Used to update existing DB with flattened twarc2-retrieved tweets.
+Debugger for edge cases at the bottom.
+"""
 #%%
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join("src")))
 # sys.path.append(os.path.abspath(os.path.join("..", "src")))
+sys.path.append(os.path.abspath(os.path.join("src")))
 
 import subprocess
 import json
@@ -18,24 +22,90 @@ from common.helpers import Helpers
 from common.insertor import InsertFromJsonl
 
 app = App()
-api = Api()
-db_test = Database("test.db", api.app)
-db_tweets = Database("tweets.db", api.app)
-insertor = InsertFromJsonl(api.app)
-
+#%%
 jsonl_path = os.path.join(app.root_dir, "database", "jsonl")
-test_file = "UN_flat_test.jsonl"
-jsonl_file_flat = os.path.join(jsonl_path, "flat", test_file)
+# jsonl_fs = os.listdir(jsonl_path)
+jsonl_fs = ["Sante_Gouv.jsonl", "Left_EU.jsonl"]
+
+#%%
+# Flatten all jsonl files
+for jsonl_f in jsonl_fs:
+    new_jsonl_f = jsonl_f[:-6]  # Remove extension from name
+    infile = os.path.join(jsonl_path, jsonl_f)
+    outfile = f"{os.path.join(jsonl_path, 'flat', new_jsonl_f)}_flat.jsonl"
+
+    subprocess.run(
+        [
+            "twarc2",
+            "flatten",
+            infile,
+            outfile,
+        ],
+        shell=True,
+    )
+    print("From", infile)
+    print("To", outfile)
+
+exit()
+
+# %%
+
+# Read smallest jsonl file to get the hang of it
+# jsonl_file = os.path.join(jsonl_path, "brexitparty_uk.jsonl")
+# jsonl_file_flat = os.path.join(jsonl_path, "flat", "brexitparty_uk_flat.jsonl")
+
+jsonl_file = os.path.join(jsonl_path, "UDCch.jsonl")
+jsonl_file_flat = os.path.join(jsonl_path, "flat", "UDCch_flat.jsonl")
+
+with open(jsonl_file) as jsonl, open(jsonl_file_flat) as jsonl_flat:
+    tweets = [json.loads(line) for line in jsonl]
+    tweets_flat = [json.loads(line) for line in jsonl_flat]
+
+#%%
+"""
+In non-flat format, each request (containing max 100 tweets) is split.
+For UDCch (327 tweets tot.):
+len(tweets[0]) == 4
+len(tweets[0]["data"]) == 100
+tweets[0]["data"][0]["text"] to get text of first tweet
+
+but len(tweets[3]["data"]) == 27
+which matches the len(tweets_flat) == 327
+
+"""
+#%%
+
+jsonl_file_flat = os.path.join(jsonl_path, "flat", "UN_flat_test.jsonl")
 
 with open(jsonl_file_flat) as jsonl_flat:
     tws_flat = [json.loads(line) for line in jsonl_flat]
 
-with db_test:
-    tws_db = db_test.get_all_tweets()
+# %%
+for i, tw in enumerate(tws_flat):
+    if tw["id"] == "1224466819819483137":
+        print(i)  # 6062
+    if tw["id"] == "1230613850292019200":
+        print(i)  # 5829
+    if tw["id"] == "1223607433484034048":
+        print(i)  # 6087
+
+# %%
+api = Api()
+db = Database("test.db", api.app)
+insertor = InsertFromJsonl(api.app)
+test_file = "UN_flat_test.jsonl"
+
+# %%
+with db:
+    tws_db = db.get_all_tweets()
 
 num_tweets = insertor.get_tot_lines(test_file)
 
-# UN db hashes with problem
+#%%
+# Tweets with issue
+# prob_idx are hashes
+db_UN = Database("tweets.db", api.app)
+
 prob_idx = [
     "2797333945",
     "1150376771",
@@ -434,103 +504,83 @@ prob_idx = [
     "6356975471",
     "1448347409",
 ]
-with db_tweets:
-    prob_tweets_db = [db_tweets.get_tweet_by_id(tweet_id) for tweet_id in prob_idx]
+with db_UN:
+    prob_tweets_db = [db_UN.get_tweet_by_id(tweet_id) for tweet_id in prob_idx]
 
-with db_tweets:
-    tws_all = db_tweets.get_all_tweets()
-df = Helpers.df_from_db(tws_all)
+
+# %%
+# Specific tweet not working:
+# line 5830 of "UN_flat.jsonl"
+# hash 6879268208 real tweet_id 1230613850292019200
+# -> also strip jsonl tweet up to 140 chars to resolve.
+# Now OK
+
+# 2nd issue:
+# line 6088 of "UN_flat.jsonl"
+# line 1589 of "UN_flat_test.jsonl"
+# -> \n not included in old db.
+# -> strip \n of jsonl tweets
+# hash 1384336018, real tweet_id 1223607433484034048
+
+# 3
+# line 1591 of UN test
+# hash 2797333945 real 1223517591223832577
+
+#%%
+with db_UN:
+    tws_UN = db_UN.get_all_tweets()
+df = Helpers.df_from_db(tws_UN)
 df_UN = df[(df["handle"] == "@UN") & (df["url"] == "0")]  # 494 UN tweets have an issue
 
-# Add tweet from tws_flat into prob_tweets_db to have at least 1 match
-fake_tw = (
-    "123",
-    0,
-    "00/00/0000",
-    "@UN",
-    "United Nations",
-    None,
-    tws_flat[0]["text"],
-    "0",
-    "New",
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    "0",
-)
-prob_tweets_db.append(fake_tw)
-tws_all.insert(0, fake_tw)
-#%%
-# Prep a few funcs
+# %%
+# Debuger
+tws_db = prob_tweets_db
+new_txt = tws_flat[1590]["text"][:140].replace("\n", "").replace(" ", "")
 
+# Absolutely not optimized, O(n^2), to be improved if possible.
+to_update = []
 
-def sanitize(txt: str):
-    return txt[:140].replace("\n", "").replace(" ", "") if txt is not None else None
-
-
-def check_in_db(tw_flat):
-    # print("check_in_db")
-
-    # tws = tws_db  # Test
-    tws = prob_tweets_db  # Prob tweets
-    # tws = tws_all  # All tweets
-    # tws = tws_all[:20_000]  # 20k tweets
-
-    for tw_db in tws:
+# for tw_flat in tqdm(tws_flat, total=num_tweets):
+for tw_flat in tws_flat:
+    for tw_db in tws_db:
+        old_text = (
+            tw_db[5][:140].replace("\n", "").replace(" ", "")
+            if tw_db[5] is not None
+            else None
+        )
+        text = (
+            tw_db[6][:140].replace("\n", "").replace(" ", "")
+            if tw_db[6] is not None
+            else None
+        )
         old_id = tw_db[0]
-        old_text = sanitize(tw_db[5])
-        text = sanitize(tw_db[6])
         old_url = tw_db[7]
-        flat_txt = sanitize(tw_flat["text"])
+        flat_txt = tw_flat["text"][:140].replace("\n", "").replace(" ", "")
 
-        # print(old_text)
-        # print(new_txt)
-        # print(old_text == new_txt)
-        # print(len(old_text))
+        print(old_text)
+        print(new_txt)
+        print(old_text == new_txt)
+        print(len(old_text))
 
+        # if old_url == "0" and (old_text == flat_txt or text == flat_txt):
         if old_url == "0" and flat_txt in (old_text, text):
+
             new_id = tw_flat["id"]
             new_url = Helpers.build_tweet_url(new_id, tw_flat["author"]["username"])
             new_created_at = Helpers.twitter_to_db_time(tw_flat["created_at"])
 
             new_tweet = (new_id, new_url, new_created_at, old_id)
 
+            to_update.append(new_tweet)
             # print(new_tweet)
-            return new_tweet
+        break
+    break
+print(to_update)
+print(len(to_update))
 
-
-#%%
-# Multiprocessing
-import multiprocessing
-from tqdm.contrib.concurrent import process_map
-import time
-
-if __name__ == "__main__":
-    # From 23min down to 6min30s!
-
-    # print("Multiproc")
-    # start = time.time()
-
-    # with multiprocessing.Pool() as pool:
-    #     up = process_map(check_in_db, tws_flat, chunksize=10)
-    # up = [el for el in up if el is not None]
-
-    # for tw in up:
-    #     print(tw)
-
-    # print(len(up))
-    # print(f"Took {time.time() - start}s")
-
-    print("Serial")
-    start = time.time()
-    to_update = [
-        check_in_db(tw_flat)
-        for tw_flat in tqdm.tqdm(tws_flat)
-        if check_in_db(tw_flat) is not None
-    ]
-    print("\n", to_update)
-    print(len(to_update))
-    print(f"Took {time.time() - start}s")
+# %%
+# with db:
+#     fields = ["tweet_id", "url", "created_at"]
+#     updated = db.update_many(fields, "tweet_id", to_update)
+# print(updated)
+# %%

@@ -20,12 +20,7 @@ database/xlsx
 database/test
 database/jsonl
 
-interactive/data/db_ML.pkl
-interactive/data/db_all_lang.pkl
-interactive/data/db_en.pkl
-interactive/data/db_fr.pkl
-interactive/data/db_other.pkl
-interactive/data/db_sub_lang.pkl
+interactive/data
 
 tests/__pycache__
 

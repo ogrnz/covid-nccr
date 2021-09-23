@@ -8,6 +8,7 @@ This is a second version with the same-ish algos, but with added handle and date
 x_test = tweet text
 x_handle = tweet user
 x_date = tweet created_at %d/%m/%y
+-> concatenated into "x" column
 """
 
 #%%
@@ -169,7 +170,7 @@ print(df_en_san[df_en_san["x"].str.contains("https")])  # if empty -> good
 # Lemmatization instead of stemming?
 
 #%%
-# 5. train/test split to have an accurate score
+# 5. train/test split
 X = df_en_san.drop(columns=["tweet_id", "y"], axis=1)["x"]
 y = df_en_san.loc[:, "y"]
 # X = np.array(X)  # transform X to numpy array
@@ -490,35 +491,50 @@ def prepare_df(df, lang="en"):
     df_do["y"] = df_do.apply(covid_classify, axis=1)
 
     # Make "x" col
-    df_do["x"] = df_do["text"].progress_apply(lambda x: sanitize(x, lang))
-    print(df_do[df_do["x"].str.contains("https")])  # if empty -> good
+    df_do["x_text"] = df_do["text"].progress_apply(lambda x: sanitize(x, lang))
+    df_do["x_handle"] = df_do["handle"]
+    df_do["x_date"] = df_do["created_at"].progress_apply(
+        lambda r: r[:10].replace("-", "/"),
+    )  # convert created_at to "%d/%m/%y"
+    # x_date is not perfect, some are %d/%m/%y, others %y/%d/%m
+
+    df_do["x"] = df_do.progress_apply(
+        lambda r: f'{r["x_date"]} {r["x_handle"]} {r["x_text"]}', axis=1
+    )
 
     return df_do
+
+
+def custom_train_test_split(df: pd.DataFrame):
+    X = df.drop(columns=["tweet_id", "y"], axis=1)["x"]
+    y = df.loc[:, "y"]
+
+    return train_test_split(
+        X,
+        y,
+        random_state=31415,
+        test_size=0.3,
+        shuffle=True,
+    )
 
 
 #%%
 df_en_ready = prepare_df(df_en, lang="en")
 
 #%%
-# Train/test split to have an accurate score
-X_train, X_test, y_train, y_test = train_test_split(
-    df_en_ready.drop("y", axis=1),
-    df_en_ready.loc[:, "y"],
-    random_state=31415,
-    test_size=0.2,
-    shuffle=True,
-)
+# Train test split
 
+X_train, X_test, y_train, y_test = custom_train_test_split(df_en_ready)
 
 # %%
 for i, pipeline in enumerate(pipelines):
     start = time.time()
     CV_scores = cross_val_score(
-        pipeline, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
+        pipeline, X_train, y_train, scoring="accuracy", cv=folds, n_jobs=-1
     )
 
-    pipeline.fit(X_train["x"], y_train)
-    y_pred = pipeline.predict(X_test["x"])
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
     score = accuracy_score(y_test, y_pred)
 
     print(pipeline.steps[2][0])
@@ -529,9 +545,9 @@ for i, pipeline in enumerate(pipelines):
 
 """
 df_en:
-SGD - 92%
-LogReg - 92%
-Ridge - 91%
+SGD - 95%
+LogReg - 95%
+Ridge - 94%
 """
 
 # %%
@@ -540,23 +556,17 @@ Ridge - 91%
 df_fr_ready = prepare_df(df_fr, lang="fr")
 
 # Train/test split to have an accurate score
-X_train, X_test, y_train, y_test = train_test_split(
-    df_fr_ready.drop("y", axis=1),
-    df_fr_ready.loc[:, "y"],
-    random_state=31415,
-    test_size=0.2,
-    shuffle=True,
-)
+X_train, X_test, y_train, y_test = custom_train_test_split(df_fr_ready)
 
 # %%
 for i, pipeline in enumerate(pipelines):
     start = time.time()
     CV_scores = cross_val_score(
-        pipeline, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
+        pipeline, X_train, y_train, scoring="accuracy", cv=folds, n_jobs=-1
     )
 
-    pipeline.fit(X_train["x"], y_train)
-    y_pred = pipeline.predict(X_test["x"])
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
     score = accuracy_score(y_test, y_pred)
 
     print(pipeline.steps[2][0])
@@ -567,9 +577,9 @@ for i, pipeline in enumerate(pipelines):
 
 """
 df_fr:
-SGD - 91%
-LogReg - 91%
-Ridge - 91%
+SGD - 94%
+LogReg - 94%
+Ridge - 92%
 """
 
 # %%
@@ -579,23 +589,17 @@ Ridge - 91%
 df_other_ready = prepare_df(df_other, lang="all")
 
 # Train/test split to have an accurate score
-X_train, X_test, y_train, y_test = train_test_split(
-    df_other_ready.drop("y", axis=1),
-    df_other_ready.loc[:, "y"],
-    random_state=31415,
-    test_size=0.2,
-    shuffle=True,
-)
+X_train, X_test, y_train, y_test = custom_train_test_split(df_other_ready)
 
 # %%
 for i, pipeline in enumerate(pipelines):
     start = time.time()
     CV_scores = cross_val_score(
-        pipeline, X_train["x"], y_train, scoring="accuracy", cv=folds, n_jobs=-1
+        pipeline, X_train, y_train, scoring="accuracy", cv=folds, n_jobs=-1
     )
 
-    pipeline.fit(X_train["x"], y_train)
-    y_pred = pipeline.predict(X_test["x"])
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
     score = accuracy_score(y_test, y_pred)
 
     print(pipeline.steps[2][0])
@@ -606,7 +610,9 @@ for i, pipeline in enumerate(pipelines):
 
 """
 df_other:
-SGD - 89%
-LogReg - 90%
-Ridge - 90%
+SGD - 92%
+LogReg - 92%
+Ridge - 92%
 """
+
+# %%

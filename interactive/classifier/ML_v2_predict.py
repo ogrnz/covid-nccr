@@ -276,7 +276,7 @@ if __name__ == "__main__":
 
     str1 = df_other.iloc[32, :]["text"]  # guess 0
     str2 = df_other.iloc[33, :]["text"]  # 0
-    str3 = df_other.iloc[413, :]["text"]  # 1
+    str3 = df_other.iloc[413, :]["text"]  # 1 -> is 0 atm
     str4 = df_other.iloc[821, :]["text"]  # 1
     strs = [str1, str2, str3, str4]
 

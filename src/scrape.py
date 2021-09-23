@@ -31,7 +31,7 @@ def main(app: App, db: Database):
             try:
                 last_ids[name] = int(db.get_last_id_by_handle(name)[0])
             except TypeError as error:
-                last_ids[name] = 0
+                last_ids[name] = 0  # Retrieve all tweets
 
     # Connect to the API
     api = Api(app)

@@ -76,5 +76,3 @@ with open("src/resources/data/pkl/tweets.pkl", "rb") as inp:
 # %%
 len(tot_tweets) - sum(tot_tweets["oldText"].apply(lambda x: str(x).startswith("RY")))
 # = 16 tweets with an issue. Most of them answer to deleted tweets
-
-# %%

@@ -3,6 +3,7 @@ API module
 """
 
 import math
+import time
 from datetime import datetime as dt
 
 from tqdm import tqdm
@@ -120,7 +121,7 @@ class Api:
 
     def get_tweets_by_ids(self, tweets_ids: list):
         """
-        Retrieve a list of completed (text) tweets for tweet ids
+        Retrieve a list of completed (text) tweets for tweet ids.
         """
 
         tot_tweets = {}
@@ -134,95 +135,94 @@ class Api:
             columns=Helpers.schema_cols,
         )
 
-        lim_start = 100
+        lim_start = self.COUNT
         start = 0
         final = lim_start + Helpers.count_null_id(tweets_ids, finish=lim_start)
         ids = tweets_ids[start:final]
 
         iter_needed = math.ceil(
-            (len(tweets_ids) - Helpers.count_null_id(tweets_ids)) / 100
+            (len(tweets_ids) - Helpers.count_null_id(tweets_ids)) / self.COUNT
         )
 
         print("Completing tweets..")
         itera = 0
-        while itera < iter_needed + 1:
-            Helpers.dynamic_text(f"{itera}/{iter_needed}")
+        with tqdm(total=len(tweets_ids)) as pbar:
+            print("Starting loop")
+            while itera <= iter_needed:
+                if self.app.debug:
+                    print(f"{itera}/{iter_needed}")
 
-            if self.app.debug:
-                print(f"{itera}/{iter_needed}")
+                try:
+                    compl_tweets = self.api.statuses_lookup(
+                        id_=ids, tweet_mode="extended"
+                    )
+                except tweepy.TweepError as error:
+                    if error.api_code == 38:
+                        # End of loop
+                        break
+                    print("Error", error)
 
-            try:
-                compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")
-            except tweepy.TweepError as error:
-                if error.api_code == 38:
-                    # End of loop
-                    break
-                print("Error", error)
-
-            # Edit tot_tweets dict
-            for compl_tweet in compl_tweets:
-                old_text = None
-                if hasattr(compl_tweet, "retweeted_status"):  # Is RT
-                    old_text = compl_tweet.full_text
-                    tweet_type = "Retweet"
-                    full_text = compl_tweet.retweeted_status.full_text
-                else:  # Not a Retweet
-                    full_text = compl_tweet.full_text
-                    tweet_type = "New"
-
-                    if compl_tweet.in_reply_to_status_id is not None:
-                        tweet_type = "Reply"
+                # Edit tot_tweets dict
+                for compl_tweet in compl_tweets:
+                    old_text = None
+                    if hasattr(compl_tweet, "retweeted_status"):  # Is RT
                         old_text = compl_tweet.full_text
-                        prefix = "RY @", compl_tweet.in_reply_to_screen_name, ": "
-                        prefix = "".join(prefix)
+                        tweet_type = "Retweet"
+                        full_text = compl_tweet.retweeted_status.full_text
+                    else:  # Not a Retweet
+                        full_text = compl_tweet.full_text
+                        tweet_type = "New"
 
-                        old_text = prefix, old_text
-                        old_text = "".join(old_text)
+                        if compl_tweet.in_reply_to_status_id is not None:
+                            tweet_type = "Reply"
+                            old_text = compl_tweet.full_text
+                            prefix = "RY @", compl_tweet.in_reply_to_screen_name, ": "
+                            prefix = "".join(prefix)
 
-                # Create a dict for each retrieved tweet and update all fields of the original df
-                new_tweet = {col: None for col in Helpers.schema_cols}
-                for coded_col in [
-                    "topic",
-                    "subcat",
-                    "position",
-                    "frame",
-                    "theme_hardcoded",
-                ]:
-                    del new_tweet[coded_col]
+                            old_text = prefix, old_text
+                            old_text = "".join(old_text)
 
-                # Generate dict of the new tweet
-                new_tweet["tweet_id"] = compl_tweet.id
-                new_tweet["created_at"] = compl_tweet.created_at.strftime(
-                    "%d/%m/%Y %H:%M:%S"
-                )
-                new_tweet["handle"] = f"@{compl_tweet.user.screen_name}"
-                new_tweet["name"] = compl_tweet.user.name
-                new_tweet["oldText"] = old_text
-                new_tweet["text"] = full_text
-                new_tweet[
-                    "URL"
-                ] = f"https://twitter.com/{compl_tweet.user.screen_name}/status/{compl_tweet.id}"
-                new_tweet["type"] = tweet_type
-                new_tweet["retweets"] = compl_tweet.retweet_count
-                new_tweet["favorites"] = compl_tweet.favorite_count
+                    # Create a dict for each retrieved tweet and update all fields of the original df
+                    new_tweet = {col: None for col in Helpers.schema_cols}
+                    for coded_col in Helpers.coded_cols:
+                        del new_tweet[coded_col]
 
-                # Update df with dict
-                Helpers.update_df_with_dict(df, new_tweet)
+                    # Generate dict of the new tweet
+                    new_tweet["tweet_id"] = compl_tweet.id
+                    new_tweet["created_at"] = compl_tweet.created_at.strftime(
+                        "%d/%m/%Y %H:%M:%S"
+                    )
+                    new_tweet["handle"] = f"@{compl_tweet.user.screen_name}"
+                    new_tweet["name"] = compl_tweet.user.name
+                    new_tweet["oldText"] = old_text
+                    new_tweet["text"] = full_text
+                    new_tweet[
+                        "URL"
+                    ] = f"https://twitter.com/{compl_tweet.user.screen_name}/status/{compl_tweet.id}"
+                    new_tweet["type"] = tweet_type
+                    new_tweet["retweets"] = compl_tweet.retweet_count
+                    new_tweet["favorites"] = compl_tweet.favorite_count
 
-            # Setup request for new iteration
-            last_iter_final = final
-            start = last_iter_final
-            if start + 100 <= len(tweets_ids):
-                final = (
-                    last_iter_final
-                    + 100
-                    + Helpers.count_null_id(tweets_ids, start=start, finish=start + 100)
-                )
-            else:
-                final = len(tweets_ids)
+                    # Update df with dict
+                    Helpers.update_df_with_dict(df, new_tweet)
 
-            ids = tweets_ids[start:final]
-            itera += 1
+                # Setup request for new iteration
+                last_iter_final = final
+                start = last_iter_final
+                if start + self.COUNT <= len(tweets_ids):
+                    final = (
+                        last_iter_final
+                        + self.COUNT
+                        + Helpers.count_null_id(
+                            tweets_ids, start=start, finish=start + self.COUNT
+                        )
+                    )
+                else:
+                    final = len(tweets_ids)
+
+                ids = tweets_ids[start:final]
+                itera += 1
+                pbar.update(self.COUNT)
 
         return df
 
@@ -348,53 +348,62 @@ class Api:
             data=tot_tweets, orient="index", columns=["id", "fulltext"]
         )
 
-        lim_start = 100
+        lim_start = self.COUNT
         start = 0
         final = lim_start + Helpers.count_null_id(tweets_ids, finish=lim_start)
         ids = tweets_ids[start:final]
 
         iter_needed = math.ceil(
-            (len(tweets_ids) - Helpers.count_null_id(tweets_ids)) / 100
+            (len(tweets_ids) - Helpers.count_null_id(tweets_ids)) / self.COUNT
         )
 
-        print("Completing tweets..")
         itera = 0
-        while itera < iter_needed + 1:
-            Helpers.dynamic_text(f"{itera}/{iter_needed}")
+        with tqdm(total=len(tweets_ids)) as pbar:
+            while itera <= iter_needed:
+                try:
+                    compl_tweets = self.api.statuses_lookup(
+                        id_=ids, tweet_mode="extended"
+                    )
+                except tweepy.RateLimitError as error:
+                    print("RateLimitError", error)
+                    print(f"{itera=}/{iter_needed=}")
+                    print("Sleeping...")
+                    time.sleep(10 * 60)
+                    continue
+                except tweepy.TweepError as error:
+                    if error.api_code == 38:
+                        # End of loop
+                        break
+                    print("Error", error)
 
-            try:
-                compl_tweets = self.api.statuses_lookup(id_=ids, tweet_mode="extended")
-            except tweepy.TweepError as error:
-                if error.api_code == 38:
-                    # End of loop
-                    break
-                print("Error", error)
+                # Edit tot_tweets dict
+                for compl_tweet in compl_tweets:
+                    if hasattr(compl_tweet, "retweeted_status"):
+                        # Is RT
+                        full_text = compl_tweet.retweeted_status.full_text
+                    else:
+                        # Not a Retweet
+                        full_text = compl_tweet.full_text
 
-            # Edit tot_tweets dict
-            for compl_tweet in compl_tweets:
-                if hasattr(compl_tweet, "retweeted_status"):
-                    # Is RT
-                    full_text = compl_tweet.retweeted_status.full_text
+                    df.loc[df["id"] == compl_tweet.id, ["fulltext"]] = full_text
+
+                # Setup request for new iteration
+                last_iter_final = final
+                start = last_iter_final
+                if start + self.COUNT <= len(tweets_ids):
+                    final = (
+                        last_iter_final
+                        + self.COUNT
+                        + Helpers.count_null_id(
+                            tweets_ids, start=start, finish=start + self.COUNT
+                        )
+                    )
                 else:
-                    # Not a Retweet
-                    full_text = compl_tweet.full_text
+                    final = len(tweets_ids)
 
-                df.loc[df["id"] == compl_tweet.id, ["fulltext"]] = full_text
-
-            # Setup request for new iteration
-            last_iter_final = final
-            start = last_iter_final
-            if start + 100 <= len(tweets_ids):
-                final = (
-                    last_iter_final
-                    + 100
-                    + Helpers.count_null_id(tweets_ids, start=start, finish=start + 100)
-                )
-            else:
-                final = len(tweets_ids)
-
-            ids = tweets_ids[start:final]
-            itera += 1
+                ids = tweets_ids[start:final]
+                itera += 1
+                pbar.update(self.COUNT)
 
         return df
 

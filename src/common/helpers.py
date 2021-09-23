@@ -14,6 +14,13 @@ class Helpers:
     Class that contains helper functions
     """
 
+    coded_cols = [
+        "topic",
+        "subcat",
+        "position",
+        "frame",
+        "theme_hardcoded",
+    ]
     topics_cov = [
         "601",
         "601.0",

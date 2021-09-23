@@ -1,3 +1,4 @@
 corona
 covid
 nCoV
+travel(\s?)update

@@ -41,6 +41,7 @@ from tqdm import tqdm
 
 from common.app import App
 from common.database import Database
+from common.classify import Classifier
 from common.helpers import Helpers
 
 from sklearn.linear_model import LogisticRegression, RidgeClassifier, SGDClassifier
@@ -52,7 +53,6 @@ from sklearn.pipeline import make_pipeline
 
 #%%
 app_run = App(debug=False)
-db = Database("tweets.db", app=app_run)
 data_path = os.path.join(app_run.root_dir, "interactive", "data")
 MODEL = "sgd_logreg_ridge_23092021.pkl"
 
@@ -151,17 +151,17 @@ def prepare_df(df, lang="en"):
 def prepare_row(row, lang="en"):
     row_do = row.copy()
 
-    row_do["y"] = np.nan
+    row_do.loc["y"] = np.nan
 
     # Make "x" col
-    row_do["x_text"] = sanitize(row_do["text"], lang)
-    row_do["x_handle"] = row_do["handle"]
-    row_do["x_date"] = row_do["created_at"][:10].replace(
+    row_do.loc["x_text"] = sanitize(row_do["text"], lang)
+    row_do.loc["x_handle"] = row_do["handle"]
+    row_do.loc["x_date"] = row_do["created_at"][:10].replace(
         "-", "/"
     )  # convert created_at to "%d/%m/%y"
     # x_date is not perfect, some are %d/%m/%y, others %y/%d/%m
 
-    row_do["x"] = f'{row_do["x_date"]} {row_do["x_handle"]} {row_do["x_text"]}'
+    row_do.loc["x"] = f'{row_do["x_date"]} {row_do["x_handle"]} {row_do["x_text"]}'
 
     return row_do
 
@@ -183,6 +183,25 @@ def lang_detect(txt, threshold=0.9):
         return lang[0]
 
 
+def classify(row, clf):
+    """
+    Postprocessing classifying function.
+    Allows to add post-treatment rules.
+    """
+
+    if isinstance(row, pd.Series):
+        txt = row.loc["old_text"] if row.loc["text"] is None else row.loc["text"]
+    else:
+        txt = row
+
+    if clf.classify(txt):
+        return 1  # About covid
+    else:
+        if isinstance(row, pd.Series):
+            return row.loc["covid_theme"]  # If already classified as covid, dont update
+        return 0  # No keyword detected in str
+
+
 #%%
 # Predict a new tweet
 # Load the fitted pipelines
@@ -195,7 +214,7 @@ for pipe in loaded_pipes:
     print(res)
 
 #%%
-def predict_covid(tw):
+def predict_covid(tw, clf):
     """
     Classify a tweet as being about covid or not with the trained ML algorithm.
 
@@ -207,32 +226,66 @@ def predict_covid(tw):
     if isinstance(tw, str):  # is a string
         detected_lang = lang_detect(tw)
         LANG = detected_lang if detected_lang in accepted_lang else "all"
-        tw = sanitize(tw, LANG)
-        results = []
-        for i, pipeline in enumerate(loaded_pipes):
-            stepname = pipeline.steps[2][0]
-            results.append(pipeline.predict([tw]))
 
-        # Vote
-        return int(bool(sum(results) > 2))
+        if classify(tw, clf):
+            return 1  # Covid-keyword detected
+        else:
+            tw = sanitize(tw, LANG)
+            results = []
+            for i, pipeline in enumerate(loaded_pipes):
+                stepname = pipeline.steps[2][0]
+                results.append(pipeline.predict([tw]))
+
+            # Vote
+            return int(bool(sum(results) > 2))
 
     else:  # pd.Series
         detected_lang = lang_detect(tw["text"])
         LANG = detected_lang if detected_lang in accepted_lang else "all"
+        tw_do = tw.copy()
 
-        tw["text"] = tw["old_text"] if tw["text"] is None else tw["text"]
-        tw = prepare_row(tw, lang=LANG)
+        tw_do.loc["text"] = tw["old_text"] if tw["text"] is None else tw["text"]
+        tw_do = prepare_row(tw_do, lang=LANG)
 
         for i, pipeline in enumerate(loaded_pipes):
             stepname = pipeline.steps[2][0]
 
             # Predict
-            tw[stepname] = int(pipeline.predict([tw["x"]]))
+            tw_do.loc[stepname] = int(pipeline.predict([tw_do["x"]]))
 
         # Make final decision by majority vote
-        tw["covid_theme"] = get_theme(tw)
+        tw_do.loc["covid_theme"] = get_theme(tw_do)
+        # Override if keyword detected
+        tw_do.loc["covid_theme"] = classify(tw_do, clf)
 
-        return tw
+        return tw_do, tw_do["covid_theme"]
+
+
+# TODO : add this func to classifier module
+
+# %%
+if __name__ == "__main__":
+    df_other = pd.read_pickle(os.path.join(data_path, "db_other.pkl"))
+    classifier = Classifier()
+
+    tw1 = df_other.iloc[42, :]  # guess 0
+    tw2 = df_other.iloc[314, :]  # 0
+    tw3 = df_other.iloc[128, :]  # 0
+    tw4 = df_other.iloc[888, :]  # 1
+    tws = [tw1, tw2, tw3, tw4]
+
+    str1 = df_other.iloc[32, :]["text"]  # guess 0
+    str2 = df_other.iloc[33, :]["text"]  # 0
+    str3 = df_other.iloc[413, :]["text"]  # 1
+    str4 = df_other.iloc[821, :]["text"]  # 1
+    strs = [str1, str2, str3, str4]
+
+    for tw in tws:
+        _, cov = predict_covid(tw, classifier)
+        # print(cov)
+
+    for txt in strs:
+        print(predict_covid(txt, classifier))
 
 
 # %%

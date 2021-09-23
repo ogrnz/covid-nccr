@@ -169,25 +169,6 @@ def prepare_df(df, lang="en"):
 
     return df_do
 
-def prepare_row(row, lang="en"):
-    row_do = row.copy()
-
-    row_do["y"] = np.nan
-
-    # Make "x" col
-    row_do["x_text"] = row_do["text"].progress_apply(lambda x: sanitize(x, lang))
-    row_do["x_handle"] = row_do["handle"]
-    row_do["x_date"] = row_do["created_at"].progress_apply(
-        lambda r: r[:10].replace("-", "/"),
-    )  # convert created_at to "%d/%m/%y"
-    # x_date is not perfect, some are %d/%m/%y, others %y/%d/%m
-
-    row_do["x"] = row_do.progress_apply(
-        lambda r: f'{r["x_date"]} {r["x_handle"]} {r["x_text"]}', axis=1
-    )
-
-    return row_do
-
 def lang_detect(txt, threshold=0.9):
     """
     Detect tweet language

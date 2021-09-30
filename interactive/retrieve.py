@@ -1,3 +1,7 @@
+"""
+Retrieves tweets from database, only keep the ones that are about covid and were not coded, in the given period.
+"""
+
 #%%
 import sys, os
 

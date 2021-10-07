@@ -439,6 +439,7 @@ class Api:
         """
 
         users = []
+        # users_dict = {handle:None for handle in handles}
 
         lim_start = self.COUNT
         start = 0

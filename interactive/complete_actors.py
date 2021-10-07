@@ -30,11 +30,13 @@ app_run = App(debug=False)
 api = Api(app_run)
 
 # %%
-f_path = os.path.join(app_run.root_dir, "src", "resources", "all_actors.txt")
+f_name = "all_actors_sorted_cleaned.txt"
+f_path = os.path.join(app_run.root_dir, "src", "resources", f_name)
 with open(f_path, "r") as f:
     actors = f.readlines()
 
 print("Total list length: ", len(actors))
+actors = [actor.lower() for actor in actors]
 actors = set(actors)
 print("Unique values counts: ", len(actors))
 actors = [actor.strip("\n") for actor in actors]
@@ -46,7 +48,8 @@ with open(os.path.join(app_run.root_dir, "src", "resources", "all_actors_sorted.
         f.write(f"{actor}\n")
 
 # %%
-users = api.get_many_users(actors)
+# users = api.get_many_users(actors)
+users = api.get_many_users(actors[:200])  # for testing
 
 #%%
 tot = 0
@@ -58,11 +61,6 @@ print(f"Got {tot} users. {len(actors) - tot} users were not found.")
 #%%
 retrieved_users = set()
 
-# with open(csv_path, "a", newline="", encoding="utf-8") as csv_f:
-    # writer = csv.writer(csv_f, delimiter="\t", quotechar="|", quoting=csv.QUOTE_MINIMAL)
-
-    # writer.writerow(["handle", "user_id", "location", "verified"])
-
 for req in tqdm(users):
     for user in req:
         handle = user.screen_name
@@ -71,12 +69,9 @@ for req in tqdm(users):
         verified = user.verified
         retrieved_users.add((handle, tw_id, location, verified))
 
-        # writer.writerow([handle, tw_id, location, verified])
 # %%
 def get_info(handles):
-    # with open(csv_path, "a", newline="", encoding="utf-8") as csv_f:
-    #     writer = csv.writer(csv_f, delimiter="\t", quotechar="|", quoting=csv.QUOTE_MINIMAL)
-
+    
     users = set()
     for i, handle in enumerate(tqdm(handles)):
         try:
@@ -102,14 +97,12 @@ def get_info(handles):
             print(f"{last_id=}")
             exit()
 
-        # writer.writerow([handle, tw_id, location, verified])
     return users
 
 #%%
 # For those problematic users, doublecheck and insert them into csv with reason
 
 # Get the names of users which were not retrieved
-# not_found_users = api.get_user_id_from_handle(actors)
 retrieved_handles = [user[0] for user in retrieved_users]
 not_found_users = set(actors) - set(retrieved_handles)  # 248
 

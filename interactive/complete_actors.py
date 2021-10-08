@@ -48,54 +48,53 @@ with open(os.path.join(app_run.root_dir, "src", "resources", "all_actors_sorted.
         f.write(f"{actor}\n")
 
 # %%
-# users = api.get_many_users(actors)
-users = api.get_many_users(actors[:200])  # for testing
+retrieved_users = api.get_many_users(actors)
 
 #%%
 tot = 0
-for req in users:
+for req in retrieved_users:
     for user in req:
         tot += 1
 print(f"Got {tot} users. {len(actors) - tot} users were not found.")
 
 #%%
-retrieved_users = set()
+users_dict = {handle:None for handle in actors}
 
-for req in tqdm(users):
+for req in retrieved_users:
     for user in req:
         handle = user.screen_name
-        tw_id = user.id
         location = user.location if user.location != "" else "NA"
-        verified = user.verified
-        retrieved_users.add((handle, tw_id, location, verified))
+
+        users_dict[handle.lower()] = {"user_id": user.id, "location": location, "verified": user.verified, "TweepError": None}
 
 # %%
 def get_info(handles):
-    
-    users = set()
+    """
+    This function is here to get individual information on users and especially to know the reason why the precendent bulk request didn't work.
+    """
+
+    users = dict()
     for i, handle in enumerate(tqdm(handles)):
+        last_id = i
         try:
             user = api.get_user(handle)
-            tw_id = user.id
             location = user.location if user.location != "" else "NA"
-            verified = user.verified
 
-            users.add((handle, tw_id, location, verified))
+            users[handle.lower()] = {"user_id": user.id, "location": location, "verified": user.verified, "TweepError": None}
 
         except tweepy.TweepError as tweep_e:
             api_code = tweep_e.args[0][0]["code"]
             print("TweepError", tweep_e)
-            tw_id = f"TweepError code: {api_code}"
-            location, verified = [ "NA" for _ in range(2)]
+
+            users[handle.lower()] = {"user_id": None, "location": None, "verified": None, "TweepError": api_code}
 
             if api_code == 88:
                 print(f"RateLimitError handle {handle} ({i})")
-                last_id = i
-                break
+                return users
 
         except KeyboardInterrupt:
             print(f"{last_id=}")
-            exit()
+            return users
 
     return users
 
@@ -103,39 +102,37 @@ def get_info(handles):
 # For those problematic users, doublecheck and insert them into csv with reason
 
 # Get the names of users which were not retrieved
-retrieved_handles = [user[0] for user in retrieved_users]
-not_found_users = set(actors) - set(retrieved_handles)  # 248
-
-prob_users = get_info(not_found_users)  # 142
+not_found_users = [k for k in users_dict.keys() if users_dict[k] is None]
+len(not_found_users)
+# 445 users
 
 #%%
-retrieved_users_idx = set(user[1] for user in retrieved_users)  # 2444
-prob_users_idx = set(user[1] for user in prob_users)  # 137
-all_idx = retrieved_users_idx.union(prob_users_idx)
+prob_users = get_info(not_found_users)  # 145
+len(prob_users)
 
-users = api.get_many_users(list(all_idx), mode="user_ids")  # 2444
+#%%
+# Complete users_dict with individually gotten user info
+for prob_user in prob_users.items():
+    users_dict[prob_user[0]] = prob_user[1]
 
+#%%
 # Note:
 # TweepError code: 50 -> user not found (account deleted)
 # TweepError code: 63 -> user suspended
 
 #%%
 to_write = []
-for req in tqdm(users):
-    for user in req:
-        handle = user.screen_name
-        tw_id = user.id
-        location = user.location if user.location != "" else "NA"
-        verified = user.verified
-        to_write.append((handle, tw_id, location, verified))
+for user in users_dict.items():
+    user_info = (user[0], user[1]["user_id"], user[1]["location"], user[1]["verified"], user[1]["TweepError"])
+    to_write.append(user_info)
+print("Do actors an to_write have same length?", len(actors) == len(to_write))
 
 # %%
 # write to file
-
 csv_path = os.path.join(app_run.root_dir, "src", "resources", "agents.csv")
 with open(csv_path, "w", newline="", encoding="utf-8") as csv_f:
     writer = csv.writer(csv_f, delimiter="\t")
-    writer.writerow(["handle", "user_id", "location", "verified"])
+    writer.writerow(["handle", "user_id", "location", "verified", "TweepError"])
     for user in to_write:
         writer.writerow(user)
 

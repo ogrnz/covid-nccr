@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 """
 This file is used to retrieve information about some users and write it to a .csv file.
 At the moment, the user_id, location and verified status are retrieved.

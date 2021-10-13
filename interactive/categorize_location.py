@@ -31,7 +31,6 @@ from common.app import App
 from common.helpers import Helpers
 
 app_run = App(debug=True)
-db = Database("tweets.db", app=app_run)
 
 #%%
 import pycountry
@@ -78,4 +77,4 @@ with open(csv_path, "w", encoding="utf-8") as f:
     writer.writeheader()
 
     for user in info:
-        writer.writerow(user)
+        writer.writerow(user) 

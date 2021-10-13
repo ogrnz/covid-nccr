@@ -2,7 +2,7 @@
 
 """
 This file is used to retrieve information about some users and write it to a .csv file.
-At the moment, the user_id, location and verified status are retrieved.
+At the moment, the user_id, location, verified status, followers count are retrieved.
 """
 
 #%%
@@ -67,7 +67,7 @@ for req in retrieved_users:
         handle = user.screen_name
         location = user.location if user.location != "" else "NA"
 
-        users_dict[handle.lower()] = {"user_id": user.id, "location": location, "verified": user.verified, "TweepError": None}
+        users_dict[handle.lower()] = {"user_id": user.id, "location": location, "followers_count": user.followers_count,  "verified": user.verified, "TweepError": None}
 
 # %%
 def get_info(handles):
@@ -82,13 +82,13 @@ def get_info(handles):
             user = api.get_user(handle)
             location = user.location if user.location != "" else "NA"
 
-            users[handle.lower()] = {"user_id": user.id, "location": location, "verified": user.verified, "TweepError": None}
+            users[handle.lower()] = {"user_id": user.id, "location": location, "followers_count": user.followers_count,  "verified": user.verified, "TweepError": None}
 
         except tweepy.TweepError as tweep_e:
             api_code = tweep_e.args[0][0]["code"]
             print("TweepError", tweep_e)
 
-            users[handle.lower()] = {"user_id": None, "location": None, "verified": None, "TweepError": api_code}
+            users[handle.lower()] = {"user_id": None, "location": None, "followers_count": None,  "verified": None, "TweepError": api_code}
 
             if api_code == 88:
                 print(f"RateLimitError handle {handle} ({i})")
@@ -106,7 +106,7 @@ def get_info(handles):
 # Get the names of users which were not retrieved
 not_found_users = [k for k in users_dict.keys() if users_dict[k] is None]
 len(not_found_users)
-# 445 users
+# 447 users
 
 #%%
 prob_users = get_info(not_found_users)  # 145
@@ -117,6 +117,8 @@ len(prob_users)
 for prob_user in prob_users.items():
     users_dict[prob_user[0]] = prob_user[1]
 
+# !!! Remember to "users_dict["last_user"] = None" if the request was stopped because of RateLimit !!!
+
 #%%
 # Note:
 # TweepError code: 50 -> user not found (account deleted)
@@ -125,16 +127,16 @@ for prob_user in prob_users.items():
 #%%
 to_write = []
 for user in users_dict.items():
-    user_info = (user[0], user[1]["user_id"], user[1]["location"], user[1]["verified"], user[1]["TweepError"])
+    user_info = (user[0], user[1]["user_id"], user[1]["location"], user[1]["followers_count"], user[1]["verified"], user[1]["TweepError"])
     to_write.append(user_info)
 print("Do actors an to_write have same length?", len(actors) == len(to_write))
 
 # %%
 # write to file
-csv_path = os.path.join(app_run.root_dir, "src", "resources", "agents.csv")
+csv_path = os.path.join(app_run.root_dir, "src", "resources", "agents2.csv")
 with open(csv_path, "w", newline="", encoding="utf-8") as csv_f:
     writer = csv.writer(csv_f, delimiter="\t")
-    writer.writerow(["handle", "user_id", "location", "verified", "TweepError"])
+    writer.writerow(["handle", "user_id", "location", "followers_count", "verified", "TweepError"])
     for user in to_write:
         writer.writerow(user)
 

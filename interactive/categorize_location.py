@@ -24,11 +24,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-tqdm.pandas()
-
-from common.database import Database
 from common.app import App
-from common.helpers import Helpers
 
 app_run = App(debug=True)
 
@@ -39,7 +35,8 @@ import pycountry
 # Import csv
 
 info = []
-csv_path = os.path.join(app_run.root_dir, "src", "resources", "agents.csv")
+filename = "agents2.csv"
+csv_path = os.path.join(app_run.root_dir, "src", "resources", filename)
 with open(csv_path, "r", encoding="utf-8") as f:
     reader = csv.DictReader(f, delimiter="\t")
     for row in reader:
@@ -67,13 +64,14 @@ for user in info:
    if user["location_category"] is None:
        na_count += 1 
 
-print(na_count)  # 4765 
+print(na_count)  # 4768 
 
 # %%
-csv_path = os.path.join(app_run.root_dir, "src", "resources", "agents_cat.csv")
+filename = "agents2_cat.csv"
+csv_path = os.path.join(app_run.root_dir, "src", "resources", filename)
 with open(csv_path, "w", encoding="utf-8") as f:
     fields = list(info[0].keys())
-    writer = csv.DictWriter(f, delimiter=",", fieldnames=fields)
+    writer = csv.DictWriter(f, delimiter="\t", fieldnames=fields)
     writer.writeheader()
 
     for user in info:

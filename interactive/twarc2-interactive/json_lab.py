@@ -46,8 +46,6 @@ for jsonl_f in jsonl_fs:
     print("From", infile)
     print("To", outfile)
 
-exit()
-
 # %%
 
 # Read smallest jsonl file to get the hang of it
@@ -530,7 +528,9 @@ with db_UN:
 with db_UN:
     tws_UN = db_UN.get_all_tweets()
 df = Helpers.df_from_db(tws_UN)
-df_UN = df[(df["handle"] == "@UN") & (df["url"] == "0")]  # 494 UN tweets have an issue
+df_UN = df[
+    (df["handle"] == "@UN") & (df["url"] == "0")
+]  # 494 UN tweets have an issue
 
 # %%
 # Debuger
@@ -566,7 +566,9 @@ for tw_flat in tws_flat:
         if old_url == "0" and flat_txt in (old_text, text):
 
             new_id = tw_flat["id"]
-            new_url = Helpers.build_tweet_url(new_id, tw_flat["author"]["username"])
+            new_url = Helpers.build_tweet_url(
+                new_id, tw_flat["author"]["username"]
+            )
             new_created_at = Helpers.twitter_to_db_time(tw_flat["created_at"])
 
             new_tweet = (new_id, new_url, new_created_at, old_id)

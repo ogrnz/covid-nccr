@@ -8,12 +8,12 @@ CREATE TABLE IF NOT EXISTS "tweets" (
 	"text"	TEXT,
 	"url"	TEXT,
 	"type"	TEXT,
-	"retweets"	TEXT,
-	"favorites"	TEXT,
-    "topic" TEXT,
-    "subcat" TEXT,
-    "position" TEXT,
-    "frame" TEXT,
+	"retweets"	INTEGER,
+	"favorites"	INTEGER,
+    "topic" INTEGER,
+    "subcat" INTEGER,
+    "position" INTEGER,
+    "frame" INTEGER,
     "theme_hardcoded" INTEGER,
 	PRIMARY KEY("tweet_id")
 );

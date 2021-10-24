@@ -53,9 +53,14 @@ class Database:
         """
 
         try:
-            self.conn = sqlite3.connect(f"{self.app.root_dir}/database/{self.db_name}")
+            self.conn = sqlite3.connect(
+                f"{self.app.root_dir}/database/{self.db_name}"
+            )
         except sqlite3.Error as error:
-            print(f"Error establishing connection to database {self.db_name}\n", error)
+            print(
+                f"Error establishing connection to database {self.db_name}\n",
+                error,
+            )
 
     def create_table(self):
         """
@@ -115,7 +120,9 @@ class Database:
         try:
             cur = self.conn.cursor()
             if limit is not None:
-                cur.execute(f"SELECT {fields} FROM tweets {where_cond} LIMIT {limit}")
+                cur.execute(
+                    f"SELECT {fields} FROM tweets {where_cond} LIMIT {limit}"
+                )
             else:
                 cur.execute(f"SELECT {fields} FROM tweets {where_cond}")
 
@@ -174,7 +181,9 @@ class Database:
             )
             self.conn.commit()
         except sqlite3.Error as error:
-            print(f"update_tweet_by_id: Error updating tweet {tweet_id} ", error)
+            print(
+                f"update_tweet_by_id: Error updating tweet {tweet_id} ", error
+            )
         finally:
             cur.close()
 
@@ -210,9 +219,8 @@ class Database:
         """
 
         if cond not in Helpers.schema_cols:
-            print(
-                "InvalidConditionError: This condition is not valid. \
-                There is no column of that name."
+            raise ValueError(
+                "This condition is not valid. There is no column of that name."
             )
 
         if isinstance(fields, list):
@@ -247,9 +255,8 @@ class Database:
         """
 
         if cond not in Helpers.schema_cols:
-            print(
-                "InvalidConditionError: This condition is not valid. \
-                There is no column of that name."
+            raise ValueError(
+                "This condition is not valid. There is no column of that name."
             )
 
         if isinstance(fields, list):
@@ -293,7 +300,9 @@ class Database:
             return cur.lastrowid
         except sqlite3.Error as error:
             print(sql)
-            print(f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}")
+            print(
+                f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}"
+            )
 
             return None
         finally:
@@ -335,7 +344,9 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print(f"insert_or_replace_many: Error inserting new tweets \n {error}")
+            print(
+                f"insert_or_replace_many: Error inserting new tweets \n {error}"
+            )
         finally:
             cur.close()
 
@@ -355,7 +366,9 @@ class Database:
             return cur.lastrowid
         except sqlite3.Error as error:
             print(sql)
-            print(f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}")
+            print(
+                f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}"
+            )
 
             return None
         finally:

@@ -8,7 +8,7 @@ columns_xls=[
     "created_at",
     "handle",
     "name",
-    "oldText",
+    "old_text",
     "text",
     "URL",
     "type",
@@ -26,6 +26,7 @@ A "theme_hardcoded" is created by default with None values if non-existent
 import hashlib
 
 import pandas as pd
+from tqdm import tqdm
 
 from common.app import App
 from common.database import Database
@@ -37,7 +38,7 @@ db = Database("tweets.db", app=app_run)
 
 files = ["excluded.xlsx"]
 
-for filename in files:
+for filename in tqdm(files):
     xls = pd.read_excel(f"src/resources/data/{filename}")
 
     # Remove empty columns
@@ -79,13 +80,14 @@ for filename in files:
     # Insert tweets into db
     tweet_entries = [tuple(entry) for entry in xls.to_numpy()]
 
-    with db:
-        inserted = db.insert_or_replace_many(tweet_entries)
+    # with db:
+    #     inserted = db.insert_or_replace_many(tweet_entries)
 
-    print(f"Done inserting {inserted} tweets")
+    # print(f"Done inserting {inserted} tweets")
 
     # Remember to classify the database if needed
 
+    print(tweet_entries)
 # TODO
 # Sanitize strings (`type`) before inserting
 # trail spaces and such...

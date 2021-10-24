@@ -126,6 +126,7 @@ class Helpers:
         """
         Extract the status id from a twitter url
         """
+
         url = str(url)
         try:
             tweet_id = re.search(r"/status/(\d+)", str(url)).group(1)
@@ -193,7 +194,7 @@ class Helpers:
         # Concatenate the fields as strings
         to_hash = created_at + old_text + text
 
-        # Return the hash
+        # Return hash
         return hashlib.sha1(bytes(to_hash, "utf-8")).hexdigest()
 
     @staticmethod
@@ -222,8 +223,6 @@ class Helpers:
         """
         Detects if a given tweet (jsonl format) is Retweet, Reply or New.
         """
-        # print(line.keys())
-        # print(type(line))tws_flat[]
 
         if line["text"][:2] == "RT":  # Is RT
             # if "retweeted_status" in line:  # Not in jsonl...

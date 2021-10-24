@@ -39,7 +39,7 @@ class Api:
             )
             self.api = tweepy.API(auth)
             self.connected = True
-        except tweepy.TweepError as error:
+        except tweepy.TweepyException as error:
             print("Error connecting to Twitter API ", error)
 
     def get_tweets(self, screen_name, last_id=0):

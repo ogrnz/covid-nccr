@@ -413,8 +413,7 @@ class Api:
         """
 
         if isinstance(handles, list):
-            users_idx = [self.api.get_user(handle).id for handle in handles]
-            return users_idx
+            return [self.api.get_user(handle).id for handle in handles]
 
         user = self.api.get_user(handles)
         return user.id
@@ -426,11 +425,9 @@ class Api:
         """
 
         if isinstance(handles, list):
-            users = [self.api.get_user(handle) for handle in handles]
-            return users
+            return [self.api.get_user(handle) for handle in handles]
 
-        user = self.api.get_user(handles)
-        return user
+        return self.api.get_user(handles)
 
     def get_many_users(self, handles, mode="screen_names"):
         """

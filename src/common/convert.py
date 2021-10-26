@@ -45,10 +45,9 @@ class Converter:
             f"{self.app.root_dir}/database/csv/{file}", encoding="utf8", newline=""
         ) as open_f:
             reader = csv.reader(open_f)
-            for row in reader:
-                yield row
+            yield from reader
 
-    def convert_by_columns(self, cols=tuple(col for col in Helpers.schema_cols)):
+    def convert_by_columns(self, cols=tuple(Helpers.schema_cols)):
         """
         Convert tweets table to csv by columns
         """

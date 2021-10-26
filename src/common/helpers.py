@@ -24,20 +24,27 @@ class Helpers:
     topics_cov = [
         "601",
         "601.0",
+        601,
         "602",
         "602.0",
+        602,
         "603",
         "603.0",
+        603,
         "604",
         "604.0",
+        604,
         "605",
         "605.0",
+        605,
         "606",
         "606.0",
+        606,
         "607",
         "607.0",
+        607,
     ]
-    topics_not_cov = ["608", "608.0"]
+    topics_not_cov = ["608", "608.0", 608]
 
     # !! Structure should match SQL schema. !!
     schema_cols = [
@@ -158,12 +165,10 @@ class Helpers:
         Transform list of tweets from database into pd.DataFrame
         """
 
-        df = pd.DataFrame(
+        return pd.DataFrame(
             tweets,
             columns=Helpers.schema_cols,
         )
-
-        return df
 
     @staticmethod
     def update_df_with_dict(df: pd.DataFrame, new_vals: dict):
@@ -181,7 +186,7 @@ class Helpers:
         Return database's columns in string surrounded by parentheses
         """
 
-        return str(tuple(col for col in Helpers.schema_cols))
+        return str(tuple(Helpers.schema_cols))
 
     @staticmethod
     def get_hash(created_at, old_text, text):
@@ -199,6 +204,7 @@ class Helpers:
 
     @staticmethod
     def build_tweet_url(tweet_id: str, handle: str):
+        # sourcery skip: simplify-fstring-formatting
         """
         Build a valid tweet (RT, RY, New) URL with the tweet id and handle.
         https://twitter.com/{handle}/status/{id}

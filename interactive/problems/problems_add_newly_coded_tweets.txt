@@ -1,0 +1,1232 @@
+- 1 / 176
+created_at: 21/02/2020
+handle: @MinSoliSante
+text: [#CORONAVIRUS]Quefairesivousrevenezd'unezoneàrisque?Retrouvezl'ensembledesinformationsetrecommandationssanitairessurle#c
+[601, 60103, 0, 3, None]
+
+
+2 / 176
+created_at: 15/02/2020
+handle: @MinSoliSante
+text: [#CORONAVIRUSFRANCE]Évolutiondelasituation,réponsesàvosinterrogationsetconseils...Retrouvezl'ensembledel'informationsanitaires
+[602, <NA>, <NA>, <NA>, None]
+
+
+3 / 176
+created_at: 22/02/2020
+handle: @MinSoliSante
+text: ☎️Unnumérogratuitd'informationsurle#Coronavirus#COVID19estdisponible7jourssur7de9h00à19h00.Appelezle0800130000(appel
+[602, <NA>, <NA>, <NA>, None]
+
+
+4 / 176
+created_at: 23/02/2020
+handle: @MinSoliSante
+text: ☎️Unnumérogratuitd'informationsurle#Coronavirus#COVID19estdisponible7jourssur7de9h00à19h00.Appelezle0800130000(appel
+[602, <NA>, <NA>, <NA>, None]
+
+
+5 / 176
+created_at: 28/02/2020
+handle: @MinSoliSante
+text: [#CORONAVIRUS]Évolutiondelasituation,réponsesàvosinterrogationsetconseils...Retrouvezl'ensembledel'informationsanitairesurle
+[602, <NA>, <NA>, <NA>, None]
+
+
+6 / 176
+created_at: 05/03/2020
+handle: @MinSoliSante
+text: MinSoliSante:[#GestesBarrières]👃Lesvirusquisontévacuésdunezquandonsemouchepeuventsurvivreplusieursheuressurunmoucho...Mar
+[602, <NA>, <NA>, <NA>, None]
+
+
+7 / 176
+created_at: 13/03/2020
+handle: @MinSoliSante
+text: MinSoliSante:#Coronavirus|Désinfox❌Lerisqued'êtreinfectéparle#COVID19entouchantdespiècesdemonnaie,billetsdebanqueo...Mar
+[602, <NA>, <NA>, <NA>, None]
+
+
+- 8 / 176
+created_at: 22/03/2020
+handle: @MinSoliSante
+text: #Coronavirus#COVID19|Gestesbarrières,modedetransmission,symptômesetexplicationsdesstadesduplandeprévention,retrouveztoutes
+[602, <NA>, <NA>, <NA>, None]
+
+
+- 9 / 176
+created_at: 19/04/2020
+handle: @WHO
+text: WHO:WHO'sresponseinsupportingcountrieson#COVID19:-Track&identifycases-Ensurepatientsgetthecaretheyneed-Frontlinewor...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+? 10 / 176 (not in DB)
+created_at: 20/04/2020
+handle: @WHO
+text: WHOEMRO:Takingchildrentoeatoutduringthis#COVID19outbreakincreasestheircontactwithotherpeople&theirchanceofbeingexp...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+- 11 / 176
+created_at: 23/04/2020
+handle: @WHO
+text: DrTedros:Handhygieneisthesinglemosteffectiveaction#healthworkerscantaketoreducethespreadofpathogensandinfectionsin...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+12 / 176
+created_at: 24/04/2020
+handle: @WHO
+text: DrTedros:Weagreedtoworktogetheronensuringequitableaccesstoventilatorsglobally,prioritizingcountrieswithfragilehealths...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+13 / 176
+created_at: 24/04/2020
+handle: @WHO
+text: WHOSEARO:#nursesand#midwivesarevaccinechampionsforparentsandparents-to-be.Theyprovideimportantfirstcontactswithvaccin...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+14 / 176
+created_at: 25/04/2020
+handle: @WHO
+text: antonioguterres:Asweworkontackling#COVID19,wecan'taffordtolosegroundonthegainswehavemadeagainstotherdiseaseslike...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+15 / 176
+created_at: 26/04/2020
+handle: @WHO
+text: pahowho:Gettingvaccinatedisanimportantwaytoprotectourselves,ourfamilies🧑🏼👵🏽👶🏿👧🏻🤱🏽,andourcommunitiesfromdangerousvaccin...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+16 / 176
+created_at: 26/04/2020
+handle: @WHO
+text: WHOEMRO:Vaccinesundergomanyteststoensuretheyaresafeandeffective:☑️involvingthousandsofhealthyparticipants☑️lasting...Apr2
+[602, <NA>, <NA>, <NA>, None]
+
+
+17 / 176
+created_at: 26/04/2020
+handle: @WHO
+text: WHOSEARO:#vaccine💉protectusagainstharmfuldiseases&preventsusfromgettingsick.👉Theyuseyourbody'snaturaldefensestoprot...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+18 / 176
+created_at: 26/04/2020
+handle: @WHO
+text: WHOSEARO:It's#WorldImmunizationWeekVaccinationisoneofthemosteffectivewaystopreventdiseases.#vaccinesprotectagainstmo...Apr2
+[602, <NA>, <NA>, <NA>, None]
+
+
+19 / 176
+created_at: 26/04/2020
+handle: @WHO
+text: WHOWPRO:WhenshouldIgetvaccinated?Vaccinesprotectusthroughoutlifeandatdifferentages.Itisimportanttogetthevaccin...Apr26,
+[602, <NA>, <NA>, <NA>, None]
+
+
+20 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: pahowho:💙Love.🙂Trust.🛡️Protect.#GetVaxi️https://t.co/8nQQXk3Lem#VaccinesWork#HealthForAllhttps://t.co/iG9KnJQaNl
+[602, <NA>, <NA>, <NA>, None]
+
+
+21 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHO_Europe:Nursesandmidwivesareatrustedsourceofinformationon#vaccinationandtheyworktirelesslytopreventandrespondto...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+22 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHOEMRO:Vaccinesprotectusthroughoutlifeandatdifferentages.Don'twaituntilyouareexposedtoaseriousillness-likedurin...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+23 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHOPhilippines:Vaccinesaresafe.Alltheingredientsinavaccinehelpensuretheyaresafeandeffectiveforyouandyourfamily.T...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+24 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHOPhilippines:Vaccines💉defendagainstdeadlydiseases,byworkingwithyourbody'snaturaldefensestostopyoufromgettingsick....Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+25 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHOSEARO:Nursesandmidwiveshelpreachchildreninallcountrieswithlifesavingvaccines💉Thisoffersachanceatahealthylife,f...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+26 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHOWPRO:Nursesandmidwivesarevaccinechampionsforparentsandparents-to-be.Theyplayakeyroleinprovidingimportantfirstcon...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+- 27 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHOWPRO:Someofourcommonhabits,likegreetingeachotherwithahugorhandshake,putusinclosecontactwithothersandcancause...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+28 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: DrTedros:GOARNissupportingthe#COVID19responseinmanyways:-sendingexpertstosupportteamsincountries&high-levelassessmen...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+29 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: pahowho:Ifyouareahealthworker,whenyougetthefluvaccine,youdon'tjustprotectyourself;youprotectyourfamily👩‍👩‍👧‍👦,fri...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+30 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: pahowho:Tipsforhealthservicesofferingvaccinationduringthe#COVID19pandemic:✅Vaccinateinwell-ventilatedspaces✅Keepvac...Apr2
+[602, <NA>, <NA>, <NA>, None]
+
+
+31 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: WHO:SinceJanuary30,WHOhasbeencallingoncountriestopreparetofind,test,treatandisolateevery#COVID19patientandtracea...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+32 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: WHOEMRO:Vaccinesprotectusagainstharmfuldisease.Vaccines:🔷useyourbody'snaturaldefensestoprotectagainstinfections🔷tra...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+33 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: WHOSriLanka:It's#WorldImmunizationWeekVaccinationisoneofthemosteffectivewaystopreventdiseases.#vaccinesprotectagainst...Apr2
+[602, <NA>, <NA>, <NA>, None]
+
+
+- 34 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: WHOWPRO:Tobefullyprotected,childrenmustreceiveallthevaccinedosesaccordingtonationalvaccinationschedules.#VaccinesWork...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+-35 / 176
+created_at: 29/04/2020
+handle: @WHO
+text: DrTedros:Sourcingofpersonalprotectiveequipmentisongoing.Thefirstbatchofpurchasesareexpectedtobeplacedfor75Mmasks,5...Apr
+[602, <NA>, <NA>, <NA>, None]
+
+
+36 / 176
+created_at: 04/05/2020
+handle: @WHO
+text: ONU_es:La#COVID19setransmiteentodotipodeclima.ElcaloroelfríoNOmatanalvirus.Nodejesqueladesinformaciónsehagav...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+37 / 176
+created_at: 04/05/2020
+handle: @WHO
+text: WHO_Europe:Second-handsmokecanputyouatriskofgettingrespiratoryinfections.Youcanhelpprotecteveryoneandreduceexposure...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+38 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:#HandHygieneDayisareminderoftheimportanceofclean👐for#healthworkers&forallofus.Thesimpleactofwashingor...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+39 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:#HandHygieneDayisalsoareminderthatmillionsofpeoplearoundtheworldarenotabletopracticethismostbasicofprec...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+40 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:Ifwearetostop#COVID19oranyothersourceofinfection,andkeep#healthworkerssafe,wemustdramaticallyincreaseinve...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+41 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:On#HandHygieneDaywealsocalloncountriesto#SupportNursesAndMidwivesby:-increasingnursestaffinglevelstoprevent...May0
+[602, <NA>, <NA>, <NA>, None]
+
+
+42 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:This#HandHygieneDay,wecallonallcountriestoimprovehandhygienepracticesto:-helppreventthetransmissionof#COVI...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+43 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: WHO:Tomark#HandHygieneDay&Intl.dayof#Midwifejointheglobalclaptomorrow!🌍Nomatterwhereyouare⏲️Atnoonbyyourloca...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+44 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: WHOAFRO:TodayisWorldHandHygieneDay!#HandHygieneisoneofthemosteffectiveactionstostopthespreadofinfection,including...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+45 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: WHOPhilippines:TodayisWorldHandHygieneDay!Everyonehasaroleinpreventinginfectionssuchas#COVID19,bypracticingthorough...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+46 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: WHOSEARO:#HandHygieneisoneofthemosteffectiveactionsyoucantaketoreducethespreadofpathogensandpreventinfections,incl...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+47 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: WHOWPRO:Washingyourhandsusingregularsoapandwateriseffectiveagainst#COVID19ifyoudon'thaveaccesstohandsanitizer.#H...May0
+[602, <NA>, <NA>, <NA>, None]
+
+
+48 / 176
+created_at: 06/05/2020
+handle: @WHO
+text: WHOWPRO:5momentsfor#HandHygiene:1.Beforetouchingapatient2.Beforeacleasepticprocedure3.Afterbodyfluidexposure...May06,202
+[602, <NA>, <NA>, <NA>, None]
+
+
+49 / 176
+created_at: 07/05/2020
+handle: @WHO
+text: DrTedros:Riskcommunication,trainingandeducationforstaffandmanagersareessential.#COVID19
+[602, <NA>, <NA>, <NA>, None]
+
+
+50 / 176
+created_at: 07/05/2020
+handle: @WHO
+text: DrTedros:Someoftheissuestoconsiderinclude:-handhygiene-respiratoryhygiene-physicaldistancingincommonareas&duringmeet...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+51 / 176
+created_at: 08/05/2020
+handle: @WHO
+text: DrTedros:Like#smallpox,#COVID19isgivingusanopportunitynotonlytofightasingledisease,butto:-changethetrajectoryofgl...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+52 / 176
+created_at: 08/05/2020
+handle: @WHO
+text: opsoms:#COVID19¿Quémedidasdeprevenciónsedebentomarenlasobras?LasobrasdeconstruccióndebensertratadascomooficinasL...May0
+[602, <NA>, <NA>, <NA>, None]
+
+
+53 / 176
+created_at: 08/05/2020
+handle: @WHO
+text: opsoms:#TBTEltrabajodeinmunizaciónesesencialentodoelmundodurantelarespuestaala#COVID19EchaunvistazoaesteTweet...May08
+[602, <NA>, <NA>, <NA>, None]
+
+
+54 / 176
+created_at: 09/05/2020
+handle: @WHO
+text: WHO:Commemorating#SmallpoxEradication–alegacyofhope,for#COVID19andotherdiseases👉https://t.co/8n4pHnLazwOn8May1980,...May0
+[602, <NA>, <NA>, <NA>, None]
+
+
+55 / 176
+created_at: 11/05/2020
+handle: @WHO
+text: DrTedros:Therehavenowbeenover4M#COVID19casesacrosstheworld.Overthepastweeksomecountrieshavestartedlifting#StayHome...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+56 / 176
+created_at: 11/05/2020
+handle: @WHO
+text: WHO:#AskWHOaboutbreastfeedingduring#COVID19https://t.co/7CPwA7YmFl
+[602, <NA>, <NA>, <NA>, None]
+
+
+57 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: DrTedros:#COVID19highlightstheurgentneedforallcountriestoinvestinstronghealthsystems&#PrimaryHealthCare,asthebestde...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+58 / 176
+created_at: 14/05/2020
+handle: @WHO
+text: DrTedros:#OnThisDayin1796,thefirstdocumentedvaccinationwascarriedoutbyEdwardJennerwhenheinoculatedJamesPhippsagainst...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+59 / 176
+created_at: 14/05/2020
+handle: @WHO
+text: WHOAFRO:Thismorning,expertswillbediscussingtheimpactofthe#COVID19pandemiconfoodsecurity&malnutritionin#Africa.🌍Joi...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+60 / 176
+created_at: 18/05/2020
+handle: @WHO
+text: UNFPA:Test.Trace.TreatCare.TheWorldHealthOrganizationhasbeencallingforthis.Thisishowtheworldwilldefeatthis#C...May18,
+[602, <NA>, <NA>, <NA>, None]
+
+
+61 / 176
+created_at: 21/05/2020
+handle: @WHO
+text: WHOAFRO:Thebestwaytoprotectyourself&othersfrom#COVID19isto#DOTHE5!1⃣WASHhandsoften🧼2⃣AVOIDtouchingeyes,nose&...May21,
+[602, <NA>, <NA>, <NA>, None]
+
+
+62 / 176
+created_at: 26/05/2020
+handle: @WHO
+text: DrTedros:Iwishtoreiteratethathydroxychloroquineandchloroquineareacceptedasgenerallysafeforuseinpatientswithautoimmun...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+63 / 176
+created_at: 26/05/2020
+handle: @WHO
+text: DrTedros:TheExecutiveGroupofthe#COVID19SolidarityTrialmetonSaturdaytoreviewastudyonhydroxychloroquineanddecidedtot...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+64 / 176
+created_at: 27/05/2020
+handle: @WHO
+text: WHOTimorLeste:Secondhandsmokeisharmful.Childrenexposedtosecondhandsmokeareata50to100%higherriskofacuterespiratoryi...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+65 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: DrTedros:Weinvitecompaniesorgov'tsthatdevelopaneffective#COVID19therapeutictocontributethepatenttotheMedicinesPatent...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+66 / 176
+created_at: 30/05/2020
+handle: @WHO
+text: ONU_es:Losproductosdeltabaconuncahansidonecesarios,menosaúndurantelapandemiade#COVID19.El31demayoeselDíaMundia...May3
+[602, <NA>, <NA>, <NA>, None]
+
+
+67 / 176
+created_at: 30/05/2020
+handle: @WHO
+text: WHO:__________aremorelikelytogetaseverecaseof#COVID19?#TobaccoExposed
+[602, <NA>, <NA>, <NA>, None]
+
+
+68 / 176
+created_at: 31/05/2020
+handle: @WHO
+text: DrTedros:Smokershaveahigherchanceofgettingsevere#COVID19.Still,thetobaccoandnicotineindustryhaslobbiedfortheirprod...May
+[602, <NA>, <NA>, <NA>, None]
+
+
+69 / 176
+created_at: 31/05/2020
+handle: @WHO
+text: ITU:Tobaccokillsmorethan8millionpeopleeveryyear,andsmokersaremorelikelytodevelopseverediseasewith#COVID19Develop...May3
+[602, <NA>, <NA>, <NA>, None]
+
+
+70 / 176
+created_at: 31/05/2020
+handle: @WHO
+text: UN:Tobaccoproductsarenotessentialduringthe#COVID19pandemic-orever.SundayisWorld#NoTobaccoDay.Helpcreateagenera...May31,
+[602, <NA>, <NA>, <NA>, None]
+
+
+- 71 / 176
+created_at: 31/05/2020
+handle: @WHO
+text: WHONAMIBIA:TodayisWorldNoTobaccoDaySmokingcanincreaseyourchanceofgettingCOVID-19.🚭This#WNTD2020,WHOurgesgovernmen...May31
+[602, <NA>, <NA>, <NA>, None]
+
+
+72 / 176
+created_at: 01/06/2020
+handle: @WHO
+text: WHO:Smokersmaybemorevulnerabletoaseverecaseof#COVID19Q&A➡️https://t.co/qy0q0G6QYW#TobaccoExposedhttps://t.co/oKhEZUv...Jun01
+[602, <NA>, <NA>, <NA>, None]
+
+
+73 / 176
+created_at: 03/06/2020
+handle: @WHO
+text: DrTedros:Basedonavailabledata,the#COVID19SolidarityTrialDataSafety&MonitoringCommitteerecommendedtherearenoreasonsto...Jun
+[602, <NA>, <NA>, <NA>, None]
+
+
+74 / 176
+created_at: 03/06/2020
+handle: @WHO
+text: DrTedros:Lastweekthe#COVID19SolidarityTrialExecutiveGroupimplementedatemporarypauseofthehydroxychloroquinearmofthetr...Jun
+[602, <NA>, <NA>, <NA>, None]
+
+
+75 / 176
+created_at: 04/06/2020
+handle: @WHO
+text: Nurses&midwives-everycheck-upisanopportunitytocheckinonvaccinationforpeopleofallages:children,youth,adultsandolderpe
+[602, <NA>, <NA>, <NA>, None]
+
+
+76 / 176
+created_at: 04/06/2020
+handle: @WHO
+text: Q:What'sinavaccine?A:Allingredientsinavaccinehelpensuretheyaresafe&effective.Vaccineingredientscanlookunfamiliarona
+[602, <NA>, <NA>, <NA>, None]
+
+
+77 / 176
+created_at: 04/06/2020
+handle: @WHO
+text: Nurses&midwivesarevaccinechampionsforparentsandparents-to-be.Theyarealsotrustedandcrediblesourcesofinformationaboutvacci
+[602, <NA>, <NA>, <NA>, None]
+
+
+78 / 176
+created_at: 04/06/2020
+handle: @WHO
+text: Immunizationisasharedresponsibility.Ifonlysomepeoplearevaccinated,diseasescanstillspread,especiallytothoseathighestrisk:
+[602, <NA>, <NA>, <NA>, None]
+
+
+79 / 176
+created_at: 08/06/2020
+handle: @WHO
+text: DrTedros:Withalmost7M#COVID19cases&400Kdeathsglobally,thisisnotthetimeforanycountrytotakeitsfootoffthepedal.We...Jun
+[602, <NA>, <NA>, <NA>, None]
+
+
+-80 / 176
+created_at: 15/03/2020
+handle: @MinSoliSante
+text: #Coronavirus#Covid_19|Lesentreprisesetlesassociationsbénéficierontd'unsoutienéconomiqueparticulierpourfairefaceauxdifficult
+[603, <NA>, <NA>, <NA>, None]
+
+
+- 81 / 176
+created_at: 20/04/2020
+handle: @WHO
+text: UNmigration:Toallmigrantworkersprovidingessentialcareandservicesduring#COVID19:thankyou❤️https://t.co/uE4ftENLAFhttps:...Apr
+[603, <NA>, <NA>, <NA>, None]
+
+
+- 82 / 176
+created_at: 21/04/2020
+handle: @WHO
+text: DrTedros:Toppriorityismakingsure#healthworkers&facilitiesinthoseareasgetthemedicalitemstheyneed.Thisrequires:boosti...Apr
+[603, <NA>, <NA>, <NA>, None]
+
+
+- 83 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: WHO_Europe:👨‍⚕️👩‍⚕️Nursesareworkingaroundtheclocktoprotectandhealusfrom#coronavirus.#COVID19https://t.co/LiPFVkUfoKApr28,
+[603, <NA>, <NA>, <NA>, None]
+
+
+- 84 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: WHOSEARO:Nurses,midwivesandotherhealthworkersareatagreaterriskof#COVID19thananyoneelse.Thankthemfortheirbraverya...Apr
+[603, <NA>, <NA>, <NA>, None]
+
+
+85 / 176
+created_at: 04/05/2020
+handle: @WHO
+text: DrTedros:#MayThe4thbewithallourhealthheroes,scientists,andallotherprofessionalsaroundtheworldfighting#COVID19.Togethe...May
+[603, <NA>, <NA>, <NA>, None]
+
+
+86 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:Todayis#HandHygieneDay&theInternationalDayofthe#Midwife.Wecallon:-allhealthfacilities-allindividualstosto...May
+[603, <NA>, <NA>, <NA>, None]
+
+
+87 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:Tragically,wealsoacknowledgethatsomemidwiveshavelosttheirlivesto#COVID19.Wehonourtheirserviceandsacrifice....May
+[603, <NA>, <NA>, <NA>, None]
+
+
+88 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: DrTedros:Weareinthemidstofthe#COVID19pandemic&already,midwives&other#healthworkersarebeingrightlyhailedasheroes.T...May
+[603, <NA>, <NA>, <NA>, None]
+
+
+- 89 / 176
+created_at: 12/05/2020
+handle: @WHO
+text: DrTedros:Nursesareonthefrontlinesofthe#COVID19response,fromcommunityclinicstointensivecareunitsinhospitals.Today,...May12
+[603, <NA>, <NA>, <NA>, None]
+
+
+90 / 176
+created_at: 16/04/2020
+handle: @WHO
+text: WHOAFRO:JoinusonTwittertomorrowat13:00(CAT)foraLIVEmediabriefingon#COVID19intheAfricanRegionwithworld-leadingexpe...Apr
+[604, <NA>, <NA>, <NA>, None]
+
+
+91 / 176
+created_at: 17/04/2020
+handle: @MinSoliSante
+text: #CORONAVIRUS#COVID19|Quellessontlessanctionsencasdenon-respectduconfinement?Dansquelscasutiliseruneattestation?@CCastan
+[604, <NA>, <NA>, <NA>, None]
+
+
+- 92 / 176
+created_at: 23/04/2020
+handle: @WHO
+text: WHO_Europe:Pressconferenceon#COVID-19intheWHOEuropeanRegionhttps://t.co/DAx74gv4Bx
+[604, <NA>, <NA>, <NA>, None]
+
+
+93 / 176
+created_at: 23/04/2020
+handle: @WHO
+text: WHOAFRO:COVID-19inAfrica:watchajointmediabriefingwithWHOandWEFhttps://t.co/HVZU9LPduR
+[604, <NA>, <NA>, <NA>, None]
+
+
+94 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: WHO_Europe:WHO/Europehaspublishedconsiderationsonthegradualeasingofmeasurestakeninresponseto#COVID19.Variousfactorsm...Apr
+[604, <NA>, <NA>, <NA>, None]
+
+
+95 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: DrTedros:IthankGOARNfor:-theirtirelessservicetoglobalhealth-ensuringthatnooneinstitutionorgovernmenthastofacehealt...Apr
+[604, <NA>, <NA>, <NA>, None]
+
+
+96 / 176
+created_at: 28/04/2020
+handle: @WHO
+text: WHO:“OnJanuary30,wedeclaredthehighestlevelofglobalemergencyon#COVID19.Duringthattimetherewereonly82casesoutside...Apr2
+[604, <NA>, <NA>, <NA>, None]
+
+
+97 / 176
+created_at: 29/04/2020
+handle: @WHO
+text: DrTedros:Parliamentariansaretheoneswhocanbringallpartiestogethertodefeatthevirusatthecommunitylevel.Strongnational...Apr
+[604, <NA>, <NA>, <NA>, None]
+
+
+98 / 176
+created_at: 29/04/2020
+handle: @WHO
+text: WHO:“WHOhasnopowerorforcetoreinforceitsadvice,exceptthewillingnessofthecountriestoacceptorreject....WHOwillcon...Apr
+[604, <NA>, <NA>, <NA>, None]
+
+
+99 / 176
+created_at: 30/04/2020
+handle: @MinSoliSante
+text: #CORONAVIRUS#COVID19|ConsultezlasuitedesannoncesduPremierministreconcernantlastratégienationalededéconfinement⤵https://t.c
+[604, <NA>, <NA>, <NA>, None]
+
+
+100 / 176
+created_at: 30/04/2020
+handle: @MinSoliSante
+text: #CORONAVIRUS#COVID19|ConsultezlasuitedesannoncesduPremierministreconcernantlastratégienationalededéconfinement⤵https://t.c
+[604, <NA>, <NA>, <NA>, None]
+
+
+101 / 176
+created_at: 30/04/2020
+handle: @WHO
+text: WHOAFRO:COVID-19inAfrica:watchajointmediabriefingwithWHOandWEFhttps://t.co/Ft5Zjk7apI
+[604, <NA>, <NA>, <NA>, None]
+
+
+- 102 / 176
+created_at: 01/05/2020
+handle: @WHO
+text: DrTedros:Yesterday,weheldourweeklyMemberStatesbriefingon#COVID19.Iparticularlythank🇰🇪🇵🇦🇶🇦🇹🇷🇧🇹🇻🇳HealthMinisterswho...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+103 / 176
+created_at: 07/05/2020
+handle: @WHO
+text: WHO_Europe:Pressconferenceon#COVID-19intheWHOEuropeanRegionhttps://t.co/a1zFdcbkpi
+[604, <NA>, <NA>, <NA>, None]
+
+
+104 / 176
+created_at: 07/05/2020
+handle: @WHO
+text: WHOAFRO:COVID-19inAfrica:watchajointmediabriefingwithWHOandWEFhttps://t.co/iuyFqZ0HxX
+[604, <NA>, <NA>, <NA>, None]
+
+
+105 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: DrTedros:Thanksforthedetailedupdateonthe#COVID19situationin#Belarus,PresidentAleksandrLukashenko.Wediscussedmeasuresf...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+106 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: WHO:AssistaàconferênciadeimprensadaOMSparaconhecerasúltimasinformaçõessobrearespostamundialàCOVID19,nasuapróprial...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+107 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: WHO:विश्वस्वास्थयसंगठन(WHO)के#COVID19प्रेसकांफ्रेंससेजुड़ेंहरसोमवार,बुधवारऔरशुक्रवारकोरात8.30बजे(IST)क्लिककरेंh...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+108 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: WHO:用你的语言观看世卫组织新闻发布会,了解全球应对COVID-19最新动态。每周一、三、五下午3点(格林威治标准时间)通过以下网址观看:https://t.co/0cDIaZUy9Shttps://t.co/qfax4kqTqM
+[604, <NA>, <NA>, <NA>, None]
+
+
+109 / 176
+created_at: 14/05/2020
+handle: @WHO
+text: WHO_Europe:Pressconferenceon#COVID-19intheWHOEuropeanRegionhttps://t.co/FKbvDsY92E
+[604, <NA>, <NA>, <NA>, None]
+
+
+110 / 176
+created_at: 14/05/2020
+handle: @WHO
+text: WHOAFRO:COVID-19inAfrica:watchajointmediabriefingwithWHOandWEFhttps://t.co/qrWx2EsaGi
+[604, <NA>, <NA>, <NA>, None]
+
+
+111 / 176
+created_at: 15/05/2020
+handle: @WHO
+text: WHO_Europe:✅Carefullymanagetransitionfromlockdown✅Enhancepreparednessforpossiblesecondwave✅Buildbridgesbetweenhealth&s...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+112 / 176
+created_at: 21/05/2020
+handle: @WHO
+text: DrTedros:The#WHA73resolutionon#COVID19assignsresponsibilitiesforboththeWHOanditsmemberstates,andcapturesthecomprehen...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+113 / 176
+created_at: 28/05/2020
+handle: @WHO
+text: WHO_Europe:Pressconferenceon#COVID-19intheWHOEuropeanRegionhttps://t.co/NwXFVN3oTy
+[604, <NA>, <NA>, <NA>, None]
+
+
+114 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: DrTedros:Anew#COVID19TechnologyAccessPooltosharedata&intellectualpropertywillgiveallcountries&companiesachancetob...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+115 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: DrTedros:Globalsolidarity&collaborationareessentialtoovercomingthecurrentpandemic.Weareproudtolaunchthe#COVID19Techn...May
+[604, <NA>, <NA>, <NA>, None]
+
+
+116 / 176
+created_at: 03/06/2020
+handle: @WHO
+text: AssistaàconferênciadeimprensadaOMSparaconhecerasúltimasinformaçõessobrearespostamundialàCOVID19,nasuapróprialíngua.Tod
+[604, <NA>, <NA>, <NA>, None]
+
+
+117 / 176
+created_at: 03/06/2020
+handle: @WHO
+text: विश्वस्वास्थयसंगठन(WHO)के#COVID19प्रेसकांफ्रेंससेजुड़ेंहरसोमवार,बुधवारऔरशुक्रवारकोरात8.30बजे(IST)क्लिककरेंhttps://t.co
+[604, <NA>, <NA>, <NA>, None]
+
+
+118 / 176
+created_at: 03/06/2020
+handle: @WHO
+text: Regardezlaconférencedepressede@WHOpourobtenirlesdernièresinformationssurlaripostemondialeàla#COVID19dansvotrelangue.Ch
+[604, <NA>, <NA>, <NA>, None]
+
+
+119 / 176
+created_at: 03/06/2020
+handle: @WHO
+text: Дляполучениясамойактуальнойинформацииоглобальнойборьбес#COVID19следитезапресс-конференциямиВОЗ(@WHO)навашемродномязыке.По
+[604, <NA>, <NA>, <NA>, None]
+
+
+120 / 176
+created_at: 01/04/2020
+handle: @MinSoliSante
+text: Commentfairesescoursesactuellement?Peut-ontrouvertoutcequ'ilnousfaut?Faut-ilfairedesréserves?Quelssontlesgestesbarriè
+[605, <NA>, <NA>, <NA>, None]
+
+
+121 / 176
+created_at: 24/04/2020
+handle: @WHO
+text: DrTedros:OursharedcommitmentistoensureALLpeoplehaveaccesstoALLthetoolstodefeat#COVID19.https://t.co/6CCTWrPDSUApr24,202
+[605, <NA>, <NA>, <NA>, None]
+
+
+122 / 176
+created_at: 25/04/2020
+handle: @WHO
+text: WHOPhilippines:Investmentsinthefightagainstmalariasupportthefightagainst#COVID19andsavelivesofthemostvulnerable:preg...Apr
+[605, <NA>, <NA>, <NA>, None]
+
+
+123 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: DrTedros:IthanktheGovernmentandthepeopleof#Portugal🇵🇹fortheircontributionof€500,000totheglobal#COVID19response.To...Apr
+[605, <NA>, <NA>, <NA>, None]
+
+
+124 / 176
+created_at: 27/04/2020
+handle: @WHO
+text: DrTedros:Toendthe#COVID19pandemic,theworldneeds:-Unityandsolidarityatthenationalandgloballevels-Toensureequalacc...Apr
+[605, <NA>, <NA>, <NA>, None]
+
+
+125 / 176
+created_at: 29/04/2020
+handle: @WHO
+text: opsoms:🌎#COVID19:Enbreve!!,participaenTwitterLivesobre💉inmunizacióndurantelapandemia.Agregatuspreguntasusandohasht...Apr29
+[605, <NA>, <NA>, <NA>, None]
+
+
+126 / 176
+created_at: 29/04/2020
+handle: @WHO
+text: WHOEMRO:Vaccinationnotonlyprotectsyou.Itprotectsthosewhocan'tbevaccinated.Vaccinesprotectindividualsandcommunities....Apr29
+[605, <NA>, <NA>, <NA>, None]
+
+
+127 / 176
+created_at: 01/05/2020
+handle: @WHO
+text: WHOIndonesia:Penyandangdisabilitasberisikolebihbesarterinfeksi#coronavirus.Tergantungdarikondisikesehatanygsdhdialami,me...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+128 / 176
+created_at: 02/05/2020
+handle: @WHO
+text: WHO:Feelingstressed?NewWHOguide📙providestechniquestohelpyoucopewithstress.Download👉https://t.co/S6VHy2XQpx#MentalHe...May0
+[605, <NA>, <NA>, <NA>, None]
+
+
+129 / 176
+created_at: 04/05/2020
+handle: @WHO
+text: DrTedros:Couldn'tagreemorewith🇩🇪ChancellorMerkelthat#UnitedAgainstCoronaviruspledgingconferenceisasignofhopeforsolida...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+130 / 176
+created_at: 04/05/2020
+handle: @WHO
+text: DrTedros:ThankstoZhangMing,🇨🇳Ambassadortothe🇪🇺,forjoiningthe#UnitedAgainstCoronavirusconferenceandforpledging€45.6M+...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+131 / 176
+created_at: 04/05/2020
+handle: @WHO
+text: WHONigeria:IfyouareexperiencingviolenceathomeduringCOVID-19andneedtoleaveinahurry:🏘️Identifyafriend,neighbour,re...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+132 / 176
+created_at: 05/05/2020
+handle: @WHO
+text: WHOThailand:Wewillgetthroughthistogether.Staystrongandhealthy.#COVID19https://t.co/jVxWp6RgUf
+[605, <NA>, <NA>, <NA>, None]
+
+
+133 / 176
+created_at: 07/05/2020
+handle: @WHO
+text: WHO:Inalittleover3months,#COVID19haschangedtheworldinsomanyways,bringingusclosertogetherandreaffirmingtheimporta...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+134 / 176
+created_at: 08/05/2020
+handle: @WHO
+text: Quarantinecanfeellonely,butyou'renotalone.Connectingwithotherpeopleisgoodforeveryone's#MentalHealth.#HealthyAtHome#COVID19
+[605, <NA>, <NA>, <NA>, None]
+
+
+135 / 176
+created_at: 09/05/2020
+handle: @WHO
+text: Servicestorespondtoviolenceagainstwomenareessentialduringthe#COVID19pandemic.INVEST,PROTECT&SUPPORTtheseservicesfortheh
+[605, <NA>, <NA>, <NA>, None]
+
+
+136 / 176
+created_at: 09/05/2020
+handle: @WHO
+text: opsargentina:Paramantenerseactivoencasa#COVID19https://t.co/nNILw8qvGY
+[605, <NA>, <NA>, <NA>, None]
+
+
+137 / 176
+created_at: 09/05/2020
+handle: @WHO
+text: WHOWPRO:EatinghealthyduringCOVID-19isimportant.Planyourgroceriesinadvancetomaintainahealthydietandavoidfoodwaste....May0
+[605, <NA>, <NA>, <NA>, None]
+
+
+138 / 176
+created_at: 09/05/2020
+handle: @WHO
+text: WHOWPRO:Rememberthesekeytipswhileatthesupermarkettokeepyourselfsafeandtomakehealthyfoodchoices.#FoodSafety#COVID...May09
+[605, <NA>, <NA>, <NA>, None]
+
+
+139 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: DrTedros:Civiliansand#healthworkersshouldneverbeatarget.Inthetimeof#COVID19,Iurgeallstakeholderstoputasidepolitics...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+140 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: DrTedros:Don'tmissjoiningusfortheWalkTheTalk:#HealthyAtHomechallengethisweekend!Thisvirtualeventwillbeheldover16-1...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+-141 / 176
+created_at: 13/05/2020
+handle: @WHO
+text: pahowho:👋🏼Learnhow#HealthWorkerscanhelpwomensurvivorsofviolenceduring#COVIDー19.👀⬇️https://t.co/VEFN26LjAc
+[605, <NA>, <NA>, <NA>, None]
+
+
+142 / 176
+created_at: 14/05/2020
+handle: @WHO
+text: DrTedros:The#COVID19pandemicisremindingusonceagainthat#mentalhealthisjustasimportantasphysicalhealth.Astheeconomic...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+143 / 176
+created_at: 14/05/2020
+handle: @WHO
+text: DrTedros:Thebriefalsoshowsthatolderpeople,particularlythoselivingalone,areatriskofsocialisolation.Supportfor#menta...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+144 / 176
+created_at: 15/05/2020
+handle: @WHO
+text: WHO:Throughsolidarity,throughtrust,throughworkingtogetherwehaveachancetoturnatragicpandemicintoabeaconofhopefor...May1
+[605, <NA>, <NA>, <NA>, None]
+
+
+145 / 176
+created_at: 17/05/2020
+handle: @WHO
+text: During#COVID19,lookingafteryour#mentalhealthisvital.✅Payattentiontoyourownneeds&feelings✅Engageinhealthyactivities✅Exerc
+[605, <NA>, <NA>, <NA>, None]
+
+
+146 / 176
+created_at: 17/05/2020
+handle: @WHO
+text: 🏠Ifyouareathomebecauseof#coronavirus,it'simportanttostayactiveeverydayasmuchasyoucan.WHOrecommendsthatallhealthyad
+[605, <NA>, <NA>, <NA>, None]
+
+
+147 / 176
+created_at: 17/05/2020
+handle: @WHO
+text: Herearesome#HealthyAtHomeideasforolderadults&peoplewithunderlyingconditionswhohaveto#StayHomeduring#COVID:-Beactive&po
+[605, <NA>, <NA>, <NA>, None]
+
+
+148 / 176
+created_at: 17/05/2020
+handle: @WHO
+text: Workingfromhomemeanspeoplearesittinglonger.Itisimportantforyourhealthtogetupoften,foratleast3minutes,tostretchyour
+[605, <NA>, <NA>, <NA>, None]
+
+
+149 / 176
+created_at: 17/05/2020
+handle: @WHO
+text: WHO:WalkTheTalkisLIVE!Joinusforsomefun,#HealthyAtHomeactivitiesthatyou&yourfamilydoduring#COVID19.https://t.co/RK8...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+150 / 176
+created_at: 18/05/2020
+handle: @WHO
+text: #COVID19threatensusall,whoeverweare,whereverwelive.Nowmorethanever,the🌎🌍🌏needsWHO.Tobuildahealthierworld:FORYOU,FOR
+[605, <NA>, <NA>, <NA>, None]
+
+
+151 / 176
+created_at: 18/05/2020
+handle: @WHO
+text: WHOSEARO:Toexperiencestress,anger&anxietycanbecommonduringsituationssuchas#COVIDー19,butlookingafteryour#mentalhealth...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+152 / 176
+created_at: 20/05/2020
+handle: @WHO
+text: DrTedros:DeepthankstoMemberStateswhohaveexpressedtheirsupport&solidarityatthe#WHA73&throughoutthepandemic.Iaminsp...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+153 / 176
+created_at: 20/05/2020
+handle: @WHO
+text: DrTedros:Foreverything#COVID19hastakenfromus,ithasalsogivenussomething:Areminderofwhatreallymattersandtheopport...May2
+[605, <NA>, <NA>, <NA>, None]
+
+
+154 / 176
+created_at: 21/05/2020
+handle: @WHO
+text: DrTedros:Togetherwewillovercome#COVID19.Nothingistoodifficulttoaddresswhenthehumanspiritwillsit.https://t.co/NCzQtlG3...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+155 / 176
+created_at: 21/05/2020
+handle: @WHO
+text: WHOSEARO:Ourthoughtsarewiththoseimpactedbythedoublewhammyof#COVID19&thedevastating#CycloneApmhanthathitpartsof#In...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+-156 / 176
+created_at: 22/05/2020
+handle: @WHO
+text: WHO:#COVID19hasrobbedusof:👩‍❤️‍👨peoplewelove🌆livesandlivelihoodsIthasshakenthefoundationsofour🌍.Butithasal...May22,
+[605, <NA>, <NA>, <NA>, None]
+
+
+157 / 176
+created_at: 25/05/2020
+handle: @WHO
+text: DrTedros:Theonlywaytodefeat#COVID19istogether!https://t.co/xoQ8iPFBKv
+[605, <NA>, <NA>, <NA>, None]
+
+
+158 / 176
+created_at: 25/05/2020
+handle: @WHO
+text: ONU_es:Muchosniñosnecesitanapoyoparaadaptarsealoscambiosquehatraídoennuestrodíaadíala#COVID19.Estelibrodecuento...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+159 / 176
+created_at: 25/05/2020
+handle: @WHO
+text: WHOWPRO:Noteverythingyouhearabout#COVID19istrue.Foraccurateinformation✔️Findofficialadvicefromyourcountry'spublic...May25
+[605, <NA>, <NA>, <NA>, None]
+
+
+160 / 176
+created_at: 27/05/2020
+handle: @WHO
+text: DrTedros:Aspeopleareisolatedathomebecauseof#COVID19,therisksofdomesticviolencehavetragicallybeenexacerbated.We'reso...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+-161 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: WHO:#LetsTalkaboutkeepingahealthymindduring#COVID19!Inthebelowthread👇,WHOanswersfrequentlyaskedquestionsonhowtom...May
+[605, <NA>, <NA>, <NA>, None]
+
+
+162 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: WHO:Canphysicalfitnessimprovemy#mentalhealth?#LetsTalk#COVID19https://t.co/B4W0ww446b
+[605, <NA>, <NA>, <NA>, None]
+
+
+163 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: WHO:HowcanIkeeppositiveduringconfinementathome?#LetsTalk#COVID19https://t.co/6WtPbufJNt
+[605, <NA>, <NA>, <NA>, None]
+
+
+164 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: WHO:IsthereanythingIshouldavoidduringconfinementathome?#LetsTalk#COVID19https://t.co/Lbprd9ftHe
+[605, <NA>, <NA>, <NA>, None]
+
+
+165 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: WHO:Whataresomeadditionalandrecommended#mentalhealthresourcesduring#COVID19?#LetsTalkhttps://t.co/bPvqZ8wz6e
+[605, <NA>, <NA>, <NA>, None]
+
+
+166 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: WHO:Withconstant,sometimesfrightening,newsreportsabout#COVID19,howcanIstayinformedwithoutfeelingoverwhelmed?#LetsTal...May2
+[605, <NA>, <NA>, <NA>, None]
+
+
+167 / 176
+created_at: 01/06/2020
+handle: @WHO
+text: DrTedros:Todayisthestartofa#PrideMonthlikenoother:astheworldfightstheglobal#COVID19pandemic,let'salsotakethisopp...Jun
+[605, <NA>, <NA>, <NA>, None]
+
+
+168 / 176
+created_at: 01/06/2020
+handle: @WHO
+text: WHO_Europe:💻Falseinformationon#COVID19isputtingpeopleindanger.i️Foraccurateinformation,consultofficialadvicefromyou...Jun
+[605, <NA>, <NA>, <NA>, None]
+
+
+169 / 176
+created_at: 03/06/2020
+handle: @WHO
+text: WHOWPRO:Areyouina#SafeHomeduring#COVID19?Ifnot,rememberyoucan:🤝Reachouttosupportivefamily,friendsorneighbours🆘Us...Jun
+[605, <NA>, <NA>, <NA>, None]
+
+
+170 / 176
+created_at: 08/06/2020
+handle: @WHO
+text: WHOhasjoinedforceswiththe#UnitedKingdom🇬🇧governmenttorun“StopTheSpread”,anawarenesscampaignabouttherisksofincorrectand
+[605, <NA>, <NA>, <NA>, None]
+
+
+171 / 176
+created_at: 11/04/2020
+handle: @WHO
+text: Trytaking20minutesdoingsomethingthekidschoose–likeplayingagameorreading-togetherwiththem.NophoneorTVsoyoucanfocus
+[606, <NA>, <NA>, <NA>, None]
+
+
+172 / 176
+created_at: 16/04/2020
+handle: @WHO
+text: Helpyourkidsstay#HealthyAtHomebytakinga20-minutebreakfromwork&doingsomethingthekidschoose–likereading-togetherwithth
+[606, <NA>, <NA>, <NA>, None]
+
+
+173 / 176
+created_at: 29/05/2020
+handle: @WHO
+text: WHO:Doyouhaveanyadviceforparentslookingafterchildrenwhileschoolsareclosed?#LetsTalk#COVID19https://t.co/yEAWUWgmhbMay29,
+[606, <NA>, <NA>, <NA>, None]
+
+
+174 / 176
+created_at: 27/05/2020
+handle: @WHO
+text: DrTedros:#COVID19isareminderoftheintimaterelationshipbetweenpeopleandplanet.Anyeffortstomakeourworldsaferaredoomed...May
+[607, <NA>, <NA>, <NA>, None]
+
+
+-175 / 176
+created_at: 27/05/2020
+handle: @WHO
+text: DrTedros:Ourprescriptionsforahealthyandgreenrecoveryfrom#COVID19:1.Protectandpreservenature2.Investinessentialservi...May
+[607, <NA>, <NA>, <NA>, None]
+
+
+176 / 176
+created_at: 08/06/2020
+handle: @WHO
+text: WHO:用你的语言观看世卫组织新闻发布会,了解全球应对COVID-19最新动态。每周一、三、五下午3点(格林威治标准时间)通过以下网址观看:https://t.co/uk8NQEzwKehttps://t.co/BsZC1Bcive
+[608, <NA>, <NA>, <NA>, None]
+
+

@@ -65,9 +65,7 @@ class InsertFromJsonl(Insertor):
             os.path.join(self.jsonl_path, filename),
             encoding="utf8",
         ) as open_f:
-            tot_lines = 0
-            for _ in open_f:
-                tot_lines += 1
+            tot_lines = sum(1 for _ in open_f)
         return tot_lines
 
     def ret_tw_from_line(self, line):
@@ -134,6 +132,7 @@ class InsertFromJsonl(Insertor):
 
         Can provide a tws_db value for debugging purpose.
         """
+
         tws = self.tws
         if tws_db is not None:
             tws = tws_db

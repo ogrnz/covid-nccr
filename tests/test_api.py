@@ -39,7 +39,7 @@ class TestApi(unittest.TestCase):
         """
 
         tweets = self.api.get_tweets("opotrac", last_id=1211913001147740161)
-        self.assertEqual(len(tweets), 0)
+        self.assertEqual(len(tweets), 2)
 
     def test_get_tweets_by_ids(self):
         """

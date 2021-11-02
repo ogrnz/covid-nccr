@@ -231,8 +231,8 @@ class TestDatabase(unittest.TestCase):
                 self.db.get_tweet_by_id(idx)
                 for idx in ["1427204514906529792", "1211853090552332289"]
             ]
-        self.assertEqual(updated[0][-2], "111")
-        self.assertEqual(updated[1][-2], "222")
+        self.assertEqual(updated[0][-2], 111)
+        self.assertEqual(updated[1][-2], 222)
 
     def test_j_get_last_id_by_handle(self):
         with self.db:

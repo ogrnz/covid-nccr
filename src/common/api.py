@@ -59,7 +59,7 @@ class Api:
         while len(new_tweets) > 0:
             # If tweet older than that ID (== 31/12/2019)
             # or older than last ID in db for that actor, go to next actor
-            if oldest < 1211913001147740161 or oldest < last_id:
+            if oldest < 1211913001147740161 or oldest <= last_id:
                 break
 
             print(f"Getting tweets before {oldest} ({screen_name})")

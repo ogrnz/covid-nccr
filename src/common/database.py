@@ -74,6 +74,22 @@ class Database:
         finally:
             if self.conn:
                 self.conn.close()
+    
+    def get_db_size(self) -> int:
+        """
+        Count the number of elements in the db
+        """
+        
+        try:
+            cur = self.conn.cursor()
+            sql = "SELECT COUNT(*) FROM tweets"
+            cur.execute(sql)
+
+            return cur.fetchone()[0]
+        except sqlite3.Error as error:
+            print("get_all_tweets: Error", error)
+        finally:
+            cur.close()
 
     def get_all_tweets(
         self,

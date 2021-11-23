@@ -43,7 +43,7 @@ df_replies = pd.DataFrame(
         "created_at",
         "handle",
         "name",
-        "oldText",
+        "old_text",
         "text",
         "URL",
         "type",
@@ -56,9 +56,9 @@ df_replies = pd.DataFrame(
         "theme_hardcoded",
     ],
 )
-df_replies["oldText"].fillna("text", inplace=True)
+df_replies["old_text"].fillna("text", inplace=True)
 
-df = df_replies[~df_replies["oldText"].str.startswith("RY")]
+df = df_replies[~df_replies["old_text"].str.startswith("RY")]
 print(len(df))
 
 #%%
@@ -82,7 +82,7 @@ to_update = [
 
 # %%
 with db:
-    count = db.update_many("oldText", "tweet_id", to_update)
+    count = db.update_many("old_text", "tweet_id", to_update)
 
 print(count, "tweets updated")
 
@@ -100,7 +100,7 @@ tweets_df = pd.DataFrame(
         "created_at",
         "handle",
         "name",
-        "oldText",
+        "old_text",
         "text",
         "URL",
         "type",
@@ -114,7 +114,7 @@ tweets_df = pd.DataFrame(
     ],
 )
 totprobs = len(tweets_df) - sum(
-    tweets_df["oldText"].apply(lambda x: str(x).startswith("RY"))
+    tweets_df["old_text"].apply(lambda x: str(x).startswith("RY"))
 )
 print(totprobs)
 # = 26 tweets with an issue. Most of them answers to deleted tweets

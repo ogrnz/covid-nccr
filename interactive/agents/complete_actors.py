@@ -72,7 +72,7 @@ for req in retrieved_users:
 # %%
 def get_info(handles):
     """
-    This function is here to get individual information on users and especially to know the reason why the precendent bulk request didn't work.
+    This function is here to get individual information on users and especially to know the reason why the precedent bulk request didn't work
     """
 
     users = dict()

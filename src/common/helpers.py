@@ -72,6 +72,23 @@ class Helpers:
     database_time_format = "%d/%m/%Y %H:%M:%S"
 
     @staticmethod
+    def convert_date(datestr: str) -> str:
+        """
+        Gets a date in US format and return it EU
+
+        2020-04-01 -> 01/04/2020
+        """
+
+        datestr = datestr.split(" ")[0]
+        datestr = datestr.replace("-", "/")
+
+        # If US format (2020/04/01), convert to EU
+        datestr_split = datestr.split("/")
+        if len(datestr_split[0]) == 4:
+            return "/".join(datestr_split[::-1])
+        return datestr
+
+    @staticmethod
     def get_actors_url(filename: str) -> list:
         """
         Retrieve all accounts URLs located in file

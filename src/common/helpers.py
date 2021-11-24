@@ -71,6 +71,76 @@ class Helpers:
     twitter_time_format = "%Y-%m-%dT%H:%M:%S.000Z"
     database_time_format = "%d/%m/%Y %H:%M:%S"
 
+    # Time range of interest
+    # ]start, end[
+    start = "31/12/2019"
+    end = "01/04/2021"
+
+    @staticmethod
+    def sort_timerange(df: pd.DataFrame, field="date") -> pd.DataFrame:
+        """
+        Given a time frame, return only tweets that are in the timerange of interest.
+        """
+
+        df[field] = pd.to_datetime(df[field], format="%d/%m/%Y")
+        return df[
+            (df[field] > pd.to_datetime(Helpers.start, format="%d/%m/%Y"))
+            & (df[field] < pd.to_datetime(Helpers.end, format="%d/%m/%Y"))
+        ]
+
+    @staticmethod
+    def categorize_df_covid(df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Return only tweets about covid given the following methodology:
+
+        (topic in topics_cov)  -> 1.1
+        OR {(covid_theme == 1)
+            BUT NOT IF ((topic in topics_not_cov) OR (theme_hardcoded == 0))}  -> 1.2
+        OR ((topic is None) AND (covid_theme == 1) AND (theme_hardcoded is None))  -> 1.3
+
+        Textual explanation:
+        1.1 Coded tweets (601 to 607)
+        1.2 Tweets automatically classified as being about covid (covid_theme=1). From those, do not consider the ones coded as 608 or manually excluded (theme_hardcoded=0)
+        1.3 Tweets about covid that are still not coded
+        """
+        return df[
+            (df["topic"].isin(Helpers.topics_cov))
+            | (
+                (df["covid_theme"] == 1)
+                & (
+                    (~df["topic"].isin(Helpers.topics_cov)) | df["theme_hardcoded"]
+                    == "0"
+                )
+            )
+            | (
+                (df["topic"].isna())
+                & (df["covid_theme"] == 1)
+                & (df["theme_hardcoded"].isna())
+            )
+        ]
+
+    @staticmethod
+    def categorize_df_not_covid(df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Return only tweets NOT about covid given the following methodology:
+
+        (topic == 608)  -> 2.1
+        OR ((theme_hardcoded == 0) BUT NOT IF (topic in topics_cov)) -> 2.2
+        OR ((covid_theme == 0)
+            BUT NOT IF (topic in topics_cov))  -> 2.3
+
+        Textual explanation:
+        2.1 Tweets coded as 608
+        2.2 Tweets manually excluded. From those, do not consider the ones with topic different from 608
+        2.3 Tweets automatically classified as being not about covid (covid_theme=0). From those, do not consider tweets that have been coded
+        """
+
+        return df[
+            ((df["covid_theme"] == 0) & (~df["topic"].isin(Helpers.topics_cov)))
+            | ((df["theme_hardcoded"] == "0") & (~df["topic"].isin(Helpers.topics_cov)))
+            | (df["topic"].isin(Helpers.topics_not_cov))
+        ]
+
     @staticmethod
     def convert_date(datestr: str) -> str:
         """

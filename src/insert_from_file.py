@@ -38,11 +38,12 @@ from common.helpers import Helpers
 app_run = App(debug=True)
 db = Database("tweets.db", app=app_run)
 
+
 def main():
     files = ["prepare_insert.xlsx"]
 
     for filename in files:
-        print("Inserting new tweets from ", filename) 
+        print("Inserting new tweets from ", filename)
 
         xls = pd.read_excel(f"src/resources/data/{filename}")
         xls_size = len(xls)
@@ -64,7 +65,7 @@ def main():
             xls["tweet_id"] = xls["URL"].apply(Helpers.extract_id)
 
         # If tweet_id==0, then it's na
-        # hash the tweet with the date, oldText and text
+        # hash the tweet with the date, old_text and text
         # and use it as id
         mask = xls["tweet_id"] == 0
         xls.loc[mask, ["tweet_id"]] = (
@@ -98,12 +99,13 @@ def main():
         print(f"{xls_size} tweets to insert")
         print(f"{db_size_before} database size before insertion")
         print(f"{db_size_after} database size before insertion")
-        
+
         # Remember to classify the database if needed
-    
+
+
 if __name__ == "__main__":
     main()
-    
+
 # TODO
 # Sanitize strings (`type`) before inserting
 # trail spaces and such...

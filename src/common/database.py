@@ -74,12 +74,12 @@ class Database:
         finally:
             if self.conn:
                 self.conn.close()
-    
+
     def get_db_size(self) -> int:
         """
         Count the number of elements in the db
         """
-        
+
         try:
             cur = self.conn.cursor()
             sql = "SELECT COUNT(*) FROM tweets"
@@ -258,7 +258,14 @@ class Database:
 
         If fields is a list, multiple fields will be updated.
         The condition value must be the last value of values.
-        values can be an iterable such as tuple(field1_value, field2_value, cond_value)
+        values should be an iterable of an iterable such as tuple(field1_value, field2_value, cond_value)
+
+        Example:
+        Update created_at and url from tweets 2222, 4444
+        new_tweets = [
+            ("23/07/2020 05:45:51", "https://twitter.com/status/2222"), 2222), ("22/07/2020 05:00:00", "https://twitter.com/status/4444", 4444)
+        ]
+        update_many(["created_at", "url"], "tweet_id", new_tweets)
         """
 
         if cond not in Helpers.schema_cols:

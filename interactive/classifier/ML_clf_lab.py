@@ -128,7 +128,7 @@ sanitize(tmp_tweet)
 # Only keep already coded tweets (6XX or "theme_hardcoded == 0")
 df_en = df_en[~df_en["topic"].isnull() | ~df_en["theme_hardcoded"].isnull()].copy()
 df_en["text"] = df_en.apply(
-    lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+    lambda r: r["old_text"] if r["text"] is None else r["text"], axis=1
 )
 
 # If 608 or theme_hardcoded == 0, then set new col `y` = 0
@@ -479,7 +479,7 @@ def prepare_df(df, lang="en"):
     # Only keep already coded tweets (6XX or "theme_hardcoded == 0")
     df_do = df_do[~df_do["topic"].isnull() | ~df_do["theme_hardcoded"].isnull()]
     df_do["text"] = df_do.apply(
-        lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+        lambda r: r["old_text"] if r["text"] is None else r["text"], axis=1
     )
 
     # If 608 or theme_hardcoded == 0, then set new col `y` = 0

@@ -108,7 +108,7 @@ class Api:
             )
             outtweets[index]["handle"] = f"@{tweet.user.screen_name}"
             outtweets[index]["name"] = tweet.user.name
-            outtweets[index]["oldText"] = old_text
+            outtweets[index]["old_text"] = old_text
             outtweets[index]["text"] = full_text
             outtweets[index][
                 "URL"
@@ -150,7 +150,8 @@ class Api:
             print("Starting loop")
             while itera <= iter_needed:
                 if self.app.debug:
-                    print(f"{itera}/{iter_needed}")
+                    # print(f"{itera}/{iter_needed}")
+                    pass
 
                 try:
                     compl_tweets = self.api.statuses_lookup(
@@ -194,7 +195,7 @@ class Api:
                     )
                     new_tweet["handle"] = f"@{compl_tweet.user.screen_name}"
                     new_tweet["name"] = compl_tweet.user.name
-                    new_tweet["oldText"] = old_text
+                    new_tweet["old_text"] = old_text
                     new_tweet["text"] = full_text
                     new_tweet[
                         "URL"
@@ -298,7 +299,7 @@ class Api:
                 )
                 new_tweet["handle"] = f"@{compl_tweet.user.screen_name}"
                 new_tweet["name"] = compl_tweet.user.name
-                new_tweet["oldText"] = old_text
+                new_tweet["old_text"] = old_text
                 new_tweet["text"] = full_text
                 new_tweet[
                     "URL"

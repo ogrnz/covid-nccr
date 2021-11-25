@@ -55,7 +55,7 @@ print(len(to_update))
 
 # %%
 with db:
-    count = db.update_many("oldtext", "tweet_id", to_update)
+    count = db.update_many("old_text", "tweet_id", to_update)
 
 print(count, "tweets updated")
 
@@ -74,5 +74,5 @@ with open("src/resources/data/pkl/tweets.pkl", "rb") as inp:
     to_update = pickle.load(inp)
 
 # %%
-len(tot_tweets) - sum(tot_tweets["oldText"].apply(lambda x: str(x).startswith("RY")))
+len(tot_tweets) - sum(tot_tweets["old_text"].apply(lambda x: str(x).startswith("RY")))
 # = 16 tweets with an issue. Most of them answer to deleted tweets

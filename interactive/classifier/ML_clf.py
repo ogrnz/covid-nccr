@@ -196,12 +196,12 @@ for df in dfs:
     df_coded.loc[:, "y"] = df_coded.progress_apply(covid_classify, axis=1)
     df_uncoded.loc[:, "y"] = np.nan
 
-    # 3: create new col "x" with text or oldText if text is nan
+    # 3: create new col "x" with text or old_text if text is nan
     df_coded.loc[:, "x"] = df_coded.progress_apply(
-        lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+        lambda r: r["old_text"] if r["text"] is None else r["text"], axis=1
     )
     df_uncoded.loc[:, "x"] = df_uncoded.progress_apply(
-        lambda r: r["oldText"] if r["text"] is None else r["text"], axis=1
+        lambda r: r["old_text"] if r["text"] is None else r["text"], axis=1
     )
 
     # 4: Sanitize text
@@ -268,7 +268,7 @@ df_final.to_pickle("interactive/data/db_ML.pkl")
 df_final = pd.read_pickle("interactive/data/db_ML.pkl")
 
 def classify(row, clf, mode="real"):
-    txt = row.loc["oldText"] if row.loc["text"] is None else row.loc["text"]
+    txt = row.loc["old_text"] if row.loc["text"] is None else row.loc["text"]
 
     topics_cov = [
         "601",

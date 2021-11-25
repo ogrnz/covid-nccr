@@ -27,7 +27,7 @@ df = pd.DataFrame(
         "created_at",
         "handle",
         "name",
-        "oldText",
+        "old_text",
         "text",
         "URL",
         "type",

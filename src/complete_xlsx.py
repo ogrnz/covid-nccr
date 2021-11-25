@@ -2,7 +2,7 @@
 Complete tweets based on xlsx file
 
 Less headache with NaNs if the cols in xlsx are as following:
-created_at; handle; name; oldText; text; URL; type; retweets; favorites; [optional_cols]
+created_at; handle; name; old_text; text; URL; type; retweets; favorites; [optional_cols]
 """
 
 

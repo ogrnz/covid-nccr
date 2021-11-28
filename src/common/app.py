@@ -3,6 +3,7 @@ App module
 """
 
 import os
+import logging
 
 from dotenv import load_dotenv
 
@@ -22,8 +23,7 @@ class App:
 
     debug = False
 
-    def __init__(self, debug: bool = False, root_dir=""):
-
+    def __init__(self, debug: bool = False, root_dir: str = ""):
         self.debug = debug
 
         abspath = os.path.abspath(__file__)
@@ -31,6 +31,17 @@ class App:
         root_dir = dirname(dirname(dirname(abspath)))
         os.chdir(root_dir)
         self.root_dir = root_dir
+
+        # Setup logging
+        logging_level = logging.INFO
+        if self.debug:
+            logging_level = logging.DEBUG
+
+        logging.basicConfig(
+            level=logging_level,
+            filename="app.log",
+            format="%(asctime)s [%(levelname)s] [%(name)s]: %(message)s",
+        )
 
         load_dotenv(load_dotenv(dotenv_path=f"{root_dir}/.env"))
 

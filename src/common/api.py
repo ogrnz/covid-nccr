@@ -2,16 +2,19 @@
 API module
 """
 
+import logging
 import math
 import time
 from datetime import datetime as dt
 
-from tqdm import tqdm
-import tweepy
 import pandas as pd
+import tweepy
+from tqdm import tqdm
 
 from common.app import App
 from common.helpers import Helpers
+
+log = logging.getLogger(__name__)
 
 
 class Api:
@@ -40,7 +43,7 @@ class Api:
             self.api = tweepy.API(auth)
             self.connected = True
         except tweepy.TweepyException as error:
-            print("Error connecting to Twitter API ", error)
+            log.warning("Error connecting to Twitter API ", error)
 
     def get_tweets(self, screen_name, last_id=0):
         """
@@ -56,13 +59,15 @@ class Api:
         all_tweets.extend(new_tweets)
         oldest = all_tweets[-1].id - 1
 
+        log.debug(f"oldest tweet_id in database {oldest}")
+
         while len(new_tweets) > 0:
             # If tweet older than that ID (== 31/12/2019)
             # or older than last ID in db for that actor, go to next actor
             if oldest < 1211913001147740161 or oldest <= last_id:
                 break
 
-            print(f"Getting tweets before {oldest} ({screen_name})")
+            log.debug(f"Getting tweets before {oldest} ({screen_name})")
 
             new_tweets = self.api.user_timeline(
                 screen_name=screen_name,
@@ -73,13 +78,14 @@ class Api:
             all_tweets.extend(new_tweets)
             oldest = all_tweets[-1].id - 1
 
-            print(f"...{len(all_tweets)} tweets downloaded")
+        log.info(f"{len(all_tweets)} tweets downloaded for {screen_name}")
 
         outtweets = {}
         for index, tweet in enumerate(all_tweets):
             # Ignore tweets older than 2019/12/31
             as_of = dt.strptime("2019/12/31", "%Y/%m/%d")
             if tweet.created_at < as_of:
+                log.debug(f"Ignoring {tweet.id} because {tweet.created_at} < {as_of}")
                 continue
 
             old_text = None
@@ -144,13 +150,13 @@ class Api:
             (len(tweets_ids) - Helpers.count_null_id(tweets_ids)) / self.COUNT
         )
 
-        print("Completing tweets..")
+        log.debug("Completing tweets..")
         itera = 0
         with tqdm(total=len(tweets_ids)) as pbar:
-            print("Starting loop")
+            log.debug("Starting loop")
             while itera <= iter_needed:
                 if self.app.debug:
-                    # print(f"{itera}/{iter_needed}")
+                    # log.debug(f"{itera}/{iter_needed}")
                     pass
 
                 try:
@@ -161,7 +167,7 @@ class Api:
                     if error.api_code == 38:
                         # End of loop
                         break
-                    print("Error", error)
+                    log.warning("Error", error)
 
                 # Edit tot_tweets dict
                 for compl_tweet in compl_tweets:
@@ -245,7 +251,7 @@ class Api:
             (len(tweets_ids) - Helpers.count_null_id(tweets_ids)) / 100
         )
 
-        print("Completing tweets..")
+        log.debug("Completing tweets..")
         itera = 0
 
         while itera < iter_needed + 1:
@@ -256,9 +262,9 @@ class Api:
             except tweepy.TweepError as error:
                 if error.api_code == 38:
                     # End of loop
-                    # print("Break loop", error.api_code)
+                    # log.info("Break loop", error.api_code)
                     break
-                print("Error", error)
+                log.warning("Error", error)
 
             # Edit tot_tweets dict
             for compl_tweet in compl_tweets:
@@ -366,16 +372,16 @@ class Api:
                         id_=ids, tweet_mode="extended"
                     )
                 except tweepy.RateLimitError as error:
-                    print("RateLimitError", error)
-                    print(f"{itera=}/{iter_needed=}")
-                    print("Sleeping...")
+                    log.info("RateLimitError", error)
+                    log.info(f"{itera=}/{iter_needed=}")
+                    log.info("Sleeping...")
                     time.sleep(10 * 60)
                     continue
                 except tweepy.TweepError as error:
                     if error.api_code == 38:
                         # End of loop
                         break
-                    print("Error", error)
+                    log.warning("Error", error)
 
                 # Edit tot_tweets dict
                 for compl_tweet in compl_tweets:
@@ -463,12 +469,12 @@ class Api:
                     if error.api_code == 38:  # End of loop
                         break
                     if error.api_code == 88:  # RateLimiteError
-                        print("Error", error)
+                        log.warning("Error", error)
                         break
                     if error.api_code == 17:  # NoUserMatch
                         nomatch += 1
                     else:
-                        print("Error", error)
+                        log.warning("Error", error)
 
                 # Setup request for new iteration
                 last_iter_final = final
@@ -489,7 +495,7 @@ class Api:
                 pbar.update(self.COUNT)
 
         if nomatch > 0:
-            print(
+            log.info(
                 "NoUserMatch: Some requests have returned no matches for some queried users."
             )
         return users

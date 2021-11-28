@@ -26,7 +26,9 @@ columns_xls=[
 A "theme_hardcoded" is created by default with None values if non-existent
 """
 
+import os
 import hashlib
+import logging
 
 import pandas as pd
 from tqdm import tqdm
@@ -38,12 +40,14 @@ from common.helpers import Helpers
 app_run = App(debug=True)
 db = Database("tweets.db", app=app_run)
 
+log = logging.getLogger(os.path.basename(__file__))
+
 
 def main():
-    files = ["prepare_insert.xlsx"]
+    files = ["test.xlsx"]
 
     for filename in files:
-        print("Inserting new tweets from ", filename)
+        log.info(f"Inserting new tweets from {filename}")
 
         xls = pd.read_excel(f"src/resources/data/{filename}")
         xls_size = len(xls)
@@ -93,12 +97,12 @@ def main():
             inserted = db.insert_or_replace_many(tweet_entries)
             db_size_after = db.get_db_size()
 
-        print(f"Done inserting {inserted} tweets")
+        log.info(f"Done inserting {inserted} tweets")
 
         # Sanity check
-        print(f"{xls_size} tweets to insert")
-        print(f"{db_size_before} database size before insertion")
-        print(f"{db_size_after} database size before insertion")
+        log.debug(f"{xls_size} tweets to insert")
+        log.debug(f"{db_size_before} database size before insertion")
+        log.debug(f"{db_size_after} database size before insertion")
 
         # Remember to classify the database if needed
 

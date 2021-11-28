@@ -26,4 +26,4 @@ tests/__pycache__
 
 .ipynb_checkpoints
 
-twarc.log
+*.log

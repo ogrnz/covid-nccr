@@ -2,6 +2,7 @@
 Helpers module
 """
 
+import logging
 import re
 import hashlib
 from datetime import datetime
@@ -191,7 +192,7 @@ class Helpers:
         Print elapsed time in terminal
         """
 
-        print(f"\nDone in {round(elapsed, 1)} s")
+        logging.info(f"\nDone in {round(elapsed, 1)} s")
 
     @staticmethod
     def extract_ids_file(file_path, col="URL", retdf=False) -> list:

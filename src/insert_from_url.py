@@ -3,6 +3,9 @@ Update database from list of URLs
 Code is similar to scrape.py
 """
 
+import os
+import logging
+
 import pandas as pd
 
 from common.app import App
@@ -10,6 +13,7 @@ from common.database import Database
 from common.api import Api
 from common.helpers import Helpers
 
+log = logging.getLogger(os.path.basename(__file__))
 
 if __name__ == "__main__":
     app_run = App(debug=True)
@@ -40,6 +44,6 @@ if __name__ == "__main__":
     with db:
         inserted = db.insert_many(tweet_entries)
 
-    print(f"Done inserting {inserted} tweets")
+    log.info(f"Done inserting {inserted} tweets")
 
     # Remember to classify the database if you need to

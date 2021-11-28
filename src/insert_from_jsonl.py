@@ -4,6 +4,7 @@ Already present tweets are updated.
 """
 
 import os
+import logging
 
 # import time
 
@@ -15,22 +16,16 @@ from common.database import Database
 # from common.helpers import Helpers
 from common.insertor import InsertFromJsonl
 
+log = logging.getLogger(os.path.basename(__file__))
+
 
 def main(fname, mode):
-    tws = []
-    for line in insertor.read(fname):
-        tws.append(insertor.ret_tw_from_line(line))
-
-    if mode == "single":
-        # To know which tweet triggers the unique constraint
-        count = 0
-        for tw in tqdm(tws):
-            if db.insert_no_ignore(tw):
-                count += 1
-    else:
-        count = db.insert_many(tws)
-
-    return count
+    tws = [insertor.ret_tw_from_line(line) for line in insertor.read(fname)]
+    return (
+        sum(1 for tw in tqdm(tws) if db.insert_no_ignore(tw))
+        if mode == "single"
+        else db.insert_many(tws)
+    )
 
 
 if __name__ == "__main__":
@@ -48,4 +43,4 @@ if __name__ == "__main__":
         for f in tqdm(files):
             tot_count += main(f, mode="single")
 
-    print(f"{tot_count} tweets inserted")
+    log.info(f"{tot_count} tweets inserted")

@@ -2,10 +2,15 @@
 Export xlsx file to server via webdav
 """
 
+import os
+import logging
+
 from webdav3.client import Client
 from webdav3.exceptions import WebDavException
 
 from common.app import App
+
+log = logging.getLogger(os.path.basename(__file__))
 
 
 def main(filename, app: App):
@@ -24,12 +29,12 @@ def main(filename, app: App):
 
     client = Client(options)
 
-    print(f"Uploading {filename} to remote server")
+    log.info(f"Uploading {filename} to remote server")
     try:
         client.upload_sync(remote_path=dest + filename, local_path=orig + filename)
-        print(f"Done uploading in {dest}")
+        log.info(f"Done uploading in {dest}")
     except WebDavException as error:
-        print("Error", error)
+        log.warning(f"Error {error}")
 
 
 if __name__ == "__main__":

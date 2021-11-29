@@ -5,6 +5,9 @@ Add "RY @handle: ..." to all replies
 """
 
 #%%
+import os
+import logging
+
 import pandas as pd
 
 from common.database import Database
@@ -14,6 +17,7 @@ from common.helpers import Helpers
 
 app_run = App(debug=True)
 db = Database("tweets.db", app=app_run)
+log = logging.getLogger(os.path.basename(__file__))
 
 # %%
 # Connect to the API
@@ -57,7 +61,7 @@ print(len(to_update))
 with db:
     count = db.update_many("old_text", "tweet_id", to_update)
 
-print(count, "tweets updated")
+log.info(count, "tweets updated")
 
 
 #%%

@@ -2,10 +2,14 @@
 Database module
 """
 
+import os
+import logging
 import sqlite3
 
 from common.app import App
 from common.helpers import Helpers
+
+log = logging.getLogger(os.path.basename(__file__))
 
 
 class Database:
@@ -43,7 +47,9 @@ class Database:
         Get sql tweets table schema
         """
 
-        with open(f"{self.app.root_dir}/database/schema.sql", "r") as sql:
+        with open(
+            f"{self.app.root_dir}/database/schema.sql", "r", encoding="utf8"
+        ) as sql:
             sql_lines = sql.readlines()
         return "".join(sql_lines)
 
@@ -55,9 +61,8 @@ class Database:
         try:
             self.conn = sqlite3.connect(f"{self.app.root_dir}/database/{self.db_name}")
         except sqlite3.Error as error:
-            print(
-                f"Error establishing connection to database {self.db_name}\n",
-                error,
+            log.warning(
+                f"Error establishing connection to database {self.db_name}\n {error}"
             )
 
     def create_table(self):
@@ -70,7 +75,7 @@ class Database:
             cur = self.conn.cursor()
             cur.execute(self.sql_schema)
         except sqlite3.Error as error:
-            print("Error creating table", error)
+            log.warning(f"Error creating table {error}")
         finally:
             if self.conn:
                 self.conn.close()
@@ -87,7 +92,7 @@ class Database:
 
             return cur.fetchone()[0]
         except sqlite3.Error as error:
-            print("get_all_tweets: Error", error)
+            log.warning(f"get_all_tweets: Error {error}")
         finally:
             cur.close()
 
@@ -117,7 +122,7 @@ class Database:
 
             return cur.fetchall()
         except sqlite3.Error as error:
-            print("get_all_tweets: Error", error)
+            log.warning(f"get_all_tweets: Error {error}")
         finally:
             cur.close()
 
@@ -137,7 +142,7 @@ class Database:
 
             return cur.fetchall()
         except sqlite3.Error as error:
-            print("get_fields: Error", error)
+            log.warning(f"get_fields: Error {error}")
         finally:
             cur.close()
 
@@ -153,7 +158,7 @@ class Database:
 
             return cur.fetchall()
         except sqlite3.Error as error:
-            print("get_by_type: Error", error)
+            log.warning(f"get_by_type: Error {error}")
         finally:
             cur.close()
 
@@ -168,7 +173,7 @@ class Database:
 
             return cur.fetchone()
         except sqlite3.Error as error:
-            print("get_tweet_by_id: Error", error)
+            log.warning(f"get_tweet_by_id: Error {error}")
         finally:
             cur.close()
 
@@ -190,7 +195,7 @@ class Database:
             )
             self.conn.commit()
         except sqlite3.Error as error:
-            print(f"update_tweet_by_id: Error updating tweet {tweet_id} ", error)
+            log.warning(f"update_tweet_by_id: Error updating tweet {tweet_id} {error}")
         finally:
             cur.close()
 
@@ -212,7 +217,7 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print("update_theme_many: Error updating tweets", error)
+            log.warning(f"update_theme_many: Error updating tweets {error}")
         finally:
             cur.close()
 
@@ -248,7 +253,7 @@ class Database:
             )
             self.conn.commit()
         except sqlite3.Error as error:
-            print("update: Error updating tweets", error, values)
+            log.warning(f"update: Error updating tweets {error} {values}")
         finally:
             cur.close()
 
@@ -293,7 +298,7 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print("update_many: Error updating tweets", error)
+            log.warning(f"update_many: Error updating tweets {error}")
         finally:
             cur.close()
 
@@ -313,8 +318,10 @@ class Database:
 
             return cur.lastrowid
         except sqlite3.Error as error:
-            print(sql)
-            print(f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}")
+            log.debug(sql)
+            log.warning(
+                f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}"
+            )
 
             return None
         finally:
@@ -336,7 +343,7 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print(f"insert_many: Error inserting new tweets \n {error}")
+            log.warning(f"insert_many: Error inserting new tweets \n {error}")
         finally:
             cur.close()
 
@@ -356,7 +363,9 @@ class Database:
 
             return cur.rowcount
         except sqlite3.Error as error:
-            print(f"insert_or_replace_many: Error inserting new tweets \n {error}")
+            log.warning(
+                f"insert_or_replace_many: Error inserting new tweets \n {error}"
+            )
         finally:
             cur.close()
 
@@ -375,8 +384,10 @@ class Database:
 
             return cur.lastrowid
         except sqlite3.Error as error:
-            print(sql)
-            print(f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}")
+            log.debug(sql)
+            log.warning(
+                f"insert_tweet: Error inserting new tweet \n {tweet} \n {error}"
+            )
 
             return None
         finally:
@@ -402,7 +413,7 @@ class Database:
 
             return cur.fetchone()
         except sqlite3.Error as error:
-            print(
+            log.warning(
                 f"get_last_id_by_handle: Error retrieving last tweet in db for {screen_name}\
                     \n {error}"
             )
@@ -420,7 +431,7 @@ class Database:
             cur.execute("DELETE FROM tweets WHERE tweet_id = ?", (tweet_id,))
             self.conn.commit()
         except sqlite3.Error as error:
-            print("delete_by_id: Error", error)
+            log.warning(f"delete_by_id: Error {error}")
         finally:
             cur.close()
 

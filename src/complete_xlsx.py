@@ -5,12 +5,15 @@ Less headache with NaNs if the cols in xlsx are as following:
 created_at; handle; name; old_text; text; URL; type; retweets; favorites; [optional_cols]
 """
 
-
+import os
+import logging
 import time
 
 from common.app import App
 from common.api import Api
 from common.helpers import Helpers
+
+log = logging.getLogger(os.path.basename(__file__))
 
 
 def complete(filename):
@@ -22,10 +25,10 @@ def complete(filename):
         f"src/resources/data/{filename}.xlsx", retdf=True
     )
 
-    print(f"Starting length: {len(ids_xls)}")
+    log.info(f"Starting length: {len(ids_xls)}")
     completed_tweets = api.get_tweets_by_ids_with_nan(ids_xls, df=xls_df)
 
-    print(f"Finishing length: {len(completed_tweets)}")
+    log.info(f"Finishing length: {len(completed_tweets)}")
 
     # print(completed_tweets)
     # completed_tweets.to_pickle(f"src/resources/data/{filename}.pkl")

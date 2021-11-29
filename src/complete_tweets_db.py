@@ -8,6 +8,9 @@ Retrieve extended and complete tweet, write it to "text" column and keep the old
 %load_ext autoreload
 %autoreload 2
 
+import os
+import logging
+
 import pandas as pd
 import tqdm
 
@@ -19,6 +22,8 @@ from common.helpers import Helpers
 app_run = App(debug=True)
 db = Database("tweets.db", app=app_run)
 api = Api(app_run)
+log = logging.getLogger(os.path.basename(__file__))
+
 
 #%%
 with db:
@@ -53,7 +58,7 @@ to_update = [
 with db:
     count = db.update_many("text", "tweet_id", to_update)
 
-print(count, "tweets updated")
+log.info(count, "tweets updated")
 # check 1216694717288632320, 1258741133326385153, 1220705634074624000
 #ok
 

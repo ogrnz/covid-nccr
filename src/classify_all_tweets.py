@@ -3,10 +3,17 @@ Classify existing tweets in the database as
 being about covid or not
 """
 
+import os
+import logging
+
+from tqdm import tqdm
+
 from common.app import App
 from common.database import Database
 from common.classify import Classifier
 from common.helpers import Helpers
+
+log = logging.getLogger(os.path.basename(__file__))
 
 if __name__ == "__main__":
     app_run = App(debug=False)
@@ -15,16 +22,15 @@ if __name__ == "__main__":
     classifier = Classifier()
 
     with db:
-        print("Downloading from db...")
+        log.info("Downloading from db...")
         tweets = db.get_fields(["tweet_id", "covid_theme", "text"])
 
-    print("Classifying tweets")
+    log.info("Classifying tweets")
     tot = len(tweets)
     classified_tweets = []
     COUNT = 0
 
-    for index, tweet in enumerate(tweets, start=1):
-        Helpers.dynamic_text(f"{index}/{tot}")
+    for index, tweet in tqdm(enumerate(tweets, start=1)):
 
         tmp_tweet = list(tweet)
         txt = tmp_tweet[2]
@@ -37,9 +43,9 @@ if __name__ == "__main__":
         tweet = (tmp_tweet[1], tmp_tweet[0])
         classified_tweets.append(tweet)
 
-    print(f"Updating {COUNT} classified tweets...")
+    log.info(f"Updating {COUNT} classified tweets...")
 
     with db:
         inserted = db.update_theme_many(classified_tweets)
 
-    print(f"{inserted} Tweets updated.")
+    log.info(f"{inserted} Tweets updated.")

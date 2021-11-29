@@ -2,12 +2,15 @@
 Helpers module
 """
 
+import os
 import logging
 import re
 import hashlib
 from datetime import datetime
 
 import pandas as pd
+
+log = logging.getLogger(os.path.basename(__file__))
 
 
 class Helpers:

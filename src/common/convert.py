@@ -3,8 +3,10 @@ Converter module
 """
 
 import csv
-import uuid
+import logging
+import os
 import os.path
+import uuid
 from datetime import date
 
 import xlsxwriter
@@ -12,6 +14,8 @@ import xlsxwriter
 from common.app import App
 from common.database import Database
 from common.helpers import Helpers
+
+log = logging.getLogger(os.path.basename(__file__))
 
 
 class Converter:
@@ -73,13 +77,13 @@ class Converter:
                 writer.writerow(cols)
                 tweets = self.database.get_fields(list(cols), self.only_covid)
                 writer.writerows(tweets)
-                print(
+                log.info(
                     f"Table successfully converted as database/csv/{covid}{outfile}-{today}.csv"
                 )
 
                 return f"{covid}{outfile}-{today}.csv"
             except csv.Error as error:
-                print("Error while writing CSV", error)
+                log.warning(f"Error while writing CSV {error}")
 
     def csv_to_xlsx(self, csv_file):
         """
@@ -115,6 +119,6 @@ class Converter:
                     wk_sheet.write(row_i, col_i, val)
 
         workbook.close()
-        print(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
+        log.info(f"File successfully exported to database/xlsx/{csv_file}.xlsx")
 
         return f"{csv_file}.xlsx"

@@ -57,10 +57,10 @@ def main(app: App, db: Database):
 
         except tweepy.TweepError as error:
             scrape_errors[actor] = str(error)
-            log.warning("Error", actor, error)
+            log.warning(f"Error {actor} {error}")
 
         except KeyError as error:
-            log.warning("KeyError when retrieving tweets from", actor, error)
+            log.warning(f"KeyError when retrieving tweets from {actor} {error}")
             continue
 
         except KeyboardInterrupt as error:

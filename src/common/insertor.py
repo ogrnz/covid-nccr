@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+import os
 import os.path
+import logging
 import json
 import unicodedata
 import re
@@ -9,6 +11,8 @@ from html import unescape
 # from common.api import Api
 # from common.database import Database
 from common.helpers import Helpers
+
+log = logging.getLogger(os.path.basename(__file__))
 
 
 class Insertor(ABC):
@@ -102,7 +106,10 @@ class InsertFromJsonl(Insertor):
 
         # Small check to prevent breaking the function if we change the number of cols.
         if len(tweet) != len(Helpers.schema_cols):
-            print("Error: number of columns in function does not match schema.")
+            log.warning(
+                "ValueError: number of columns in function does not match schema."
+            )
+            raise ValueError("Number of columns in function does not match schema")
 
         return tweet
 
@@ -159,14 +166,14 @@ class InsertFromJsonl(Insertor):
 
                 new_tweet = (new_id, new_url, new_created_at, old_id)
 
-                print(new_tweet)
+                log.debug(new_tweet)
 
             if found_count > 1 and self.mode == "multiproc":
-                print(f"\nMultiple matching tweets found for {new_id}")
-                print(f"Db idx {idx_found}")
+                log.info(f"\nMultiple matching tweets found for {new_id}")
+                log.info(f"Db idx {idx_found}")
 
         if found_count > 1:
-            print(f"\nMultiple matching tweets found for {new_id}")
+            log.info(f"\nMultiple matching tweets found for {new_id}")
 
         return new_tweet
 

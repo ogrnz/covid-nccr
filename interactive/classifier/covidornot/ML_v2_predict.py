@@ -7,7 +7,7 @@ This file classifies a new tweet or string as being about covid or not using the
 #%%
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join("..", "..", "src")))
+sys.path.append(os.path.abspath(os.path.join("src")))
 
 import re
 import time

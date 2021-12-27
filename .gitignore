@@ -15,6 +15,7 @@ src/resources/data
 
 database/*.db
 database/*.db-journal
+database/*.bin
 database/csv
 database/xlsx
 database/test

@@ -7,7 +7,7 @@ Experiment with ML classifier
 #%%
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join("..", "..", "src")))
+sys.path.append(os.path.abspath(os.path.join("src")))
 
 import re
 import time

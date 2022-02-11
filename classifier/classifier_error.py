@@ -1,4 +1,10 @@
 # pylint: skip-file
+"""
+Compute TP and FP for CovidOrNot task.
+! Should be updated to take into account new classification methodology.
+! -> see common/src/helpers.py categorize_df_covid() and categorize_df_not_covid()
+"""
+
 #%%
 import sys, os
 

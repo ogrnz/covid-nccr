@@ -19,7 +19,7 @@ algorithms trained on the respective set
 #%%
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join("src")))
+sys.path.append(os.path.abspath(os.path.join("..", "..", "..", "src")))
 
 import re
 import time

@@ -7,7 +7,7 @@ This file classifies a new tweet or string as being about covid or not using the
 #%%
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join("src")))
+sys.path.append(os.path.abspath(os.path.join("..", "..", "..", "src")))
 
 import re
 import time
@@ -54,7 +54,7 @@ from sklearn.pipeline import make_pipeline
 #%%
 app_run = App(debug=False)
 data_path = os.path.join(app_run.root_dir, "interactive", "data")
-MODEL = "sgd_logreg_ridge_23092021.pkl"
+MODEL = "sgd_logreg_ridge_20022022.pkl"
 
 #%%
 # Utils funcs

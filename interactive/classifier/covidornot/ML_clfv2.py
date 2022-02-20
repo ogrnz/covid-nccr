@@ -17,6 +17,9 @@ algorithms trained on the respective set
 """
 
 #%%
+%load_ext autoreload
+%autoreload 2
+
 import sys, os
 
 sys.path.append(os.path.abspath(os.path.join("..", "..", "..", "src")))
@@ -75,26 +78,24 @@ from sklearn.metrics import confusion_matrix
 app_run = App(debug=False)
 db = Database("tweets.db", app=app_run)
 data_path = os.path.join(app_run.root_dir, "interactive", "data")
+lang_path = os.path.join(data_path, "lang")
 
 #%%
 # Import the sets
-df_en = pd.read_pickle(os.path.join(data_path, "db_en.pkl"))
-df_fr = pd.read_pickle(os.path.join(data_path, "db_fr.pkl"))
-df_other = pd.read_pickle(os.path.join(data_path, "db_other.pkl"))
+df_en = pd.read_pickle(os.path.join(lang_path, "db_en.pkl"))
+df_fr = pd.read_pickle(os.path.join(lang_path, "db_fr.pkl"))
+df_other = pd.read_pickle(os.path.join(lang_path, "db_other.pkl"))
 
 #%%
 # Utils funcs
 
 def covid_classify(row: pd.Series):
-    if (
-        row["topic"] == "608"
-        or row["topic"] == "608.0"
-        or row["theme_hardcoded"] == "0"
-    ):
-        return 0
-    return 1
+    return 1 if (Helpers.categorize_tweet_covid(row)) else 0
 
 def sanitize(text, lang="en"):
+    if lang not in ["en", "fr", "all"]:
+        raise ValueError("lang parameter should be en, fr, all")
+
     if lang == "en":
         stemmer = stemmer_en
         stopwords = stopwords_en
@@ -158,32 +159,16 @@ def prepare_df(df, lang="en"):
     # Make "x" col
     df_do["x_text"] = df_do["text"].progress_apply(lambda x: sanitize(x, lang))
     df_do["x_handle"] = df_do["handle"]
-    df_do["x_date"] = df_do["created_at"].progress_apply(
+    df_do["x_date"] = df_do["created_at"].apply(
         lambda r: r[:10].replace("-", "/"),
     )  # convert created_at to "%d/%m/%y"
     # x_date is not perfect, some are %d/%m/%y, others %y/%d/%m
 
-    df_do["x"] = df_do.progress_apply(
+    df_do["x"] = df_do.apply(
         lambda r: f'{r["x_date"]} {r["x_handle"]} {r["x_text"]}', axis=1
     )
 
     return df_do
-
-def lang_detect(txt, threshold=0.9):
-    """
-    Detect tweet language
-    returns None if confidence lvl < threshold
-    """
-
-    if txt is None:
-        return None
-
-    txt = txt.replace("\n", " ")
-    lang = identifier.classify(txt)
-    if lang[1] < threshold:
-        return None
-    else:
-        return lang[0]
 
 #%%
 # General pipeline structure
@@ -309,28 +294,31 @@ for j, df in enumerate(dfs):
     clf_dfs.append(df_coded)
     clf_dfs.append(df_uncoded)
 
-    # Compute false neg/pos
-    df_not = df_coded[df_coded["theme_hardcoded"] == "0"].copy()
-    false_neg = 1 - (df_not["covid_theme"] == 0).sum() / len(df_not)
-    print(f"\nFalse negative: {round(false_neg * 100, 2)}")
-
-    df_yes = df_coded[
-        ~(df_coded["theme_hardcoded"] == "0")
-        & ~(df_coded["topic"] == "608")
-        & ~(df_coded["topic"] == "608.0")
-    ].copy()
-    false_pos = 1 - (df_yes["covid_theme"] == 1).sum() / len(df_yes)
-    print(f"False positive: {round(false_pos * 100, 2)}")
-
-    error_rates[j] = {"False negative rate (%)": round(false_neg * 100, 2), "False positive rate (%)": round(false_pos * 100, 2)}
-
 df_final = pd.concat(clf_dfs)
 df_final["covid_theme"].unique()  # small verification
-print(error_rates)
+
+"""
+Final reports on test sets, weighted accuracies:
+EN 
+sgd - 0.96
+log - 0.97
+ridge - 0.95
+
+FR
+sgd - 0.94
+log - 0.94
+ridge - 0.94
+
+ALL
+sgd - 0.97
+log - 0.97
+ridge - 0.96
+"""
 
 #%%
 # Save pipelines to pkl to reuse
-pickle.dump(pipelines, open(os.path.join(data_path, "models", "sgd_logreg_ridge_23092021.pkl"), "wb"))
+# Old save was 23.09.2021
+pickle.dump(pipelines, open(os.path.join(data_path, "models", "sgd_logreg_ridge_20.02.2022.pkl"), "wb"))
 
 #%%
 # Save db after only ML classification
@@ -349,9 +337,12 @@ def classify(row, clf, mode="real"):
     Postprocessing classifying function.
     Allows to add post-treatment rules.
 
-    In the "real" mode, we check each tweet against the naive classifier again, to be sure that if a tweet containing obvious covid keywords ("covid", "ncov", ...), it will be classifier as being about covid.
+    In the "real" mode, we check each tweet against the naive classifier again, to be sure that if a tweet 
+    contains obvious covid keywords ("covid", "ncov", ...), it will be classified as being about covid.
 
-    The "fake" mode is here to fix inconsistencies in the database, but artificially betters the false pos/neg rates. For example if an already-coded tweet has a topic other than 608, it cannot be classified as not being about covid, so we override the ML classifier decision.
+    The "fake" mode is here to fix inconsistencies in the database, but artificially betters the false pos/neg rates. 
+    For example if an already-coded tweet has a topic other than 608, it cannot be classified as not being about covid, 
+    so we override the ML classifier decision.
     """
 
     txt = row.loc["old_text"] if row.loc["text"] is None else row.loc["text"]
@@ -361,7 +352,7 @@ def classify(row, clf, mode="real"):
             or row.loc["topic"] in Helpers.topics_cov):
             return 1  # About covid
         elif (row.loc["topic"] in Helpers.topics_not_cov
-            or row.loc["theme_hardcoded"] == "0"):
+            or row.loc["theme_hardcoded"] in [0, "0"]):
             return 0 # Not about covid
         else:
             return row.loc["covid_theme"]
@@ -374,8 +365,6 @@ def classify(row, clf, mode="real"):
 
 #%%
 from common.classify import Classifier
-%load_ext autoreload
-%autoreload 2
 
 classifier = Classifier(keywords_file="covid_final.txt")
 
@@ -392,16 +381,14 @@ df_final.to_pickle(os.path.join(data_path, "db_final_classified.pkl"))
 # All coded tweets
 
 all_coded = df_final[
-    (df_final["topic"].isin(Helpers.topics_cov + Helpers.topics_not_cov)) | (df_final["theme_hardcoded"] == "0")
+    (df_final["topic"].isin(Helpers.topics_cov + Helpers.topics_not_cov)) | (df_final["theme_hardcoded"].isin([0, "0"]))
 ]
-all_yes = all_coded[all_coded["topic"].isin(Helpers.topics_cov)]
-all_no = all_coded[
-    all_coded["topic"].isin(Helpers.topics_not_cov) | (all_coded["theme_hardcoded"] == "0")
-]
+all_yes = Helpers.categorize_df_covid(all_coded)
+all_no = Helpers.categorize_df_not_covid(all_coded)
 
 # %%
 # Calculate false negative
-false_neg_count = sum(all_yes["covid_theme"] == "0")
+false_neg_count = sum(all_yes["covid_theme"] == 0)
 all_count = len(all_yes)
 
 print("False Negative:")
@@ -409,7 +396,7 @@ print(
     f"Out of {all_count} manually coded tweets about covid, {false_neg_count} were classified as not being about covid although they were. The false negative rate is {round(false_neg_count / all_count*100, 2)}%."
 )
 """
-"Real" false negative: 0%
+"Real" false negative: 1.55%
 "Fake" (with manual changes to have a clean database): 0%
 """
 
@@ -425,9 +412,10 @@ print(
 )
 
 """
-"Real" false positive: 2.4%
-"Fake" (with manual changes to have a clean database): 0.12%
+"Real" false positive: 21.49%
+"Fake" (with manual changes to have a clean database): 12.5%
 """
+
 #%%
 # Check a few tweets
 df_final[df_final["theme_hardcoded"] == "0"]

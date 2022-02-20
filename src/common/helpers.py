@@ -124,6 +124,46 @@ class Helpers:
         ]
 
     @staticmethod
+    def categorize_tweet_covid(row: pd.Series) -> pd.Series:
+        """
+        Same function as the above one but for a unique row instead of df.
+        Returns True if the tweet is about covid given the coding.
+        """
+
+        # print(type(row))
+        # return row[
+        #     (row["topic"].isin(Helpers.topics_cov))
+        #     | (
+        #         (row["covid_theme"] == 1)
+        #         & (
+        #             (~row["topic"].isin(Helpers.topics_cov)) | row["theme_hardcoded"]
+        #             == "0"
+        #         )
+        #     )
+        #     | (
+        #         (row["topic"].isna())
+        #         & (row["covid_theme"] == 1)
+        #         & (row["theme_hardcoded"].isna())
+        #     )
+        # ]
+
+        if row["topic"] in Helpers.topics_cov \
+            or ( 
+                (row["covid_theme"] == 1)
+                and (
+                    (row["topic"] not in Helpers.topics_cov)
+                    or row["theme_hardcoded"] in [0, "0"]    
+                )
+            ) \
+            or (
+                row["topic"] is None
+                and row["covid_theme"] == 1
+                and row["theme_hardcoded"] is None
+            ):
+            return True
+        return False
+
+    @staticmethod
     def categorize_df_not_covid(df: pd.DataFrame) -> pd.DataFrame:
         """
         Return only tweets NOT about covid given the following methodology:
@@ -141,7 +181,7 @@ class Helpers:
 
         return df[
             ((df["covid_theme"] == 0) & (~df["topic"].isin(Helpers.topics_cov)))
-            | ((df["theme_hardcoded"] == "0") & (~df["topic"].isin(Helpers.topics_cov)))
+            | ((df["theme_hardcoded"].isin([0, "0"])) & (~df["topic"].isin(Helpers.topics_cov)))
             | (df["topic"].isin(Helpers.topics_not_cov))
         ]
 

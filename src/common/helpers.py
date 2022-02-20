@@ -187,7 +187,7 @@ class Helpers:
         Returns screen_names list stripped from urls
         """
 
-        return [url[19 : len(url)] for url in urls]
+        return [url[19:] for url in urls]
 
     @staticmethod
     def print_timer(elapsed):

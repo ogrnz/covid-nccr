@@ -4,6 +4,8 @@
 (v2) Experiment with ML classifier.
 This is a second version with the same-ish algos, but with added handle and date fields as predictors.
 
+This raises questions: it performs better for our data, but will lack generalization if we decide to add new actors.
+
 3 predictors:
 x_test = tweet text
 x_handle = tweet user

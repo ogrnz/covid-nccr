@@ -276,7 +276,7 @@ for j, df in enumerate(dfs):
     )
 
     # 5. train/test split to have an accurate score
-    X_train, X_test, y_train, y_test = train_test_split(df_coded.drop("y", axis=1), df_coded.loc[:, "y"], random_state=31415, test_size=0.2, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(df_coded.drop("y", axis=1), df_coded.loc[:, "y"], random_state=31415, test_size=0.15, shuffle=True)
 
     # Predict
     print("Predicting..")

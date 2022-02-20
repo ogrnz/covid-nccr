@@ -74,7 +74,7 @@ def fasttext_lang_detect(txt, threshold=0.5):
     if confidence < threshold:
         return None
     else:
-        return lang.strip("__label__")
+        return lang.replace("__label__", "")
 
 def fasttext_en_detect(txt, threshold=0.5):
     """

@@ -38,10 +38,10 @@ The database that we created is analyzed by researchers to measure the "Impact o
 The objective is to classify a given tweet as being about covid or not. For this, many different algorithms were tested. The development steps can be observed in `interactive/classifier/`. We went from a naive, keyworkds-based classifier to a majority voting classifier between 3 different algorithms. The latter is the last iteration of the classifier and is the one used. It can be used with the `interactive/classifier/ML_v2_predict.py`. Note that the pickle file of the trained model is not yet available.
 
 ### 2.2 Codebook classification
-[Active research]
+[Report](https://github.com/ogrnz/covid-nccr/blob/main/interactive/classifier/classification_report.pdf)
 
 ## Notes
-- An exploratory data analysis of the database is available [here](https://github.com/ogrnz/covid-project-helpers/blob/main/interactive/descriptives/eda.ipynb).
+- [An exploratory data analysis of the database is available](https://github.com/ogrnz/covid-project-helpers/blob/main/interactive/descriptives/eda.ipynb).
 - Many tasks handling bridging the gap between the database and Excel for the other researchers had to be automated and tested. For this, we deemed jupyter's notebooks unsuitable and preferred standalone scripts. Those are for instance the `src/insert_from_*.py`.
 - `src/complete.py` is used to get existing tweets' full text
 - `src/classify_all_tweets.py` is used to classify again the whole database
